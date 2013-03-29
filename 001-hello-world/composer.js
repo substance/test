@@ -23,7 +23,7 @@ window.test_case = [
   // Create a new document
   // ----------
 
-  function(cb) {
+  function(data, cb) {
     localStore.create('hello-world', function(err, doc) {
       // assert.ok(doc.id === "hello-world");
       cb(null, doc);
@@ -33,7 +33,7 @@ window.test_case = [
   // Apply commit
   // ----------
   
-  function(doc, cb) {
+  function(data, cb) {
     var meta = {"keywords": ["hello", "world"]};
     var refs = {
       "master": "b0a4df43adba704eaef6809ada25bc4a",
@@ -41,7 +41,7 @@ window.test_case = [
     };
 
     // Apply commit
-    localStore.update("hello-world", [c1], meta, refs , function(err) {
+    localStore.update("hello-world", [c1], function(err) {
       cb(err);
     });
   },
@@ -49,11 +49,12 @@ window.test_case = [
   // Check if commit has been stored
   // ----------
 
-  function(arg1, callback) {
+  function(data, cb) {
     localStore.get("hello-world", function(err, doc) {
       // assert(Object.keys(doc.commits).length === 1);
       // assert(doc.refs.master === "b0a4df43adba704eaef6809ada25bc4a");
       // assert(doc.refs.tail === "b0a4df43adba704eaef6809ada25bc4a");
+      console.log('LE DOC', doc);
       cb(err, doc);
     });
   }
