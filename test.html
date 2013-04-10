@@ -1,0 +1,18 @@
+<html>
+<header>
+  <script src="./jquery.min.js"></script>
+  <script src="./underscore.js"></script>
+  <script src="./test.js"></script>
+  <script type="text/javascript">
+    function initTests() {
+      Substance.registerTest("001-hello-world");
+    }
+  </script>
+</header>
+<body onload="initTests();">
+  <div>
+    <div>Hello World</div>
+    <div onclick='Substance.runTest("001-hello-world");'>Run</div>
+  </div>
+</body>
+</html>
