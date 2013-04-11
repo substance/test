@@ -3,8 +3,22 @@ if (typeof Substance == 'undefined') {
 }
 
 // TODO better naming, better place, maybe there are more custom helpers for asynchronous calls?
-function runChain(funcs, data, cb) {
-  if (!cb) throw RuntimeException("Illegal arguments for runChain: no callback given.");
+function runChain(funcs, data_or_cb, cb) {
+  var data = null;
+
+  // be tolerant - allow to omit the data argument
+  if (arguments.length == 2) {
+    cb = data_or_cb;
+  } else if (arguments.length == 3) {
+    data = data_or_cb;
+  } else {
+      throw "Illegal arguments.";
+  }
+
+  if (Object.prototype.toString.call(cb) !== '[object Function]') {
+    throw "Illegal arguments: a callback function must be provided";
+  }
+
   if (!data) data = {};
 
   var index = 0;
@@ -64,46 +78,48 @@ Substance.Test = function() {
   // convenience method for boolean assertions
   this.assertTrue = function(stmt, cb) {
     if (!stmt) {
-      cb("Assertion failed.", null);
+      var err = "Assertion failed.";
+      cb(err, null);
+      throw err;
     }
   };
 
   // convenience method for euality assertions
   this.assertEqual = function(expected, actual, cb) {
     if (expected !== actual ) {
-      cb("Assertion failed: expected="+expected+", actual="+actual, null);
+      var err = "Assertion failed: expected="+expected+", actual="+actual;
+      cb(err, null);
+      throw err;
     }
-  }
-
-  // convenience method for asynchronous error handling
-  this.assertNoError = function(err, cb, data) {
-    if (!data) data = null;
-    if (err) cb(err, data);
-  }
-
-  // For execution on composer or hub, repsectively,
-  // actions for the other have to be replaced by stubs.
-  this.prepareActions = function(platform) {
-    // TODO: return adapted actions
   }
 
   this.run = function(cb) {
     // prepare the actions for execution in composer or on hub, respectively
     var funcs = [];
     //TODO do preparation, i.e., unpack the
-    _.foreach(this.actions, function(action) {
-      funcs.push(action.func);
+    _.each(this.actions, function(action) {
+      funcs.push(function(test, cb) {
+        action.func(test, cb);
+        // TODO: we could add the last cb(null, test) call
+        //  which is questionable, though.
+        cb(null, test);
+      });
     });
 
     // use our simple asynch chaining call
-    runChain(funcs, cb);
-  }
+    try {
+      runChain(funcs, this, cb);
+    } catch (err) {
+      // not repeating the message, as cb has been called already
+    }
+  };
+
 };
 
 // registry for all tests
 Substance.tests = {};
 
-Substance.registerTest = function(testName) {
+Substance.loadTest = function(testName) {
   // testname should be a relative path to the test directory
   // relative to the tests directory without things like '..'
   Substance.test = new Substance.Test();
@@ -134,24 +150,34 @@ Substance.registerTest = function(testName) {
         'func': null
       };
       var objType = Object.prototype.toString.call(action);
+      // actions can be declared in a declarative way in array notation
+      // e.g.: ['Label', 'composer', function(test, cb) {...}]
+      // 'composer' and 'hub' are keywords to specify the action type
       if(objType === '[object Array]') {
         _.each(action, function(elem) {
           var elemType = Object.prototype.toString.call(elem);
+          // String elements can be either platform type or a label
           if (elemType === '[object String]') {
             if (elem === 'composer' || elem === 'hub') {
               _action.type = elem;
             } else {
               _action.label = elem;
             }
+          // a function element is the action body
           } else if (elemType === '[object Function]') {
             _action.func = elem;
+          // other things not allowed
           } else {
             cb("Illegal action format.", null);
           }
         })
-      } else if (objType === '[object Function]') {
+      }
+      // alternatively, only the action body can be given
+      else if (objType === '[object Function]') {
         _action.func = action;
-      } else {
+      }
+      // and also a direct version as object
+      else {
         if (action.func) _action.func = action.func;
         if (action.label) _action.label = action.label;
         if (action.type) _action.type = action.type;
@@ -168,7 +194,7 @@ Substance.registerTest = function(testName) {
     return function(data, cb){
       $.getJSON(test.name+"/" + fileName)
        .done(function(data) {
-          test[dataKey] = data;
+          test.data[dataKey] = data;
           cb(null, test);
         })
        .error(function(req, err) {
@@ -189,13 +215,13 @@ Substance.registerTest = function(testName) {
     if (test.seedHub) {
       funcs.push(resourceGetter(test, "hub.json", "hub"));
     }
-    funcs.push(function(data, cb) {
+    funcs.push(function(data) {
       cb(null, data);
     })
     runChain(funcs, test, cb);
   }
 
-  runChain([getTest, expandActions, loadResources], null, function(err, test) {
+  runChain([getTest, expandActions, loadResources], function(err, test) {
     if (err) {
       console.log("Could not register test: ", testName, "Error:", err);
     } else {
@@ -203,8 +229,4 @@ Substance.registerTest = function(testName) {
       console.log("Registered test:", test);
     }
   })
-};
-
-Substance.runTest = function(test) {
-
 };

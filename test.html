@@ -4,15 +4,27 @@
   <script src="./underscore.js"></script>
   <script src="./test.js"></script>
   <script type="text/javascript">
-    function initTests() {
-      Substance.registerTest("001-hello-world");
+
+    function loadTests() {
+      Substance.loadTest("001-hello-world");
+    }
+
+    function runTest(id) {
+      var test = Substance.tests[id];
+      test.run(function(err) {
+        if(err) {
+          console.log("Test failed:" + err);
+        } else {
+          console.log("Test succeeded.");
+        }
+      });
     }
   </script>
 </header>
-<body onload="initTests();">
+<body onload="loadTests();">
   <div>
-    <div>Hello World</div>
-    <div onclick='Substance.runTest("001-hello-world");'>Run</div>
+    <div id="001-hello-world">001-hello-world</div>
+    <div onclick='runTest("001-hello-world");'>Run</div>
   </div>
 </body>
 </html>
