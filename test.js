@@ -49,6 +49,26 @@ function runChain(funcs, data_or_cb, cb) {
   process(data);
 }
 
+// TODO: where to put the test helpers?
+
+// convenience method for boolean assertions
+var assertTrue = function(stmt, cb) {
+  if (!stmt) {
+    var err = "Assertion failed.";
+    cb(err, null);
+    throw err;
+  }
+};
+
+// convenience method for euality assertions
+var assertEqual = function(expected, actual, cb) {
+  if (expected !== actual ) {
+    var err = "Assertion failed: expected="+expected+", actual="+actual;
+    cb(err, null);
+    throw err;
+  }
+}
+
 Substance.Test = function() {
   var self = this;
 
@@ -74,24 +94,6 @@ Substance.Test = function() {
   // In test specs actions can be defined in a sparse/sloppy way.
   // They get expanded to a unified format automatically.
   this.actions = [];
-
-  // convenience method for boolean assertions
-  this.assertTrue = function(stmt, cb) {
-    if (!stmt) {
-      var err = "Assertion failed.";
-      cb(err, null);
-      throw err;
-    }
-  };
-
-  // convenience method for euality assertions
-  this.assertEqual = function(expected, actual, cb) {
-    if (expected !== actual ) {
-      var err = "Assertion failed: expected="+expected+", actual="+actual;
-      cb(err, null);
-      throw err;
-    }
-  }
 
   this.run = function(cb) {
     // prepare the actions for execution in composer or on hub, respectively
