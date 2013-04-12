@@ -139,13 +139,12 @@ Substance.Test = function() {
   this.run = function(cb) {
     // prepare the actions for execution in composer or on hub, respectively
     var funcs = [];
-    //TODO do preparation, i.e., unpack the
+
+    // TODO: when there are tests for the other platform
+    // they need to be converted to stub-tests
     _.each(this.actions, function(action) {
       funcs.push(function(test, cb) {
         action.func(test, cb);
-        // TODO: we could add the last cb(null, test) call
-        //  which is questionable, though.
-        cb(null, test);
       });
     });
 
