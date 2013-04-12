@@ -2,6 +2,8 @@ if (typeof Substance == 'undefined') {
   Substance = {};
 }
 
+
+
 // TODO better naming, better place, maybe there are more custom helpers for asynchronous calls?
 function runChain(funcs, data_or_cb, cb) {
   var data = null;
@@ -49,25 +51,64 @@ function runChain(funcs, data_or_cb, cb) {
   process(data);
 }
 
-// TODO: where to put the test helpers?
+// for now only these two functions.
+// if necessary we could pull in something more sophisticated such as chai.js
+var assert = {};
 
-// convenience method for boolean assertions
-var assertTrue = function(stmt, cb) {
-  if (!stmt) {
-    var err = "Assertion failed.";
-    cb(err, null);
-    throw err;
+assert.AssertionError = function (message) {
+  this.message = message;
+  try { throw new Error(); } catch (trace) {
+    var idx;
+    var stackTrace = trace.stack.split('\n');
+    // parse the stack trace: each line is a tuple (function, file, lineNumber)
+    // TODO: is this interpreter specific?
+    // for safari it is "<function>@<file>:<lineNumber>"
+    var expr = /([^@]*)@(.*):(\d+)/;
+
+    var stack = [];
+    for (idx = 0; idx < stackTrace.length; idx++) {
+      var match = expr.exec(stackTrace[idx]);
+      if (match) {
+        var entry = {
+          func: match[1],
+          file: match[2],
+          line: match[3]
+        };
+        if (entry.func === "") entry.func = "<anonymous>";
+        stack.push(entry);
+      }
+    }
+
+    // leave out the first entries that are from this file
+    var thisFile = stack[0].file;
+    for (idx = 1; idx < stack.length; idx++) {
+      if (stack[idx].file !== thisFile) break;
+    }
+    this.stack = stack.slice(idx);
   }
 };
 
-// convenience method for euality assertions
-var assertEqual = function(expected, actual, cb) {
-  if (expected !== actual ) {
-    var err = "Assertion failed: expected="+expected+", actual="+actual;
-    cb(err, null);
-    throw err;
+assert.AssertionError.prototype = new Error();
+assert.AssertionError.prototype.constructor = assert.AssertionError;
+assert.AssertionError.prototype.name = 'AssertionError';
+
+assert.AssertionError.prototype.toString = function() {
+  var errorPos = this.stack[0];
+  return this.message + " at " + errorPos.file+":"+errorPos.line;
+};
+
+assert.equal = function(expected, actual) {
+  if (expected !== actual) {
+    var err = "Assertion failed. Expected="+expected+", actual="+actual;
+    var exc = new assert.AssertionError(err);
+    var bla = new Error();
+    throw exc;
   }
 }
+
+assert.isTrue = function(stmt) {
+  assert.equal(true, stmt);
+};
 
 Substance.Test = function() {
   var self = this;
@@ -112,7 +153,8 @@ Substance.Test = function() {
     try {
       runChain(funcs, this, cb);
     } catch (err) {
-      // not repeating the message, as cb has been called already
+      cb(err, this);
+      console.log(err.toString());
     }
   };
 
@@ -121,24 +163,34 @@ Substance.Test = function() {
 // registry for all tests
 Substance.tests = {};
 
+Substance.loadTestsFromResource = false;
+
 Substance.loadTest = function(testName) {
   // testname should be a relative path to the test directory
   // relative to the tests directory without things like '..'
-  Substance.test = new Substance.Test();
 
   function getTest(data, cb) {
+
+    // called when test is available
+    function proceed() {
+        var test = Substance.tests[testName];
+        test.name = testName;
+        cb(null, test);
+    }
+
     // TODO: is there another way to retrieve the result of the test spec?
     // Currently, a quasi 'global' variable is used ...
-    Substance.test = new Substance.Test();
-    $.getScript(testName+"/test.js")
-      .done(function() {
-          var test = Substance.test;
-          test.name = testName;
-          cb(null, test);
-        })
-      .error(function(request, err) {
-          cb(err, null);
-        });
+    if (Substance.loadTestsFromResource) {
+      $.getScript(testName+"/test.js")
+        .done(function() {
+            proceed();
+          })
+        .error(function(request, err) {
+            cb(err, null);
+          });
+    } else {
+      proceed();
+    }
   }
 
   // Expands the actions into a unified format.

@@ -1,8 +1,9 @@
-Substance.test.type = 'composer';
-Substance.test.actions = [
+var test = new Substance.Test();
+test.actions = [
   ["Say hello", function(test, cb) {
-    console.log("Hello World! Test:",test);
-    assertTrue((1+1)==2, cb);
-    assertTrue((1+1)==3, cb);
+    console.log("Hello World! Test:", test);
+    assert.isTrue((1+1)==2);
+    assert.equal(1,2);
   }]
 ];
+Substance.tests['001-hello-world'] = test;

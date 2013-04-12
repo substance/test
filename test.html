@@ -1,30 +1,63 @@
 <html>
 <header>
-  <script src="./jquery.min.js"></script>
-  <script src="./underscore.js"></script>
-  <script src="./test.js"></script>
+  <script src="./jquery.min.js" type="text/javascript"></script>
+  <script src="./underscore.js" type="text/javascript"></script>
+  <script src="./substance-test.js" type="text/javascript"></script>
+  <script src="./001-hello-world/test.js" type="text/javascript"></script>
+  <style type="text/css">
+    .testcase {
+      overflow:hidden;
+    }
+    .testcase div {
+      float:left;
+      margin:5px 10px 5px 10px;
+      padding:2px 5px 2px 5px;
+    }
+    .testcase .button {
+      background-color:#a0a0a0;
+    }
+    .result.success {
+      background-color:#00a000;
+    }
+    .result.fail {
+      background-color:#a00000;
+    }
+    .testcase .output {
+      background-color:#F0F0a0;
+      clear: both;
+    }
+  </style>
   <script type="text/javascript">
-
     function loadTests() {
       Substance.loadTest("001-hello-world");
     }
-
     function runTest(id) {
       var test = Substance.tests[id];
+      var selTest = '.testcase#'+id;
+      var selResult = selTest+" .result";
+      var selOutput = selTest+" .output";
+      $(selResult).hide();
+      $(selOutput).hide();
       test.run(function(err) {
         if(err) {
-          console.log("Test failed:" + err);
+          $(selResult).text("Failed").removeClass("success").addClass("fail").show();
+          $(selOutput).text(err.toString()).show();
+          //console.log("Test failed:" + err);
         } else {
-          console.log("Test succeeded.");
+          $(selResult).text("Ok").removeClass("fail").addClass("success").show();
+          //console.log("Test succeeded.");
         }
       });
     }
+
   </script>
 </header>
 <body onload="loadTests();">
-  <div>
-    <div id="001-hello-world">001-hello-world</div>
-    <div onclick='runTest("001-hello-world");'>Run</div>
+  <div class="testcase" id="001-hello-world">
+    <div>001-hello-world</div>
+    <div class="button" onclick='runTest("001-hello-world");'>Run</div>
+    <div class="result"></div>
+    <div class="output"></div>
   </div>
 </body>
 </html>
