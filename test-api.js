@@ -183,14 +183,15 @@ Substance.Test = function() {
     function prepare(test, cb) {
       loadResources(test, function(err) {
         if (err) return cb(err);
-        seed(test.data[0], cb);
+        seed(test.data[0], function(err) {
+          client.seed(test.seeds[0], cb);
+        });
       });
     }
 
     // prepare the actions for execution in composer or on hub, respectively
     var funcs = [];
 
-    console.log('seed it');
     // TODO: when there are tests for the other platform
     // they need to be converted to stub-tests
     _.each(this.actions, function(action) {
@@ -230,7 +231,7 @@ Substance.loadTest = function(testName, env) {
     // TODO: is there another way to retrieve the result of the test spec?
     // Currently, a quasi 'global' variable is used ...
     if (Substance.loadTestsFromResource) {
-      $.getScript(testName+"/test.js")
+      $.getScript("tests/"+testName+"/test.js")
         .done(function() {
             proceed();
           })

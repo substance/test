@@ -5,6 +5,9 @@ test.seeds = ['002-some-docs'];
 test.defaultType = "composer";
 
 test.actions = [
+  ["composer", "Login", function(data, cb) {
+    session.authenticate("michael", "abcd", cb);
+  }],
   ["composer", "Say hello", function(test, cb) {
     // Check if there are some docs from the seed
     var docs = localStore.list();
