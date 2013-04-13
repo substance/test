@@ -44,7 +44,12 @@ function runChain(funcs, data_or_cb, cb) {
       process(data);
     };
 
-    func(data, recursiveCallback);
+    //-> if assertion fails this will throw
+    try {
+      func(data, recursiveCallback);      
+    } catch (err) {
+      cb(err);
+    }
   }
 
   // start processing
@@ -123,8 +128,8 @@ Substance.Test = function() {
   // If seedClient is set to true, `composer.json` should be present.
   // If seedHub is set to true, `hub.json` should be present.
   // Both values are by default true.
-  this.seedClient = true;
-  this.seedHub = true;
+  // this.seedClient = true;
+  // this.seedHub = true;
 
   // usually these get populated using json files
   // however, they can be set manually in test.js, too.
@@ -137,9 +142,55 @@ Substance.Test = function() {
   this.actions = [];
 
   this.run = function(cb) {
+
+
+    // helper function which is used for creating a function chain
+    function resourceGetter(test, fileName) {
+      return function(data, cb) {
+        $.getJSON("../tests/seeds/"+test.seeds[0]+"/" + fileName)
+         .done(function(data) {
+            // Make seed data available to test runner
+            test.data = [data];
+            cb(null, test);
+          })
+         .error(function(req, err) {
+            //TODO: create a nicer error message?
+            cb(err, test);
+          });
+      };
+    }
+
+    // depending on the test specification
+    // more data needs to be loaded
+    function loadResources(test, cb) {
+      var funcs =  [];
+
+      if (test.env === "composer") {
+        funcs.push(resourceGetter(test, "local.json"));
+      }
+      if (test.env === "hub") {
+        funcs.push(resourceGetter(test, "remote.json"));
+      }
+
+      funcs.push(function(data) {
+        cb(null, data);
+      })
+      runChain(funcs, test, cb);
+    }
+
+
+    // Load Resources, Seed it and continue with actual test
+    function prepare(test, cb) {
+      loadResources(test, function(err) {
+        if (err) return cb(err);
+        seed(test.data[0], cb);
+      });
+    }
+
     // prepare the actions for execution in composer or on hub, respectively
     var funcs = [];
 
+    console.log('seed it');
     // TODO: when there are tests for the other platform
     // they need to be converted to stub-tests
     _.each(this.actions, function(action) {
@@ -149,12 +200,10 @@ Substance.Test = function() {
     });
 
     // use our simple asynch chaining call
-    try {
+    prepare(this, function(err) {
+      console.log('all set... now running tests');
       runChain(funcs, this, cb);
-    } catch (err) {
-      cb(err, this);
-      console.log(err.toString());
-    }
+    });
   };
 
 };
@@ -164,7 +213,7 @@ Substance.tests = {};
 
 Substance.loadTestsFromResource = false;
 
-Substance.loadTest = function(testName) {
+Substance.loadTest = function(testName, env) {
   // testname should be a relative path to the test directory
   // relative to the tests directory without things like '..'
 
@@ -174,6 +223,7 @@ Substance.loadTest = function(testName) {
     function proceed() {
         var test = Substance.tests[testName];
         test.name = testName;
+        test.env = env;
         cb(null, test);
     }
 
@@ -239,42 +289,12 @@ Substance.loadTest = function(testName) {
     });
     test.actions = _actions;
 
+
     cb(null, test);
   }
 
-  // helper function which is used for creating a function chain
-  function resourceGetter(test, fileName, dataKey) {
-    return function(data, cb){
-      $.getJSON(test.name+"/" + fileName)
-       .done(function(data) {
-          test.data[dataKey] = data;
-          cb(null, test);
-        })
-       .error(function(req, err) {
-          //TODO: create a nicer error message?
-          cb(err, test);
-        });
-    };
-  }
 
-  // depending on the test specification
-  // more data needs to be loaded
-  function loadResources(test, cb) {
-    var funcs =  [];
-
-    if (test.seedClient) {
-      funcs.push(resourceGetter(test, "composer.json", "composer"));
-    }
-    if (test.seedHub) {
-      funcs.push(resourceGetter(test, "hub.json", "hub"));
-    }
-    funcs.push(function(data) {
-      cb(null, data);
-    })
-    runChain(funcs, test, cb);
-  }
-
-  runChain([getTest, expandActions, loadResources], function(err, test) {
+  runChain([getTest, expandActions], function(err, test) {
     if (err) {
       console.log("Could not register test: ", testName, "Error:", err);
     } else {
