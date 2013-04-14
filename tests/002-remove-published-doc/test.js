@@ -1,41 +1,82 @@
-// TODO: create corresponding seed data
-// Hub: Document "bla-blupp", has one publication + one version
-// client: Document "bla-blupp" in sync with hub
+var test = new Substance.Test();
 
-// window.test_case = [
+test.seeds = ['002-some-docs'];
 
-//   // Delete concerned document locally
-//   // ----------
+test.defaultType = "composer";
 
-//   function(data, cb) {
-//     localStore.delete('bla-blupp', function(err, doc) {
-//       // assert.ok(doc.id === "hello-world");
-//       cb(null, doc);
-//     });
-//   },
+test.actions = [
+  ["composer", "Login", function(data, cb) {
+    session.authenticate("michael", "abcd", cb);
+  }],
 
-//   // Start replication
-//   // ----------
-  
-//   function(data, cb) {
-//     // Oliver, implement new replicator first! :)
-//     Replicator.replicate(localStore, remoteStore, cb);
-//   },
+  ["composer", "Open Doc for editing", function(test, cb) {
+    session.loadDocument("test-doc-michael-1", function(err, doc) {
+      cb(err, doc);
+    });
+  }],
 
-//   // Check if commit has been stored
-//   // ----------
+  // TODO: try to create version before publication. Ensure this properly fails
 
-//   function(data, cb) {
+  // Creating a publication implicitly creates a document entry on the hub
+  ["composer", "Create publication", function(doc, cb) {
+    session.createPublication("substance", function(err) {
+      assert.isNull(err);
+      cb(err, doc);
+    });
+  }],
 
-//     client.getDocument('bla-blupp', function(err) {
-//       assert(err !== null);
+  // This should fail, if there's no publication for that doc
+  ["composer", "Create version", function(doc, cb) {
+    session.createVersion(function(err) {
+      assert.isNull(err);
+      cb(err, doc);
+    });
+  }],
 
-//       client.loadPublications('bla-blupp', function(err, publications) {
-//         assert(publications.length === 0);
-//         client.loadVersions('bla-blupp', function(err, versions) {
-//           assert(versions.length === 0);
-//         });
-//       });
-//     });
-//   }
-// ];
+  // Check if replication still works now that a document entry has been created implicitly by createPublication
+  ["composer", "Replicate with the server", function(docCount, cb) {
+    var replicator = new Substance.Replicator({store: localStore, user: "michael"});
+    replicator.sync(cb);
+  }],
+
+  ["composer", "Delete doc locally", function(doc, cb) {
+    session.deleteDocument("test-doc-michael-1", function(err) {
+      assert.isNull(err);
+      session.loadDocument("test-doc-michael-1", function(err, doc) {
+        assert.isTrue(!doc);
+        cb(null, doc);
+      })
+    });
+  }],
+
+  ["composer", "Trigger replication again", function(doc, cb) {
+    var replicator = new Substance.Replicator({store: localStore, user: "michael"});
+    replicator.sync(function(err) {
+      assert.isTrue(!err);
+      cb(null, doc);
+    });
+  }],
+
+  ["composer", "After the sync all publications for that doc should be gone", function(doc, cb) {
+    session.loadPublications(function(err) {
+      assert.isTrue(session.publications.length === 0);
+      cb(null, doc);
+    });
+  }],
+
+  // Alternatively, we could check that on the hub
+  // ["hub", "After the sync all publications for that doc should be gone", function(doc, cb) {
+  //   publications.findByDocument("test-doc-michael-1", function(err, pubs) {
+  //     assert.isTrue(pubs.length === 0);
+  //     cb(null, doc);
+  //   });
+  // }],
+
+  // ["hub", "Same with versions", function(doc, cb) {
+  //   versions.findLatest("test-doc-michael-1", function(err) {
+  //     assert.isTrue(!err);
+  //   });
+  // }]
+];
+
+Substance.tests['002-remove-published-doc'] = test;

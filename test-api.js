@@ -61,6 +61,10 @@ assert.isTrue = function(stmt) {
   assert.equal(true, stmt);
 };
 
+assert.isNull = function(stmt) {
+  assert.isTrue(stmt === null);
+};
+
 Substance.Test = function() {
   var self = this;
 
