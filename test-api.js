@@ -2,60 +2,6 @@ if (typeof Substance == 'undefined') {
   Substance = {};
 }
 
-
-
-// TODO better naming, better place, maybe there are more custom helpers for asynchronous calls?
-function runChain(funcs, data_or_cb, cb) {
-  var data = null;
-
-  // be tolerant - allow to omit the data argument
-  if (arguments.length == 2) {
-    cb = data_or_cb;
-  } else if (arguments.length == 3) {
-    data = data_or_cb;
-  } else {
-      throw "Illegal arguments.";
-  }
-
-  if (Object.prototype.toString.call(cb) !== '[object Function]') {
-    throw "Illegal arguments: a callback function must be provided";
-  }
-
-  if (!data) data = {};
-
-  var index = 0;
-  var args = [];
-
-  function process(data) {
-    var func = funcs[index];
-    // stop if no function is left
-    if (!func) {
-      return cb(null, data);
-    }
-
-    // A function that is used as call back for each function
-    // which does the progression in the chain via recursion.
-    // On errors the given callback will be called and recursion is stopped.
-    var recursiveCallback = function(err, data) {
-      // stop on error
-      if (err) return cb(err, data);
-
-      index += 1;
-      process(data);
-    };
-
-    //-> if assertion fails this will throw
-    try {
-      func(data, recursiveCallback);      
-    } catch (err) {
-      cb(err);
-    }
-  }
-
-  // start processing
-  process(data);
-}
-
 // for now only these two functions.
 // if necessary we could pull in something more sophisticated such as chai.js
 var assert = {};
@@ -143,67 +89,29 @@ Substance.Test = function() {
 
   this.run = function(cb) {
 
-
-    // helper function which is used for creating a function chain
-    function resourceGetter(test, fileName) {
-      return function(data, cb) {
-        $.getJSON("../tests/seeds/"+test.seeds[0]+"/" + fileName)
-         .done(function(data) {
-            // Make seed data available to test runner
-            test.data = [data];
-            cb(null, test);
-          })
-         .error(function(req, err) {
-            //TODO: create a nicer error message?
-            cb(err, test);
+    var prepare = Substance.util.async.each({
+      selector: function(test) { return test.seedNames; },
+      iterator: function(seedName, test) {
+        Substance.util.loadSeed(seedName, function(err, seedData) {
+          if (err) return cb(err);
+          seed(seedData.local, function(err) {
+            client.seed(seedName, cb);
           });
-      };
-    }
-
-    // depending on the test specification
-    // more data needs to be loaded
-    function loadResources(test, cb) {
-      var funcs =  [];
-
-      if (test.env === "composer") {
-        funcs.push(resourceGetter(test, "local.json"));
-      }
-      if (test.env === "hub") {
-        funcs.push(resourceGetter(test, "remote.json"));
-      }
-
-      funcs.push(function(data) {
-        cb(null, data);
-      })
-      runChain(funcs, test, cb);
-    }
-
-
-    // Load Resources, Seed it and continue with actual test
-    function prepare(test, cb) {
-      loadResources(test, function(err) {
-        if (err) return cb(err);
-        seed(test.data[0], function(err) {
-          client.seed(test.seeds[0], cb);
         });
-      });
-    }
+      }
+    });
 
     // prepare the actions for execution in composer or on hub, respectively
-    var funcs = [];
-
-    // TODO: when there are tests for the other platform
-    // they need to be converted to stub-tests
-    _.each(this.actions, function(action) {
-      funcs.push(function(test, cb) {
+    var funcs = _.map(this.actions, function(action) {
+      return function(test, cb) {
         action.func(test, cb);
-      });
+      };
     });
 
     // use our simple asynch chaining call
     prepare(this, function(err) {
       console.log('all set... now running tests');
-      runChain(funcs, this, cb);
+      Substance.util.async(funcs, this, cb);
     });
   };
 
@@ -212,36 +120,31 @@ Substance.Test = function() {
 // registry for all tests
 Substance.tests = {};
 
-Substance.loadTestsFromResource = false;
-
+// testname should be a relative path to the test directory
+// relative to the tests directory without things like '..'
 Substance.loadTest = function(testName, env) {
-  // testname should be a relative path to the test directory
-  // relative to the tests directory without things like '..'
+
+  // TODO: the API will be later used from withing Composer and from Hub.
+  var util = Substance.util;
 
   function getTest(data, cb) {
-
-    // called when test is available
-    function proceed() {
-        var test = Substance.tests[testName];
-        test.name = testName;
-        test.env = env;
-        cb(null, test);
-    }
-
-    // TODO: is there another way to retrieve the result of the test spec?
-    // Currently, a quasi 'global' variable is used ...
-    if (Substance.loadTestsFromResource) {
-      $.getScript("tests/"+testName+"/test.js")
-        .done(function() {
-            proceed();
-          })
-        .error(function(request, err) {
-            cb(err, null);
-          });
-    } else {
-      proceed();
-    }
+    var test = Substance.tests[testName];
+    test.name = testName;
+    test.env = env;
+    test.seedNames = test.seeds;
+    test.seeds = [];
+    cb(null, test);
   }
+
+  var loadSeeds = util.async.each({
+    selector: function(test) { return test.seedNames; },
+    iterator: function(seedName, test, cb) {
+      util.loadSeedSpec(seedName, function(err, seed) {
+        test.seeds.push(seed);
+        cb(null, test);
+      });
+    }
+  });
 
   // Expands the actions into a unified format.
   // For convenienve, tests maybe be declared in a simpler format.
@@ -290,12 +193,10 @@ Substance.loadTest = function(testName, env) {
     });
     test.actions = _actions;
 
-
     cb(null, test);
   }
 
-
-  runChain([getTest, expandActions], function(err, test) {
+  Substance.util.async([getTest, loadSeeds, expandActions], function(err, test) {
     if (err) {
       console.log("Could not register test: ", testName, "Error:", err);
     } else {
@@ -304,3 +205,4 @@ Substance.loadTest = function(testName, env) {
     }
   })
 };
+

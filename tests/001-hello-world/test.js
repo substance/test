@@ -1,7 +1,6 @@
 var test = new Substance.Test();
 
 test.seeds = ['002-some-docs'];
-
 test.defaultType = "composer";
 
 test.actions = [
