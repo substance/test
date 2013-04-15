@@ -1,7 +1,6 @@
 var test = new Substance.Test();
 
 test.seeds = ['002-some-docs'];
-
 test.defaultType = "composer";
 
 
@@ -29,11 +28,10 @@ test.actions = [
   }],
 
   ["composer", "Try to access shared document", function(data, cb) {
-    // session.loadDocument("test-doc-michael-1", function(err) {
-    //   assert.isTrue(!!err);
-    //   cb(null, data);
-    // });
-    session.loadDocument("test-doc-michael-1", cb);
+    session.loadDocument("test-doc-michael-1", function(err) {
+      assert.isTrue(!!err);
+      cb(null, data);
+    });
   }],
 
   ["composer", "Replicate with the server", function(data, cb) {
