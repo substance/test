@@ -6,11 +6,13 @@ test.defaultType = "composer";
 test.actions = [
   ["composer", "Login", function(data, cb) {
     session.authenticate("michael", "abcd", cb);
+
   }],
   ["composer", "Say hello", function(test, cb) {
     // Check if there are some docs from the seed
     var docs = localStore.list();
     assert.isTrue(docs.length > 0);
+
 
     cb(null, docs.length);
   }],
@@ -31,6 +33,5 @@ test.actions = [
     cb(null);
   }]
 ];
-
 
 Substance.tests['001-hello-world'] = test;
