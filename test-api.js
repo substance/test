@@ -95,7 +95,8 @@ Substance.Test = function() {
 
     var prepare = Substance.util.async.each({
       selector: function(test) { return test.seedNames; },
-      iterator: function(seedName, test) {
+      iterator: function(seedName, test, cb) {
+
         Substance.util.loadSeed(seedName, function(err, seedData) {
           if (err) return cb(err);
           seed(seedData.local, function(err) {
