@@ -93,30 +93,51 @@ Substance.Test = function() {
 
   this.run = function(cb) {
 
-    var prepare = Substance.util.async.each({
-      selector: function(test) { return test.seedNames; },
-      iterator: function(seedName, test, cb) {
+    var oldEnv;
 
-        Substance.util.loadSeed(seedName, function(err, seedData) {
-          if (err) return cb(err);
-          seed(seedData.local, function(err) {
-            client.seed(seedName, cb);
+    var prepare = Substance.util.async.each({
+      selector: function(test) { return test.seeds; },
+      iterator: function(seedSpec, cb) {
+
+        var funcs = [];
+
+        funcs.push(Substance.util.loadSeed);
+
+        funcs.push(function(seedData, cb) {
+          console.log("Seeding local store...", seedData.local);
+          // find this in model.js
+          Substance.test.seed(seedData.local, function(err) {
+            if (err) return cb(err);
+            cb(null, seedData);
           });
         });
+
+        funcs.push(function(seedData, cb) {
+          // TODO: make sure the remote store is cleared
+          console.log("Seeding remote store...", seedData.remote);
+          client.seed(seedData, cb);
+        });
+
+        Substance.util.async(funcs, seedSpec, cb);
       }
     });
 
-    // prepare the actions for execution in composer or on hub, respectively
+    // TODO: prepare the actions for execution in composer or on hub, respectively
     var funcs = _.map(this.actions, function(action) {
-      return function(test, cb) {
-        action.func(test, cb);
+      return function(data, cb) {
+        action.func(data, cb);
       };
     });
 
     // use our simple asynch chaining call
     prepare(this, function(err) {
-      console.log('all set... now running tests');
-      Substance.util.async(funcs, this, cb);
+      if (err) return cb(err);
+      var oldEnv = Substance.env;
+      Substance.env = "test";
+      Substance.util.async(funcs, self, function(err, data) {
+        Substance.env = oldEnv;
+        cb(err, data);
+      });
     });
   };
 
@@ -128,6 +149,7 @@ Substance.tests = {};
 // testname should be a relative path to the test directory
 // relative to the tests directory without things like '..'
 Substance.loadTest = function(testName, env) {
+  console.log("Loading test...", testName);
 
   // TODO: the API will be later used from withing Composer and from Hub.
   var util = Substance.util;
@@ -136,24 +158,36 @@ Substance.loadTest = function(testName, env) {
     var test = Substance.tests[testName];
     test.name = testName;
     test.env = env;
-    test.seedNames = test.seeds;
-    test.seeds = [];
     cb(null, test);
   }
 
   var loadSeeds = util.async.each({
-    selector: function(test) { return test.seedNames; },
-    iterator: function(seedName, test, cb) {
-      util.loadSeedSpec(seedName, function(err, seed) {
-        test.seeds.push(seed);
-        cb(null, test);
-      });
+    selector: function(test) { return test.seeds; },
+    iterator: function(seedName_or_inlineSeed, idx, test, cb) {
+      console.log("load seed...");
+      // do not load a seed if it is defined inline or has been loaded already
+      var isInline = !util.isString(seedName_or_inlineSeed);
+      if (isInline) {
+        var seedSpec = seedName_or_inlineSeed;
+        util.prepareSeedSpec(seedSpec, function(err, seed) {
+          if (err) return cb(err);
+          test.seeds[idx] = seed;
+          cb(null, test);
+        });
+      } else {
+        util.loadSeedSpec(seedName_or_inlineSeed, function(err, seed) {
+          if (err) return cb(err);
+          test.seeds[idx] = seed;
+          cb(null, test);
+        });
+      }
     }
   });
 
   // Expands the actions into a unified format.
   // For convenienve, tests maybe be declared in a simpler format.
   function expandActions(test, cb) {
+    console.log("expand actions...");
     var _actions = []
     _.each(test.actions, function(action) {
       var _action = {
