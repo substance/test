@@ -1,5 +1,5 @@
 {
-  "requires": ["001-boilerplate"],
-  "local": ["docs.json"],
-  "remote": ["docs.json"]
+  "requires": "001-boilerplate",
+  "local": "docs.json",
+  "remote": "docs.json"
 }
