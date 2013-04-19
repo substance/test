@@ -28,15 +28,15 @@ test.actions = [
   },
 
   "Initial replication", function(data, cb) {
-    data.replicator.sync(Substance.util.propagate(data, cb));
+    data.replicator.sync(test.proceed(data, cb));
   },
 
   "Delete remote document", function(data, cb) {
-    session.remoteStore.delete("lorem_ipsum", Substance.util.propagate(data, cb));
+    session.remoteStore.delete("lorem_ipsum", test.proceed(data, cb));
   },
 
   "Replicate", function(data, cb) {
-    data.replicator.sync(Substance.util.propagate(data, cb));
+    data.replicator.sync(test.proceed(data, cb));
   },
 
   "Now the document should have been removed locally", function(data, cb) {

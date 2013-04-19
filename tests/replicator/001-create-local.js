@@ -27,7 +27,7 @@ test.actions = [
   },
 
   "Replicate", function(data, cb) {
-    data.replicator.sync(Substance.util.propagate(data, cb));
+    data.replicator.sync(test.proceed(data, cb));
   },
 
   "Now the document should exist locally", function(data, cb) {

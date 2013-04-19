@@ -25,7 +25,7 @@ test.actions = [
     });
   },
   "Replicate", function(data, cb) {
-    data.replicator.sync(Substance.util.propagate(data, cb));
+    data.replicator.sync(test.proceed(data, cb));
   },
   "Now the document should exist remotely", function(data, cb) {
     data.remoteStore.exists("lorem_ipsum", function(err, exists) {

@@ -61,8 +61,20 @@ assert.isTrue = function(stmt) {
   assert.equal(true, stmt);
 };
 
-assert.isNull = function(stmt) {
-  assert.isTrue(stmt === null);
+assert.isNull = function(obj) {
+  assert.equal(obj === null);
+};
+
+assert.notNull = function(stmt) {
+  assert.equal(obj !== null);
+};
+
+assert.isDefined = function(obj) {
+  assert.equal(false, obj === undefined);
+};
+
+assert.isUndefined = function(obj) {
+  assert.equal(true, obj === undefined);
 };
 
 Substance.Test = function(name) {
@@ -85,6 +97,8 @@ Substance.Test = function(name) {
   // In test specs actions can be defined in a sparse/sloppy way.
   // They get expanded to a unified format automatically.
   this.actions = [];
+
+  this.proceed = Substance.util.propagate;
 
   this.run = function(cb) {
 
