@@ -62,11 +62,11 @@ assert.isTrue = function(stmt) {
 };
 
 assert.isNull = function(obj) {
-  assert.equal(obj === null);
+  assert.equal(true, obj === null);
 };
 
 assert.notNull = function(stmt) {
-  assert.equal(obj !== null);
+  assert.equal(false, obj === null);
 };
 
 assert.isDefined = function(obj) {
