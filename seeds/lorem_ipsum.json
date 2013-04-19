@@ -212,8 +212,10 @@
       }
      },
      "refs": {
-      "master": "f77a5f01b66243135e5e4a2f9b2645fa",
-      "tail": "f77a5f01b66243135e5e4a2f9b2645fa"
+      "master": {
+        "head": "f77a5f01b66243135e5e4a2f9b2645fa",
+        "last": "f77a5f01b66243135e5e4a2f9b2645fa"
+      }
      }
     }
    }
