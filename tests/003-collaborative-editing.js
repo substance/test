@@ -1,4 +1,4 @@
-var test = new Substance.Test();
+var test = new Substance.Test('003-collaborative-editing');
 
 test.seeds = ['002-some-docs'];
 
@@ -102,5 +102,3 @@ test.actions = [
     });
   }
 ];
-
-Substance.tests['003-collaborative-editing'] = test;

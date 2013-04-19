@@ -1,4 +1,4 @@
-var test = new Substance.Test();
+var test = new Substance.Test('002-remove-published-doc');
 
 test.seeds = ['002-some-docs'];
 
@@ -76,5 +76,3 @@ test.actions = [
   //   });
   // }]
 ];
-
-Substance.tests['002-remove-published-doc'] = test;

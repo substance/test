@@ -1,4 +1,4 @@
-var test = new Substance.Test();
+var test = new Substance.Test('replicator-004-delete-remote');
 
 test.seeds = [
   {
@@ -44,5 +44,3 @@ test.actions = [
     });
   }
 ];
-
-Substance.tests['replicator-004-delete-remote'] = test;

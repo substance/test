@@ -65,11 +65,11 @@ assert.isNull = function(stmt) {
   assert.isTrue(stmt === null);
 };
 
-Substance.Test = function() {
+Substance.Test = function(name) {
   var self = this;
+  this.name = name;
 
-  // will be set automatically when registering a test
-  this.name = "";
+  Substance.tests[name] = this;
 
   // default type of a Test is composer-only
   this.defaultType = 'composer';
@@ -89,6 +89,7 @@ Substance.Test = function() {
   this.run = function(cb) {
 
     var oldEnv;
+    var self = this;
 
     var prepare = Substance.util.async.each({
       selector: function(test) { return test.seeds; },
@@ -120,7 +121,7 @@ Substance.Test = function() {
     // TODO: prepare the actions for execution in composer or on hub, respectively
     var funcs = _.map(this.actions, function(action) {
       return function(data, cb) {
-        action.func(data, cb);
+        action.func.call(self, data, cb);
       };
     });
 

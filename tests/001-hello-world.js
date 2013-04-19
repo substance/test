@@ -1,4 +1,4 @@
-var test = new Substance.Test();
+var test = new Substance.Test('001-hello-world');
 
 test.seeds = ['002-some-docs'];
 
@@ -31,5 +31,3 @@ test.actions = [
     cb(null);
   }
 ];
-
-Substance.tests['001-hello-world'] = test;

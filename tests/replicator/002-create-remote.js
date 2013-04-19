@@ -1,4 +1,4 @@
-var test = new Substance.Test();
+var test = new Substance.Test('replicator-001-create-remote');
 
 test.seeds = [
   {
@@ -36,5 +36,3 @@ test.actions = [
     });
   }
 ];
-
-Substance.tests['replicator-001-create-remote'] = test;
