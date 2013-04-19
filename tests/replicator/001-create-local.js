@@ -9,21 +9,31 @@ test.seeds = [
 
 test.actions = [
   "Init the session", function(test, cb) {
-    var data = {}
-    data.replicator = new Substance.Replicator({user: "oliver", store: session.localStore});
-    session.authenticate("oliver", "abcd", Substance.util.propagate(data, cb));
+    session.authenticate("oliver", "abcd", function(err, _) {
+      if (err) return cb(err);
+      var data = {}
+      data.localStore = session.localStore;
+      data.remoteStore = session.remoteStore;
+      data.replicator = new Substance.Replicator({user: "oliver", store: data.localStore});
+      cb(null, data);
+    });
   },
   "Document should not exist locally", function(data, cb) {
-    assert.equal(false, session.localStore.exists("lorem_ipsum"));
-    cb(null, data);
+    data.localStore.exists("lorem_ipsum", function(err, exists) {
+      if (err) return cb(err);
+      assert.equal(false, exists);
+      cb(null, data);
+    });
   },
   "Replicate", function(data, cb) {
     data.replicator.sync(Substance.util.propagate(data, cb));
   },
   "Now the document should exist locally", function(data, cb) {
-    assert.equal(true, session.localStore.exists("lorem_ipsum"));
-    cb(null, data);
+    data.localStore.exists("lorem_ipsum", function(err, exists) {
+      assert.equal(true, exists);
+      cb(null, data);
+    });
   }
 ];
 
-Substance.tests['replicator_001-create-local'] = test;
+Substance.tests['replicator-001-create-local'] = test;
