@@ -8,7 +8,7 @@ test.seeds = [
   }
 ];
 
-test.commits = [
+var commits = [
     {
      "op": [
       "insert",
@@ -41,17 +41,17 @@ test.commits = [
 
 test.actions = [
   "Init the session", function(test, cb) {
-    session.authenticate("oliver", "abcd", function(err, _) {
+    session.authenticate("oliver", "abcd", function(err) {
       if (err) return cb(err);
-      var data = {}
+      var data = {};
       data.localStore = session.localStore;
       data.remoteStore = session.remoteStore;
       data.replicator = new Substance.Replicator({user: "oliver", store: data.localStore});
       cb(null, data);
     });
   },
-  // replicate to register the synch state
-  "Replicate", function(data, cb) {
+
+  "Initial replication", function(data, cb) {
     data.replicator.sync(Substance.util.propagate(data, cb));
   },
 
@@ -64,14 +64,10 @@ test.actions = [
   },
 
   "Now the local document should contain the new commit", function(data, cb) {
-    var self = this;
-
     data.localStore.get("lorem_ipsum", function(err, doc) {
-      if (err) return cb(err);
-      assert.equal(true, !!doc.commits[self.commits[0].sha]);
-      assert.equal(true, !!doc.commits[self.commits[1].sha]);
+      assert.equal(true, !!commits[self.commits[0].sha]);
+      assert.equal(true, !!commits[self.commits[1].sha]);
       cb(null, data);
     });
   }
 ];
-
