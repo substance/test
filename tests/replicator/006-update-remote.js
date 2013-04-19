@@ -1,4 +1,4 @@
-var test = new Substance.Test('replicator-005-update-local');
+var test = new Substance.Test('replicator-006-update-remote');
 
 test.seeds = [
   {
@@ -55,16 +55,16 @@ test.actions = [
     data.replicator.sync(test.proceed(data, cb));
   },
 
-  "Update the remote document", function(data, cb) {
-    data.remoteStore.update("lorem_ipsum", COMMITS, null, null, test.proceed(data, cb));
+  "Update the local document", function(data, cb) {
+    data.localStore.update("lorem_ipsum", COMMITS, null, null, test.proceed(data, cb));
   },
 
   "Replicate", function(data, cb) {
     data.replicator.sync(test.proceed(data, cb));
   },
 
-  "Now the local document should contain the new commit", function(data, cb) {
-    data.localStore.get("lorem_ipsum", function(err, doc) {
+  "Now the remote document should contain the new commit", function(data, cb) {
+    data.remoteStore.get("lorem_ipsum", function(err, doc) {
       assert.isDefined(doc.commits[COMMITS[0].sha]);
       assert.isDefined(doc.commits[COMMITS[1].sha]);
       cb(null, data);
