@@ -3,48 +3,48 @@ var test = new Substance.Test();
 test.seeds = ['002-some-docs'];
 
 test.actions = [
-  ["Login", function(test, cb) {
+  "Login", function(test, cb) {
     session.authenticate("michael", "abcd", cb);
-  }],
+  },
 
-  ["Open Doc for editing", function(data, cb) {
+  "Open Doc for editing", function(data, cb) {
     session.loadDocument("test-doc-michael-1", cb);
-  }],
+  },
 
-  ["Add collaborator", function(data, cb) {
+  "Add collaborator", function(data, cb) {
     session.createCollaborator("oliver", cb);
-  }],
+  },
 
   // Check if replication still works now that a document entry has been created implicitly by createPublication
-  ["Replicate with the server", function(data, cb) {
+  "Replicate with the server", function(data, cb) {
     var replicator = new Substance.Replicator({store: localStore, user: "michael"});
     replicator.sync(cb);
-  }],
+  },
 
-  ["Login as Oliver", function(data, cb) {
+  "Login as Oliver", function(data, cb) {
     session.authenticate("oliver", "abcd", cb);
-  }],
+  },
 
-  ["Try to access shared document", function(data, cb) {
+  "Try to access shared document", function(data, cb) {
     session.loadDocument("test-doc-michael-1", function(err) {
       assert.isTrue(!!err);
       cb(null, data);
     });
-  }],
+  },
 
-  ["Replicate with the server", function(data, cb) {
+  "Replicate with the server", function(data, cb) {
     var replicator = new Substance.Replicator({store: localStore, user: "oliver"});
     replicator.sync(cb);
-  }],
+  },
 
-  ["After sync shared doc should be available", function(data, cb) {
+  "After sync shared doc should be available", function(data, cb) {
     session.loadDocument("test-doc-michael-1", function(err, doc) {
       assert.isTrue(!err);
       cb(null, data);
     });
-  }],
+  },
 
-  ["Oliver modifies doc", function(data, cb) {
+  "Oliver modifies doc", function(data, cb) {
     var op = [
       "insert",
       {
@@ -59,9 +59,9 @@ test.actions = [
 
     session.document.apply(op);
     cb(null);
-  }],
+  },
 
-  ["In the meanwhile Michael also modifies the doc", function(data, cb) {
+  "In the meanwhile Michael also modifies the doc", function(data, cb) {
     var op = [
       "insert",
       {
@@ -80,28 +80,27 @@ test.actions = [
         cb(null);
       });
     });
-  }],
+  },
 
-  ["Replicate with the server", function(data, cb) {
+  "Replicate with the server", function(data, cb) {
     var replicator = new Substance.Replicator({store: localStore, user: "michael"});
     replicator.sync(cb);
-  }],
+  },
 
-  ["Now Oliver performs a sync (conflict situation!)", function(data, cb) {
+  "Now Oliver performs a sync (conflict situation!)", function(data, cb) {
     session.authenticate("oliver", "abcd", function(err) {
       var replicator = new Substance.Replicator({store: localStore, user: "oliver"});
       replicator.sync(cb);
     });
-  }],
+  },
 
-  ["Michael's change should be the winner", function(data, cb) {
+  "Michael's change should be the winner", function(data, cb) {
     session.loadDocument("test-doc-michael-1", function(err, doc) {
       assert.isTrue(doc.content.nodes['text:xyz'].content === "Michael's text.");
       assert.isTrue(doc.content.nodes['text:abcd'] === undefined);
       cb(null);
     });
-  }]
-
+  }
 ];
 
 Substance.tests['003-collaborative-editing'] = test;

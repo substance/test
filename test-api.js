@@ -81,11 +81,6 @@ Substance.Test = function() {
   // this.seedClient = true;
   // this.seedHub = true;
 
-  // usually these get populated using json files
-  // however, they can be set manually in test.js, too.
-  // The respective data are stored under test.data['composer'] and test.data['hub']
-  this.data = {};
-
   // A list of actions which will be executed in turn.
   // In test specs actions can be defined in a sparse/sloppy way.
   // They get expanded to a unified format automatically.
@@ -189,46 +184,47 @@ Substance.loadTest = function(testName, env) {
   function expandActions(test, cb) {
     console.log("expand actions...");
     var _actions = []
-    _.each(test.actions, function(action) {
-      var _action = {
-        'label': null,
+    var _action = null;
+
+    function action_template() {
+      return {
+        'label': [],
         'type': test.defaultType,
         'func': null
       };
-      var objType = Object.prototype.toString.call(action);
-      // actions can be declared in a declarative way in array notation
-      // e.g.: ['Label', 'composer', function(test, cb) {...}]
-      // 'composer' and 'hub' are keywords to specify the action type
-      if(objType === '[object Array]') {
-        _.each(action, function(elem) {
-          var elemType = Object.prototype.toString.call(elem);
-          // String elements can be either platform type or a label
-          if (elemType === '[object String]') {
-            if (elem === 'composer' || elem === 'hub') {
-              _action.type = elem;
-            } else {
-              _action.label = elem;
-            }
-          // a function element is the action body
-          } else if (elemType === '[object Function]') {
-            _action.func = elem;
-          // other things not allowed
+    }
+
+    function complete_action() {
+       _actions.push(_action);
+       _action = action_template();
+    };
+
+    _action = action_template();
+
+    _.each(test.actions, function(elem) {
+      var objType = Object.prototype.toString.call(elem);
+      // actions can be declared in a declarative way in as a sequence of
+      // functions (=actions) separated by strings which are used
+      // as labels or to specify the platform
+      if(objType === '[object String]') {
+          if (elem === 'composer' || elem === 'hub') {
+            _action.type = elem;
           } else {
-            cb("Illegal action format.", null);
+            _action.label.push(elem);
           }
-        })
       }
       // alternatively, only the action body can be given
       else if (objType === '[object Function]') {
-        _action.func = action;
+        _action.func = elem;
+        complete_action();
       }
       // and also a direct version as object
       else {
-        if (action.func) _action.func = action.func;
-        if (action.label) _action.label = action.label;
-        if (action.type) _action.type = action.type;
-      }
-      _actions.push(_action);
+        if (elem.func) _action.func = action.func;
+        if (elem.label) _action.label = action.label;
+        if (elem.type) _action.type = action.type;
+        complete_action();
+      };
     });
     test.actions = _actions;
 
