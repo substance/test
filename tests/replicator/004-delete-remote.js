@@ -10,12 +10,18 @@ test.seeds = [
 
 test.actions = [
   "Init the session", function(test, cb) {
-    var data = {}
-    data.replicator = new Substance.Replicator({user: "oliver", store: session.localStore});
-    session.authenticate("oliver", "abcd", Substance.util.propagate(data, cb));
+    session.authenticate("oliver", "abcd", function(err, _) {
+      if (err) return cb(err);
+      var data = {}
+      data.localStore = session.localStore;
+      data.remoteStore = session.remoteStore;
+      data.replicator = new Substance.Replicator({user: "oliver", store: data.localStore});
+      cb(null, data);
+    });
   },
   "Document should exist remotely", function(data, cb) {
-    session.remoteStore.exists("lorem_ipsum", function(err, exists) {
+    data.remoteStore.exists("lorem_ipsum", function(err, exists) {
+      if (err) return cb(err);
       assert.equal(true, exists);
       cb(null, data);
     });
@@ -25,13 +31,14 @@ test.actions = [
     data.replicator.sync(Substance.util.propagate(data, cb));
   },
   "Delete local document", function(data, cb) {
-    session.localStore.delete("lorem_ipsum", Substance.util.propagate(data, cb));
+    data.localStore.delete("lorem_ipsum", Substance.util.propagate(data, cb));
   },
   "Replicate", function(data, cb) {
     data.replicator.sync(Substance.util.propagate(data, cb));
   },
   "Now the document should have been removed remotely", function(data, cb) {
-    session.remoteStore.exists("lorem_ipsum", function(err, exists) {
+    data.remoteStore.exists("lorem_ipsum", function(err, exists) {
+      if (err) return cb(err);
       assert.equal(false, exists);
       cb(null, data);
     });
