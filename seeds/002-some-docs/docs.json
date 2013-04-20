@@ -41,8 +41,10 @@
           }
         },
         "refs": {
-          "master": "e37d538ad8f1607277cc4edfb394ab26",
-          "tail": "e37d538ad8f1607277cc4edfb394ab26"
+          "master": {
+            "head": "e37d538ad8f1607277cc4edfb394ab26",
+            "last": "e37d538ad8f1607277cc4edfb394ab26"
+          }
         }
       },
       "test-doc-michael-2": {
@@ -83,8 +85,10 @@
           }
         },
         "refs": {
-          "master": "e5362404da8e5518761f31ff1b9e68b5",
-          "tail": "e5362404da8e5518761f31ff1b9e68b5"
+          "master": {
+            "head": "e5362404da8e5518761f31ff1b9e68b5",
+            "last": "e5362404da8e5518761f31ff1b9e68b5"
+          }
         }
       }
     },
@@ -133,8 +137,10 @@
           }
         },
         "refs": {
-          "master": "803a64ebc84820aff9453fbd82335510",
-          "tail": "803a64ebc84820aff9453fbd82335510"
+          "master": {
+            "head": "803a64ebc84820aff9453fbd82335510",
+            "last": "803a64ebc84820aff9453fbd82335510"
+          }
         }
       },
       "test-doc-oliver-2": {
@@ -177,8 +183,10 @@
           }
         },
         "refs": {
-          "master": "06e12eb047b04e7c1f919e4422b65c1a",
-          "tail": "06e12eb047b04e7c1f919e4422b65c1a"
+          "master": {
+            "head": "06e12eb047b04e7c1f919e4422b65c1a",
+            "last": "06e12eb047b04e7c1f919e4422b65c1a"
+          }
         }
       }
     },

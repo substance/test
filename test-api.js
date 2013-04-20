@@ -61,15 +61,27 @@ assert.isTrue = function(stmt) {
   assert.equal(true, stmt);
 };
 
-assert.isNull = function(stmt) {
-  assert.isTrue(stmt === null);
+assert.isNull = function(obj) {
+  assert.equal(true, obj === null);
 };
 
-Substance.Test = function() {
-  var self = this;
+assert.notNull = function(stmt) {
+  assert.equal(false, obj === null);
+};
 
-  // will be set automatically when registering a test
-  this.name = "";
+assert.isDefined = function(obj) {
+  assert.equal(false, obj === undefined);
+};
+
+assert.isUndefined = function(obj) {
+  assert.equal(true, obj === undefined);
+};
+
+Substance.Test = function(name) {
+  var self = this;
+  this.name = name;
+
+  Substance.tests[name] = this;
 
   // default type of a Test is composer-only
   this.defaultType = 'composer';
@@ -81,42 +93,61 @@ Substance.Test = function() {
   // this.seedClient = true;
   // this.seedHub = true;
 
-  // usually these get populated using json files
-  // however, they can be set manually in test.js, too.
-  // The respective data are stored under test.data['composer'] and test.data['hub']
-  this.data = {};
-
   // A list of actions which will be executed in turn.
   // In test specs actions can be defined in a sparse/sloppy way.
   // They get expanded to a unified format automatically.
   this.actions = [];
 
+  this.proceed = Substance.util.propagate;
+
   this.run = function(cb) {
 
-    var prepare = Substance.util.async.each({
-      selector: function(test) { return test.seedNames; },
-      iterator: function(seedName, test, cb) {
+    var oldEnv;
+    var self = this;
 
-        Substance.util.loadSeed(seedName, function(err, seedData) {
-          if (err) return cb(err);
-          seed(seedData.local, function(err) {
-            client.seed(seedName, cb);
+    var prepare = Substance.util.async.each({
+      selector: function(test) { return test.seeds; },
+      iterator: function(seedSpec, cb) {
+
+        var funcs = [];
+
+        funcs.push(Substance.util.loadSeed);
+
+        funcs.push(function(seedData, cb) {
+          console.log("Seeding local store...", seedData.local);
+          // find this in model.js
+          Substance.test.seed(seedData.local, function(err) {
+            if (err) return cb(err);
+            cb(null, seedData);
           });
         });
+
+        funcs.push(function(seedData, cb) {
+          // TODO: make sure the remote store is cleared
+          console.log("Seeding remote store...", seedData.remote);
+          client.seed(seedData, cb);
+        });
+
+        Substance.util.async(funcs, seedSpec, cb);
       }
     });
 
-    // prepare the actions for execution in composer or on hub, respectively
+    // TODO: prepare the actions for execution in composer or on hub, respectively
     var funcs = _.map(this.actions, function(action) {
-      return function(test, cb) {
-        action.func(test, cb);
+      return function(data, cb) {
+        action.func.call(self, data, cb);
       };
     });
 
     // use our simple asynch chaining call
     prepare(this, function(err) {
-      console.log('all set... now running tests');
-      Substance.util.async(funcs, this, cb);
+      if (err) return cb(err);
+      var oldEnv = Substance.env;
+      Substance.env = "test";
+      Substance.util.async(funcs, self, function(err, data) {
+        Substance.env = oldEnv;
+        cb(err, data);
+      });
     });
   };
 
@@ -128,6 +159,7 @@ Substance.tests = {};
 // testname should be a relative path to the test directory
 // relative to the tests directory without things like '..'
 Substance.loadTest = function(testName, env) {
+  console.log("Loading test...", testName);
 
   // TODO: the API will be later used from withing Composer and from Hub.
   var util = Substance.util;
@@ -136,65 +168,78 @@ Substance.loadTest = function(testName, env) {
     var test = Substance.tests[testName];
     test.name = testName;
     test.env = env;
-    test.seedNames = test.seeds;
-    test.seeds = [];
     cb(null, test);
   }
 
   var loadSeeds = util.async.each({
-    selector: function(test) { return test.seedNames; },
-    iterator: function(seedName, test, cb) {
-      util.loadSeedSpec(seedName, function(err, seed) {
-        test.seeds.push(seed);
-        cb(null, test);
-      });
+    selector: function(test) { return test.seeds; },
+    iterator: function(seedName_or_inlineSeed, idx, test, cb) {
+      console.log("load seed...");
+      // do not load a seed if it is defined inline or has been loaded already
+      var isInline = !util.isString(seedName_or_inlineSeed);
+      if (isInline) {
+        var seedSpec = seedName_or_inlineSeed;
+        util.prepareSeedSpec(seedSpec, function(err, seed) {
+          if (err) return cb(err);
+          test.seeds[idx] = seed;
+          cb(null, test);
+        });
+      } else {
+        util.loadSeedSpec(seedName_or_inlineSeed, function(err, seed) {
+          if (err) return cb(err);
+          test.seeds[idx] = seed;
+          cb(null, test);
+        });
+      }
     }
   });
 
   // Expands the actions into a unified format.
   // For convenienve, tests maybe be declared in a simpler format.
   function expandActions(test, cb) {
+    console.log("expand actions...");
     var _actions = []
-    _.each(test.actions, function(action) {
-      var _action = {
-        'label': null,
+    var _action = null;
+
+    function action_template() {
+      return {
+        'label': [],
         'type': test.defaultType,
         'func': null
       };
-      var objType = Object.prototype.toString.call(action);
-      // actions can be declared in a declarative way in array notation
-      // e.g.: ['Label', 'composer', function(test, cb) {...}]
-      // 'composer' and 'hub' are keywords to specify the action type
-      if(objType === '[object Array]') {
-        _.each(action, function(elem) {
-          var elemType = Object.prototype.toString.call(elem);
-          // String elements can be either platform type or a label
-          if (elemType === '[object String]') {
-            if (elem === 'composer' || elem === 'hub') {
-              _action.type = elem;
-            } else {
-              _action.label = elem;
-            }
-          // a function element is the action body
-          } else if (elemType === '[object Function]') {
-            _action.func = elem;
-          // other things not allowed
+    }
+
+    function complete_action() {
+       _actions.push(_action);
+       _action = action_template();
+    };
+
+    _action = action_template();
+
+    _.each(test.actions, function(elem) {
+      var objType = Object.prototype.toString.call(elem);
+      // actions can be declared in a declarative way in as a sequence of
+      // functions (=actions) separated by strings which are used
+      // as labels or to specify the platform
+      if(objType === '[object String]') {
+          if (elem === 'composer' || elem === 'hub') {
+            _action.type = elem;
           } else {
-            cb("Illegal action format.", null);
+            _action.label.push(elem);
           }
-        })
       }
       // alternatively, only the action body can be given
       else if (objType === '[object Function]') {
-        _action.func = action;
+        _action.func = elem;
+        complete_action();
       }
       // and also a direct version as object
       else {
-        if (action.func) _action.func = action.func;
-        if (action.label) _action.label = action.label;
-        if (action.type) _action.type = action.type;
-      }
-      _actions.push(_action);
+        if (elem.func) _action.func = action.func;
+        if (elem.label) _action.label = action.label;
+        if (elem.type) _action.type = action.type;
+        complete_action();
+      };
     });
     test.actions = _actions;
 

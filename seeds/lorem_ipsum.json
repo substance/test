@@ -1,0 +1,223 @@
+{
+ "oliver": {
+   "documents": {
+    "lorem_ipsum": {
+     "id": "lorem_ipsum",
+     "meta": {
+      "creator": "oliver",
+      "title": "Lorem ipsum",
+      "abstract": "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...",
+      "updated_at": "2013-04-16T12:28:42.593Z"
+     },
+     "commits": {
+      "2e0982fee1f81d0eec92171cff55593c": {
+       "op": [
+        "set",
+        {
+         "title": "Untitled",
+         "abstract": "Enter abstract"
+        }
+       ],
+       "sha": "2e0982fee1f81d0eec92171cff55593c",
+       "parent": null
+      },
+      "55135e3a8994b403debba06f44cb3519": {
+       "op": [
+        "set",
+        {
+         "title": [
+          -3,
+          "Lorem ",
+          1,
+          -4,
+          "psum"
+         ]
+        }
+       ],
+       "sha": "55135e3a8994b403debba06f44cb3519",
+       "parent": "2e0982fee1f81d0eec92171cff55593c"
+      },
+      "a28bc1fd2131b3d7845ecd81dd251030": {
+       "op": [
+        "set",
+        {
+         "abstract": [
+          -2,
+          "Neque porro quisquam es",
+          1,
+          " qui dolor",
+          1,
+          "m ipsum quia dolo",
+          2,
+          "sit ",
+          1,
+          -1,
+          "met, con",
+          1,
+          "ec",
+          1,
+          "etu",
+          1,
+          ", ",
+          1,
+          "dipis",
+          1,
+          "i veli",
+          1,
+          "..."
+         ]
+        }
+       ],
+       "sha": "a28bc1fd2131b3d7845ecd81dd251030",
+       "parent": "55135e3a8994b403debba06f44cb3519"
+      },
+      "477fdfda09b92eb6eebd3e0b4bbd112e": {
+       "op": [
+        "insert",
+        {
+         "id": "text:628df690",
+         "type": "text",
+         "data": {
+          "content": ""
+         }
+        }
+       ],
+       "sha": "477fdfda09b92eb6eebd3e0b4bbd112e",
+       "parent": "a28bc1fd2131b3d7845ecd81dd251030"
+      },
+      "18055b209dae666744c0913672985cb5": {
+       "op": [
+        "update",
+        {
+         "id": "text:628df690",
+         "data": [
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In in neque mauris. Nullam semper tellus ac quam consectetur at dictum purus imperdiet. Proin quis arcu sit amet turpis rutrum ullamcorper at vitae sapien. Curabitur tempor lectus nec dolor suscipit sed interdum nulla auctor. Etiam id fermentum sapien. Nam eleifend mi sit amet felis auctor at tincidunt odio ornare. Sed ac est sed libero rhoncus euismod."
+         ]
+        }
+       ],
+       "sha": "18055b209dae666744c0913672985cb5",
+       "parent": "477fdfda09b92eb6eebd3e0b4bbd112e"
+      },
+      "d94fc16ca7bd1d06f6d9fd3d1465b498": {
+       "op": [
+        "insert",
+        {
+         "id": "text:ef223f13",
+         "type": "text",
+         "target": "text:628df690",
+         "data": {
+          "content": ""
+         }
+        }
+       ],
+       "sha": "d94fc16ca7bd1d06f6d9fd3d1465b498",
+       "parent": "18055b209dae666744c0913672985cb5"
+      },
+      "9bad95652f0469b7d341f31c8d3f0c4a": {
+       "op": [
+        "update",
+        {
+         "id": "text:ef223f13",
+         "data": [
+          "Nam at tempus lacus. Pellentesque eu ligula nulla. Nunc imperdiet leo at ligula aliquam faucibus. Mauris mattis tellus nec turpis porta eget molestie ligula aliquet. Aenean aliquet suscipit leo non ornare. Maecenas at lectus nec ligula mollis posuere eget non neque. Curabitur tristique orci sed magna varius sit amet sodales eros interdum. Nam quis erat dolor. Nullam dui risus, vestibulum vitae iaculis a, tincidunt at nisl. Nulla sed sapien velit."
+         ]
+        }
+       ],
+       "sha": "9bad95652f0469b7d341f31c8d3f0c4a",
+       "parent": "d94fc16ca7bd1d06f6d9fd3d1465b498"
+      },
+      "73aad250b1893138a9770350dde9b23a": {
+       "op": [
+        "insert",
+        {
+         "id": "text:45a9ed59",
+         "type": "text",
+         "target": "text:ef223f13",
+         "data": {
+          "content": ""
+         }
+        }
+       ],
+       "sha": "73aad250b1893138a9770350dde9b23a",
+       "parent": "9bad95652f0469b7d341f31c8d3f0c4a"
+      },
+      "39c905dc06a3211fbe8f298076a665fa": {
+       "op": [
+        "update",
+        {
+         "id": "text:45a9ed59",
+         "data": [
+          "Quisque hendrerit, tortor vitae malesuada placerat, felis sapien placerat mi, in condimentum dui ante ut lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras eget felis sed augue congue imperdiet. Etiam id nisl non dolor luctus porttitor fermentum accumsan diam. Praesent a lacus orci, consectetur congue massa. Proin ultrices vulputate dui, eu pellentesque purus aliquam accumsan. Aenean ultricies urna sed purus faucibus vitae tincidunt odio rhoncus. Praesent sit amet congue est."
+         ]
+        }
+       ],
+       "sha": "39c905dc06a3211fbe8f298076a665fa",
+       "parent": "73aad250b1893138a9770350dde9b23a"
+      },
+      "d1e4f4ae31985b51378644e977328ad8": {
+       "op": [
+        "insert",
+        {
+         "id": "text:6f5239d5",
+         "type": "text",
+         "target": "text:45a9ed59",
+         "data": {
+          "content": ""
+         }
+        }
+       ],
+       "sha": "d1e4f4ae31985b51378644e977328ad8",
+       "parent": "39c905dc06a3211fbe8f298076a665fa"
+      },
+      "f4d2a8b46d663a9813494f2c19b91da5": {
+       "op": [
+        "update",
+        {
+         "id": "text:6f5239d5",
+         "data": [
+          "In nulla urna, facilisis sit amet posuere id, varius sed ipsum. Cras vitae nunc at justo placerat tempus. Mauris tincidunt fringilla metus eget tempus. Maecenas pellentesque nunc a nulla venenatis sed lobortis urna ornare. Sed eget dui odio. Mauris pulvinar, sem quis cursus mollis, mi tellus vestibulum neque, nec gravida elit est vitae massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
+         ]
+        }
+       ],
+       "sha": "f4d2a8b46d663a9813494f2c19b91da5",
+       "parent": "d1e4f4ae31985b51378644e977328ad8"
+      },
+      "021a04e27d927fdc019d48253e714dc3": {
+       "op": [
+        "insert",
+        {
+         "id": "text:df3af54e",
+         "type": "text",
+         "target": "text:6f5239d5",
+         "data": {
+          "content": ""
+         }
+        }
+       ],
+       "sha": "021a04e27d927fdc019d48253e714dc3",
+       "parent": "f4d2a8b46d663a9813494f2c19b91da5"
+      },
+      "f77a5f01b66243135e5e4a2f9b2645fa": {
+       "op": [
+        "update",
+        {
+         "id": "text:df3af54e",
+         "data": [
+          "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nam libero magna, egestas quis dictum ut, dictum at ligula. Proin semper eros molestie purus tristique aliquam. Vestibulum sit amet massa urna. Ut tempor, purus at convallis ultricies, arcu eros pretium velit, condimentum commodo sem tellus ac odio. Praesent et nisi odio. Quisque quis nunc vitae nisi ullamcorper euismod non ut enim. Sed ac facilisis massa. Nulla rutrum tempor lectus, non interdum eros congue vitae. Phasellus quam nisi, tempor non tempor sit amet, volutpat nec nibh. Proin aliquet tempor velit, at ultricies nisi venenatis quis. Cras nec mi sapien, et condimentum mi. Aenean mollis, orci in molestie fermentum, libero mi posuere risus, in interdum nisl enim ut velit."
+         ]
+        }
+       ],
+       "sha": "f77a5f01b66243135e5e4a2f9b2645fa",
+       "parent": "021a04e27d927fdc019d48253e714dc3"
+      }
+     },
+     "refs": {
+      "master": {
+        "head": "f77a5f01b66243135e5e4a2f9b2645fa",
+        "last": "f77a5f01b66243135e5e4a2f9b2645fa"
+      }
+     }
+    }
+   }
+ }
+}
