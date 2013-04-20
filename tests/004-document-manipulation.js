@@ -1,19 +1,17 @@
-var test = new Substance.Test();
+var test = new Substance.Test('004-document-manipulation');
 
 test.seeds = ['002-some-docs'];
-test.defaultType = 'composer';
-
 
 // Empty document
 var doc = new Substance.Document({"id": "substance-doc"});
 
 test.actions = [
-  ["composer", "Verify empty document", function(data, cb) {
+  "Verify empty document", function(data, cb) {
     console.log('the empty document', doc);
     cb(null);
-  }],
+  },
 
-  ["composer", "Create heading", function(data, cb) {
+  "Create heading", function(data, cb) {
     var op = [
       "insert",
       {
@@ -29,9 +27,9 @@ test.actions = [
     doc.apply(op);
 
     cb(null);
-  }],
+  },
 
-  ["composer", "Create text element", function(data, cb) {
+  "Create text element", function(data, cb) {
     var op = [
       "insert",
       {
@@ -48,9 +46,9 @@ test.actions = [
 
     
     cb(null);
-  }],
+  },
 
-  ["composer", "Create some more text elements", function(data, cb) {
+  "Create some more text elements", function(data, cb) {
 
     var op1 = [
       "insert",
@@ -80,14 +78,14 @@ test.actions = [
     doc.apply(op2);
 
     cb(null);
-  }],
+  },
 
-  ["composer", "Verify populated doc", function(data, cb) {
+  "Verify populated doc", function(data, cb) {
     assert.isTrue(_.isEqual(doc.content.lists.content, ["text:2", "heading:1", "text:1", "text:3"]));
     cb(null);
-  }],
+  },
 
-  ["composer", "Move operation", function(data, cb) {
+  "Move operation", function(data, cb) {
     var op = [
       "move",
       {
@@ -99,9 +97,9 @@ test.actions = [
     doc.apply(op);
     assert.isTrue(_.isEqual(doc.content.lists["content"], ["text:1", "text:2", "heading:1", "text:3"]));
     cb(null);
-  }],
+  },
 
-  ["composer", "Create a new comment", function(data, cb) {
+  "Create a new comment", function(data, cb) {
     var op = [
       "insert",
       {
@@ -116,10 +114,10 @@ test.actions = [
 
     doc.apply(op);
     cb(null);
-  }],
+  },
 
 
-  ["composer", "Create a new annotation", function(data, cb) {
+  "Create a new annotation", function(data, cb) {
     var op = [
       "insert",
       {
@@ -148,9 +146,9 @@ test.actions = [
     doc.apply(op);
     doc.apply(op2);
     cb(null);
-  }],
+  },
 
-  ["composer", "Test indexes", function(data, cb) {
+  "Test indexes", function(data, cb) {
 
     // Get comments for text:1
     var comments = doc.find("comments", "text:1");
@@ -169,9 +167,9 @@ test.actions = [
 
     cb(null);
 
-  }],
+  },
 
-  ["composer", "Delete some comments", function(data, cb) {
+  "Delete some comments", function(data, cb) {
     var op = [
       "delete",
       {
@@ -186,17 +184,17 @@ test.actions = [
     var comments = doc.find("comments", "annotation:1");
     assert.equal(comments.length, 0);
     cb(null);
-  }],
+  },
 
-  ["composer", "Iteration", function(data, cb) {
+  "Iteration", function(data, cb) {
     doc.each(function(element) {
       console.log('elem', element.id);
     });
 
     cb(null);
-  }],
+  },
 
-  ["composer", "Update Annotation", function(data, cb) {
+  "Update Annotation", function(data, cb) {
     var op = [
       "update",
       {
@@ -219,9 +217,9 @@ test.actions = [
     assert.equal(annotations.length, 1);
 
     cb(null);
-  }],
+  },
 
-  ["composer", "OT Updates for multiple properties", function(data, cb) {
+  "OT Updates for multiple properties", function(data, cb) {
     var op = [
       "insert",
       {
@@ -251,9 +249,9 @@ test.actions = [
     assert.equal(node.content, "John Doe");
 
     cb(null);
-  }],
+  },
 
-  ["composer", "Support objects as values", function(data, cb) {
+  "Support objects as values", function(data, cb) {
 
     var op = [
       "update",
@@ -270,8 +268,5 @@ test.actions = [
     var node = doc.content.nodes["annotation:1"];
     assert.isTrue(_.isEqual(node.pos, [1, 27]));
     cb(null);
-  }],
-
+  },
 ];
-
-Substance.tests['004-document-manipulation'] = test;
