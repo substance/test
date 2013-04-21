@@ -7,7 +7,6 @@ var doc = new Substance.Document({"id": "substance-doc"});
 
 test.actions = [
   "Verify empty document", function(data, cb) {
-    console.log('the empty document', doc);
     cb(null);
   },
 
@@ -81,7 +80,7 @@ test.actions = [
   },
 
   "Verify populated doc", function(data, cb) {
-    assert.isTrue(_.isEqual(doc.content.lists.content, ["text:2", "heading:1", "text:1", "text:3"]));
+    assert.isTrue(_.isEqual(doc.lists.content, ["text:2", "heading:1", "text:1", "text:3"]));
     cb(null);
   },
 
@@ -95,7 +94,7 @@ test.actions = [
     ];
 
     doc.apply(op);
-    assert.isTrue(_.isEqual(doc.content.lists["content"], ["text:1", "text:2", "heading:1", "text:3"]));
+    assert.isTrue(_.isEqual(doc.lists["content"], ["text:1", "text:2", "heading:1", "text:3"]));
     cb(null);
   },
 
@@ -187,9 +186,12 @@ test.actions = [
   },
 
   "Iteration", function(data, cb) {
+    var count = 0;
     doc.each(function(element) {
-      console.log('elem', element.id);
+      count++;
     });
+
+    assert.equal(count, 4);
 
     cb(null);
   },
@@ -245,7 +247,7 @@ test.actions = [
     doc.apply(op);
     doc.apply(op2);
 
-    var node = doc.content.nodes["comment:3"];
+    var node = doc.nodes["comment:3"];
     assert.equal(node.content, "John Doe");
 
     cb(null);
@@ -265,7 +267,7 @@ test.actions = [
 
     doc.apply(op);
 
-    var node = doc.content.nodes["annotation:1"];
+    var node = doc.nodes["annotation:1"];
     assert.isTrue(_.isEqual(node.pos, [1, 27]));
     cb(null);
   },
