@@ -1,4 +1,8 @@
-var test = new Substance.Test('002-remove-published-doc');
+var test = {}
+
+test.id = '002-remove-published-doc';
+test.name = 'Remove Published Doc';
+test.category = 'Publishing';
 
 test.seeds = ['002-some-docs'];
 
@@ -9,6 +13,7 @@ test.actions = [
 
   "Open Doc for editing", function(test, cb) {
     session.loadDocument("test-doc-michael-1", function(err, doc) {
+      assert.isNull(err);
       cb(err, doc);
     });
   },
@@ -33,7 +38,7 @@ test.actions = [
 
   // Check if replication still works now that a document entry has been created implicitly by createPublication
   "Replicate with the server", function(docCount, cb) {
-    var replicator = new Substance.Replicator({store: localStore, user: "michael"});
+    var replicator = new Substance.Replicator({store: session.localStore, user: "michael"});
     replicator.sync(cb);
   },
 
@@ -48,8 +53,8 @@ test.actions = [
   },
 
   "Trigger replication again", function(doc, cb) {
-    var replicator = new Substance.Replicator({store: localStore, user: "michael"});
-    replicator.sync(function(err) {
+    var replicator = new Substance.Replicator({store: session.localStore, user: "michael"});
+    replicator.sync(function(err){
       assert.isTrue(!err);
       cb(null, doc);
     });
@@ -76,3 +81,5 @@ test.actions = [
   //   });
   // }]
 ];
+
+Substance.registerTest(test);

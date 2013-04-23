@@ -1,4 +1,8 @@
-var test = new Substance.Test('replicator-004-delete-remote');
+var test = {};
+
+test.id = 'replicator-004-delete-remote';
+test.name = 'Delete Remote';
+test.category = 'Replicator';
 
 test.seeds = [
   {
@@ -28,15 +32,15 @@ test.actions = [
   },
 
   "Initial replication", function(data, cb) {
-    data.replicator.sync(test.proceed(data, cb));
+    data.replicator.sync(this.proceed(data, cb));
   },
 
   "Delete local document", function(data, cb) {
-    data.localStore.delete("lorem_ipsum", test.proceed(data, cb));
+    data.localStore.delete("lorem_ipsum", this.proceed(data, cb));
   },
 
   "Replicate", function(data, cb) {
-    data.replicator.sync(test.proceed(data, cb));
+    data.replicator.sync(this.proceed(data, cb));
   },
 
   "Now the document should have been removed remotely", function(data, cb) {
@@ -46,3 +50,5 @@ test.actions = [
     });
   }
 ];
+
+Substance.registerTest(test);

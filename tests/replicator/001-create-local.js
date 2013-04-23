@@ -1,4 +1,8 @@
-var test = new Substance.Test('replicator-001-create-local');
+var test = {};
+
+test.id = 'replicator-001-create-local';
+test.name = 'Create Local';
+test.category = 'Replicator';
 
 test.seeds = [
   {
@@ -27,7 +31,7 @@ test.actions = [
   },
 
   "Replicate", function(data, cb) {
-    data.replicator.sync(test.proceed(data, cb));
+    data.replicator.sync(this.proceed(data, cb));
   },
 
   "Now the document should exist locally", function(data, cb) {
@@ -38,3 +42,5 @@ test.actions = [
     });
   }
 ];
+
+Substance.registerTest(test);

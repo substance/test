@@ -1,4 +1,8 @@
-var test = new Substance.Test('replicator-001-create-remote');
+var test = {};
+
+test.id = 'replicator-001-create-remote';
+test.name= 'Create Remote';
+test.category = 'Replicator';
 
 test.seeds = [
   {
@@ -25,7 +29,7 @@ test.actions = [
     });
   },
   "Replicate", function(data, cb) {
-    data.replicator.sync(test.proceed(data, cb));
+    data.replicator.sync(this.proceed(data, cb));
   },
   "Now the document should exist remotely", function(data, cb) {
     data.remoteStore.exists("lorem_ipsum", function(err, exists) {
@@ -34,3 +38,5 @@ test.actions = [
     });
   }
 ];
+
+Substance.registerTest(test);

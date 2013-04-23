@@ -1,4 +1,8 @@
-var test = new Substance.Test('replicator-005-update-local');
+var test = {};
+
+test.id = 'replicator-005-update-local';
+test.name = 'Update Local';
+test.category = 'Replicator';
 
 test.seeds = [
   {
@@ -52,15 +56,15 @@ test.actions = [
   },
 
   "Initial replication", function(data, cb) {
-    data.replicator.sync(test.proceed(data, cb));
+    data.replicator.sync(this.proceed(data, cb));
   },
 
   "Update the remote document", function(data, cb) {
-    data.remoteStore.update("lorem_ipsum", COMMITS, null, null, test.proceed(data, cb));
+    data.remoteStore.update("lorem_ipsum", COMMITS, null, null, this.proceed(data, cb));
   },
 
   "Replicate", function(data, cb) {
-    data.replicator.sync(test.proceed(data, cb));
+    data.replicator.sync(this.proceed(data, cb));
   },
 
   "Now the local document should contain the new commit", function(data, cb) {
@@ -71,3 +75,6 @@ test.actions = [
     });
   }
 ];
+
+Substance.registerTest(test);
+

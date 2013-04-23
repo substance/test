@@ -1,4 +1,8 @@
-var test = new Substance.Test('003-collaborative-editing');
+var test = {};
+
+test.id = '003-collaborative-editing';
+test.name = 'Collaborative Editing';
+test.category = '';
 
 test.seeds = ['002-some-docs'];
 

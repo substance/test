@@ -1,4 +1,8 @@
-var test = new Substance.Test('004-document-manipulation');
+var test = {};
+
+test.id = '004-document-manipulation';
+test.name = 'Document Manipulation';
+test.category = 'Document';
 
 test.seeds = ['002-some-docs'];
 
