@@ -150,7 +150,17 @@ var Test = function(testSpec) {
     // TODO: prepare the actions for execution in composer or on hub, respectively
     var funcs = _.map(this.actions, function(action) {
       return function(data, cb) {
-        action.func.call(self, data, cb);
+        try {
+          action.func.call(self, data, function(err, data) {
+            if (err) self.trigger('action:error', err, action);
+            else self.trigger('action:success', null, action);
+            cb(err, data);
+          });
+        } catch(err) {
+          // does not work. WHY????
+          self.trigger('action:error', err, action);
+          cb(err, data);
+        }
       };
     });
 
@@ -170,6 +180,8 @@ var Test = function(testSpec) {
   buildActions();
 
 };
+
+_.extend(Test.prototype, util.Events);
 
 root.Substance.registerTest = function(testSpec) {
   var test = new Test(testSpec);
