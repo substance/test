@@ -44,31 +44,31 @@ assert.AssertionError.prototype.toString = function() {
   return this.message + " at " + errorPos.file+":"+errorPos.line;
 };
 
-assert.equal = function(expected, actual) {
+assert.equal = function(expected, actual, cb) {
   if (expected !== actual) {
     var err = "Assertion failed. Expected="+expected+", actual="+actual;
     var exc = new assert.AssertionError(err);
-    var bla = new Error();
+    if (cb) cb(err);
     throw exc;
   }
 }
 
-assert.isTrue = function(stmt) {
-  assert.equal(true, stmt);
+assert.isTrue = function(stmt, cb) {
+  assert.equal(true, stmt, cb);
 };
 
-assert.isNull = function(obj) {
-  assert.equal(true, obj === null);
+assert.isNull = function(obj, cb) {
+  assert.equal(true, obj === null, cb);
 };
 
-assert.notNull = function(stmt) {
-  assert.equal(false, obj === null);
+assert.notNull = function(stmt, cb) {
+  assert.equal(false, obj === null, cb);
 };
 
-assert.isDefined = function(obj) {
-  assert.equal(false, obj === undefined);
+assert.isDefined = function(obj, cb) {
+  assert.equal(false, obj === undefined, cb);
 };
 
-assert.isUndefined = function(obj) {
-  assert.equal(true, obj === undefined);
+assert.isUndefined = function(obj, cb) {
+  assert.equal(true, obj === undefined, cb);
 };

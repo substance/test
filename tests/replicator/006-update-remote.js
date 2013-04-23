@@ -69,13 +69,10 @@ test.actions = [
 
   "Now the remote document should contain the new commit", function(data, cb) {
     data.remoteStore.get("lorem_ipsum", function(err, doc) {
-      // must not throw here as remoteStore.get is executed in its own thread
+      assert.isDefined(doc.commits[COMMITS[0].sha], cb);
+      assert.isDefined(doc.commits[COMMITS[1].sha], cb);
       cb(null, doc);
     });
-  }, function (doc, cb) {
-      assert.isDefined(doc.commits[COMMITS[0].sha]);
-      assert.isDefined(doc.commits[COMMITS[1].sha]);
-      cb(null, data);
   }
 ];
 

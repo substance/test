@@ -26,7 +26,7 @@ test.actions = [
 
   "Document should exist remotely", function(data, cb) {
     data.remoteStore.exists("lorem_ipsum", function(err, exists) {
-      if (!exists) return cb("doc lorem_ipsum not found");
+      assert.equal(false, exists, cb);
       cb(null, data);
     });
   },
