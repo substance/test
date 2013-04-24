@@ -50,21 +50,27 @@ test.actions = [
       var data = {};
       data.localStore = session.localStore;
       data.remoteStore = session.remoteStore;
-      data.replicator = new Substance.Replicator({user: "oliver", store: data.localStore});
       cb(null, data);
     });
   },
 
   "Initial replication", function(data, cb) {
-    data.replicator.sync(this.proceed(data, cb));
+    session.replicate(this.proceed(data, cb));
   },
 
   "Update the remote document", function(data, cb) {
-    data.remoteStore.update("lorem_ipsum", COMMITS, null, null, this.proceed(data, cb));
+    // TODO: it should be easier to update the refs implicitely
+    var refs = {
+      master: {
+        head: COMMITS[1].sha,
+        last: COMMITS[1].sha
+      }
+    };
+    data.remoteStore.update("lorem_ipsum", COMMITS, null, refs, this.proceed(data, cb));
   },
 
   "Replicate", function(data, cb) {
-    data.replicator.sync(this.proceed(data, cb));
+    session.replicate(this.proceed(data, cb));
   },
 
   "Now the local document should contain the new commit", function(data, cb) {

@@ -21,8 +21,7 @@ test.actions = [
 
   // Check if replication still works now that a document entry has been created implicitly by createPublication
   "Replicate with the server", function(data, cb) {
-    var replicator = new Substance.Replicator({store: localStore, user: "michael"});
-    replicator.sync(cb);
+    session.replicate(cb);
   },
 
   "Login as Oliver", function(data, cb) {
@@ -37,8 +36,7 @@ test.actions = [
   },
 
   "Replicate with the server", function(data, cb) {
-    var replicator = new Substance.Replicator({store: localStore, user: "oliver"});
-    replicator.sync(cb);
+    session.replicate(cb);
   },
 
   "After sync shared doc should be available", function(data, cb) {
@@ -87,14 +85,12 @@ test.actions = [
   },
 
   "Replicate with the server", function(data, cb) {
-    var replicator = new Substance.Replicator({store: localStore, user: "michael"});
-    replicator.sync(cb);
+    session.replicate(cb);
   },
 
   "Now Oliver performs a sync (conflict situation!)", function(data, cb) {
     session.authenticate("oliver", "abcd", function(err) {
-      var replicator = new Substance.Replicator({store: localStore, user: "oliver"});
-      replicator.sync(cb);
+      session.replicate(cb);
     });
   },
 

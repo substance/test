@@ -19,7 +19,6 @@ test.actions = [
       var data = {};
       data.localStore = session.localStore;
       data.remoteStore = session.remoteStore;
-      data.replicator = new Substance.Replicator({user: "oliver", store: data.localStore});
       cb(null, data);
     });
   },
@@ -32,7 +31,7 @@ test.actions = [
   },
 
   "Initial replication", function(data, cb) {
-    data.replicator.sync(this.proceed(data, cb));
+    session.replicate(this.proceed(data, cb));
   },
 
   "Delete remote document", function(data, cb) {
@@ -40,7 +39,7 @@ test.actions = [
   },
 
   "Replicate", function(data, cb) {
-    data.replicator.sync(this.proceed(data, cb));
+    session.replicate(this.proceed(data, cb));
   },
 
   "Now the document should have been removed locally", function(data, cb) {

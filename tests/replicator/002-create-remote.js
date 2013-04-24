@@ -18,7 +18,6 @@ test.actions = [
       var data = {};
       data.localStore = session.localStore;
       data.remoteStore = session.remoteStore;
-      data.replicator = new Substance.Replicator({user: "oliver", store: data.localStore});
       cb(null, data);
     });
   },
@@ -29,7 +28,7 @@ test.actions = [
     });
   },
   "Replicate", function(data, cb) {
-    data.replicator.sync(this.proceed(data, cb));
+    session.replicate(this.proceed(data, cb));
   },
   "Now the document should exist remotely", function(data, cb) {
     data.remoteStore.exists("lorem_ipsum", function(err, exists) {
