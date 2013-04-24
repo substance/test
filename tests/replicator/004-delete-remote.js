@@ -24,13 +24,6 @@ test.actions = [
     });
   },
 
-  "Document should exist remotely", function(data, cb) {
-    data.remoteStore.exists("lorem_ipsum", function(err, exists) {
-      assert.equal(false, exists, cb);
-      cb(null, data);
-    });
-  },
-
   "Initial replication", function(data, cb) {
     data.replicator.sync(this.proceed(data, cb));
   },
