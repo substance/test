@@ -84,7 +84,7 @@ test.actions = [
   },
 
   "Verify populated doc", function(data, cb) {
-    assert.isTrue(_.isEqual(doc.lists.content, ["text:2", "heading:1", "text:1", "text:3"]));
+    assert.isTrue(_.isEqual(doc.views.content, ["text:2", "heading:1", "text:1", "text:3"]));
     cb(null);
   },
 
@@ -98,7 +98,7 @@ test.actions = [
     ];
 
     doc.apply(op);
-    assert.isTrue(_.isEqual(doc.lists["content"], ["text:1", "text:2", "heading:1", "text:3"]));
+    assert.isTrue(_.isEqual(doc.views["content"], ["text:1", "text:2", "heading:1", "text:3"]));
     cb(null);
   },
 

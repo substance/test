@@ -1,8 +1,8 @@
 var test = {}
 
-test.id = '001-hello-world';
-test.name = 'Hello World';
-test.category = 'General';
+test.id = '007-replicate-empty-doc';
+test.name = 'Replicate Empty Doc';
+test.category = 'Replicator';
 
 test.seeds = ['002-some-docs'];
 
@@ -11,11 +11,10 @@ test.actions = [
     session.authenticate("michael", "abcd", cb);
   },
 
-  "There should be some douments.", function(test, cb) {
+  "There should be some documents.", function(test, cb) {
     // Check if there are some docs from the seed
     var docs = session.localStore.list();
     assert.isTrue(docs.length > 0);
-
     cb(null, docs.length);
   },
 
@@ -23,6 +22,15 @@ test.actions = [
     session.localStore.create('hello');
     assert.equal(docCount+1, session.localStore.list().length);
     cb(null);
+  },
+  "Push empty doc", function(docCount, cb) {
+    session.replicate(cb);
+  },
+  // "Create empty doc remote", function(docCount, cb) {
+  //   session.remoteStore.create('hugo', cb);
+  // },
+  "Pull empy again", function(docCount, cb) {
+    session.replicate(cb);
   }
 ];
 
