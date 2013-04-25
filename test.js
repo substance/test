@@ -3,7 +3,6 @@
 var root = this; 
 var util = (typeof exports === 'undefined') ? Substance.util : require("../util/util");
 
-console.log('UTIL', util);
 
 function seedLocalStore(seeds, cb) {
   console.log('Seeding the docstore...', seeds);
@@ -157,7 +156,6 @@ var Test = function(testSpec) {
             cb(err, data);
           });
         } catch(err) {
-          // does not work. WHY????
           self.trigger('action:error', err, action);
           cb(err, data);
         }
@@ -168,8 +166,7 @@ var Test = function(testSpec) {
       Substance.util.async(funcs, self, cb);
     }
 
-    // use our simple asynch chaining call
-
+    // Use our simple asynch chaining call
     Substance.util.async([_loadSeed, _seed, runActions], self, cb);
   };
 
@@ -178,8 +175,8 @@ var Test = function(testSpec) {
 
   // initialization
   buildActions();
-
 };
+
 
 _.extend(Test.prototype, util.Events);
 

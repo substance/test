@@ -276,3 +276,5 @@ test.actions = [
     cb(null);
   },
 ];
+
+Substance.registerTest(test);

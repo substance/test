@@ -102,3 +102,6 @@ test.actions = [
     });
   }
 ];
+
+
+Substance.registerTest(test);
