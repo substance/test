@@ -44,13 +44,17 @@ assert.AssertionError.prototype.toString = function() {
   return this.message + " at " + errorPos.file+":"+errorPos.line;
 };
 
-assert.equal = function(expected, actual, cb) {
-  if (expected !== actual) {
-    var err = "Assertion failed. Expected="+expected+", actual="+actual;
-    var exc = new assert.AssertionError(err);
-    if (cb) cb(err);
+var _assert = function(assertion, msg, cb) {
+  if (!assertion) {
+    var exc = new assert.AssertionError(msg);
+    if (cb) cb(msg);
     throw exc;
   }
+}
+
+assert.equal = function(expected, actual, cb) {
+  var msg = "Assertion failed. Expected="+expected+", actual="+actual;
+  _assert(expected === actual, msg, cb);
 }
 
 assert.isTrue = function(stmt, cb) {
@@ -58,17 +62,17 @@ assert.isTrue = function(stmt, cb) {
 };
 
 assert.isNull = function(obj, cb) {
-  assert.equal(true, obj === null, cb);
+  assert.equal(null, obj, cb);
 };
 
-assert.notNull = function(stmt, cb) {
-  assert.equal(false, obj === null, cb);
+assert.notNull = function(obj, cb) {
+  _assert(null !== obj, "Assertion failed. Actual value is null.", cb);
 };
 
 assert.isDefined = function(obj, cb) {
-  assert.equal(false, obj === undefined, cb);
+  _assert(undefined !== obj, "Assertion failed. Actual value is undefined.", cb);
 };
 
 assert.isUndefined = function(obj, cb) {
-  assert.equal(true, obj === undefined, cb);
+  assert.equal(undefined, obj, cb);
 };
