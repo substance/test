@@ -96,8 +96,8 @@ test.actions = [
 
   "Michael's change should be the winner", function(data, cb) {
     session.loadDocument("test-doc-michael-1", function(err, doc) {
-      assert.isTrue(doc.content.nodes['text:xyz'].content === "Michael's text.");
-      assert.isTrue(doc.content.nodes['text:abcd'] === undefined);
+      assert.isTrue(doc.nodes['text:xyz'].content === "Michael's text.");
+      assert.isTrue(doc.nodes['text:abcd'] === undefined);
       cb(null);
     });
   }

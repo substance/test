@@ -7,10 +7,11 @@ test.category = 'Document';
 test.seeds = ['002-some-docs'];
 
 // Empty document
-var doc = new Substance.Document({"id": "substance-doc"});
+var doc;
 
 test.actions = [
-  "Verify empty document", function(data, cb) {
+  "Initialize empty document", function(data, cb) {
+    doc = new Substance.Document({"id": "substance-doc"});
     cb(null);
   },
 
@@ -47,7 +48,7 @@ test.actions = [
 
     doc.apply(op);
 
-    
+
     cb(null);
   },
 
@@ -133,7 +134,7 @@ test.actions = [
       }
     ];
 
-    // Create a comment that sticks on the 
+    // Create a comment that sticks on the
     var op2 = [
       "insert",
       {
