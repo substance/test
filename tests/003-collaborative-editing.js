@@ -30,7 +30,7 @@ test.actions = [
 
   "Try to access shared document", function(data, cb) {
     session.loadDocument("test-doc-michael-1", function(err) {
-      assert.isTrue(!!err);
+      assert.notNull(err);
       cb(null, data);
     });
   },
@@ -41,7 +41,7 @@ test.actions = [
 
   "After sync shared doc should be available", function(data, cb) {
     session.loadDocument("test-doc-michael-1", function(err, doc) {
-      assert.isTrue(!err);
+      assert.isNull(err);
       cb(null, data);
     });
   },
