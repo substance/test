@@ -14,13 +14,7 @@ test.seeds = [
 
 test.actions = [
   "Init the session", function(test, cb) {
-    session.authenticate("oliver", "abcd", function(err) {
-      if (err) return cb(err);
-      var data = {};
-      data.localStore = session.localStore;
-      data.remoteStore = session.remoteStore;
-      cb(null, data);
-    });
+    session.authenticate("oliver", "abcd", cb);
   },
 
   "Initial replication", function(data, cb) {
@@ -28,7 +22,7 @@ test.actions = [
   },
 
   "Delete local document", function(data, cb) {
-    data.localStore.delete("lorem_ipsum", this.proceed(data, cb));
+    session.localStore.delete("lorem_ipsum", this.proceed(data, cb));
   },
 
   "Replicate", function(data, cb) {
@@ -36,7 +30,7 @@ test.actions = [
   },
 
   "Now the document should have been removed remotely", function(data, cb) {
-    data.remoteStore.exists("lorem_ipsum", function(err, exists) {
+    session.remoteStore.exists("lorem_ipsum", function(err, exists) {
       assert.equal(false, exists);
       cb(null, data);
     });

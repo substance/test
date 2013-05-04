@@ -13,16 +13,10 @@ test.seeds = [
 
 test.actions = [
   "Init the session", function(test, cb) {
-    session.authenticate("oliver", "abcd", function(err) {
-      if (err) return cb(err);
-      var data = {};
-      data.localStore = session.localStore;
-      data.remoteStore = session.remoteStore;
-      cb(null, data);
-    });
+    session.authenticate("oliver", "abcd", cb);
   },
   "Document should not exist remotely", function(data, cb) {
-    data.remoteStore.exists("lorem_ipsum", function(err, exists) {
+    session.remoteStore.exists("lorem_ipsum", function(err, exists) {
       assert.equal(false, exists);
       cb(null, data);
     });
@@ -31,7 +25,7 @@ test.actions = [
     session.replicate(this.proceed(data, cb));
   },
   "Now the document should exist remotely", function(data, cb) {
-    data.remoteStore.exists("lorem_ipsum", function(err, exists) {
+    session.remoteStore.exists("lorem_ipsum", function(err, exists) {
       assert.equal(true, exists);
       cb(null, data);
     });
