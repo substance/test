@@ -28,7 +28,7 @@ test.actions = [
     session.authenticate("oliver", "abcd", cb);
   },
 
-  "Try to access shared document", function(data, cb) {
+  "Shared document should not be available yet", function(data, cb) {
     session.loadDocument("test-doc-michael-1", function(err) {
       assert.notNull(err);
       cb(null, data);
@@ -102,6 +102,5 @@ test.actions = [
     });
   }
 ];
-
 
 Substance.registerTest(test);
