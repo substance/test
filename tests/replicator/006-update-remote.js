@@ -66,7 +66,8 @@ test.actions = [
         last: COMMITS[1].sha
       }
     };
-    data.localStore.update("lorem_ipsum", COMMITS, null, refs, this.proceed(data, cb));
+    var options = {commits: COMMITS, refs: refs}
+    data.localStore.update("lorem_ipsum", options, this.proceed(data, cb));
   },
 
   "Replicate", function(data, cb) {
