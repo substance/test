@@ -16,7 +16,7 @@ test.actions = [
   },
 
   "Create a new blob locally", function(data, cb) {
-    session.createBlob("image:1", "BASE64_BLOBDATA", cb);
+    session.createBlob("test-doc-michael-1", "image:1", "BASE64_BLOBDATA", cb);
   },
 
   "Create a new image locally", function(data, cb) {

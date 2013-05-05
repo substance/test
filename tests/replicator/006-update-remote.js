@@ -45,13 +45,7 @@ var COMMITS = [
 
 test.actions = [
   "Init the session", function(test, cb) {
-    session.authenticate("oliver", "abcd", function(err) {
-      if (err) return cb(err);
-      var data = {};
-      data.localStore = session.localStore;
-      data.remoteStore = session.remoteStore;
-      cb(null, data);
-    });
+    session.authenticate("oliver", "abcd", cb);
   },
 
   "Initial replication", function(data, cb) {
@@ -66,7 +60,8 @@ test.actions = [
         last: COMMITS[1].sha
       }
     };
-    data.localStore.update("lorem_ipsum", COMMITS, null, refs, this.proceed(data, cb));
+    var options = {commits: COMMITS, refs: refs}
+    session.localStore.update("lorem_ipsum", options, this.proceed(data, cb));
   },
 
   "Replicate", function(data, cb) {
@@ -74,7 +69,7 @@ test.actions = [
   },
 
   "Now the remote document should contain the new commit", function(data, cb) {
-    data.remoteStore.get("lorem_ipsum", function(err, doc) {
+    session.remoteStore.get("lorem_ipsum", function(err, doc) {
       assert.isDefined(doc.commits[COMMITS[0].sha], cb);
       assert.isDefined(doc.commits[COMMITS[1].sha], cb);
       cb(null, doc);

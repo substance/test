@@ -1,6 +1,6 @@
 (function() {
 
-var root = this; 
+var root = this;
 var util = (typeof exports === 'undefined') ? Substance.util : require("../util/util");
 
 
@@ -89,7 +89,7 @@ var Test = function(testSpec) {
 
     self.seeds = []
 
-    var _loadSeed = util.async.each({
+    var _loadSeed = util.async.iterator({
       selector: function(test) { return test.spec.seeds; },
       iterator: function(seedName_or_seedSpec, idx, test, cb) {
         console.log("load seed...");
@@ -118,7 +118,7 @@ var Test = function(testSpec) {
       }
     });
 
-    var _seed = Substance.util.async.each({
+    var _seed = util.async.iterator({
       selector: function(test) { return test.seeds; },
       iterator: function(seedSpec, cb) {
 
@@ -142,7 +142,7 @@ var Test = function(testSpec) {
           });
         };
 
-        Substance.util.async([_seedLocal, _seedRemote], seedSpec, cb);
+        util.async([_seedLocal, _seedRemote], seedSpec, cb);
       }
     });
 
@@ -150,6 +150,7 @@ var Test = function(testSpec) {
     var funcs = _.map(this.actions, function(action) {
       return function(data, cb) {
         try {
+          console.log("####### Test action:", action.label);
           action.func.call(self, data, function(err, data) {
             if (err) self.trigger('action:error', err, action);
             else self.trigger('action:success', null, action);
@@ -163,15 +164,15 @@ var Test = function(testSpec) {
     });
 
     function runActions(data, cb) {
-      Substance.util.async(funcs, self, cb);
+      util.async(funcs, self, cb);
     }
 
     // Use our simple asynch chaining call
-    Substance.util.async([_loadSeed, _seed, runActions], self, cb);
+    util.async([_loadSeed, _seed, runActions], self, cb);
   };
 
   // convenience function to create propagating callbacks instead of needing to define callbacks inline
-  this.proceed = Substance.util.propagate;
+  this.proceed = util.propagate;
 
   // initialization
   buildActions();
