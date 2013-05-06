@@ -16,7 +16,7 @@ test.actions = [
   },
 
   "Create a new blob locally", function(data, cb) {
-    session.createBlob("test-doc-michael-1", "image:1", "BASE64_BLOBDATA", cb);
+    session.createBlob("test-doc-michael-1", "blob1", "BASE64_BLOBDATA", cb);
   },
 
   "Create a new image locally", function(data, cb) {
@@ -27,8 +27,8 @@ test.actions = [
         "type": "image",
         "target": "back",
         "data": {
-          "medium": "image:1",
-          "large": "image:1",
+          "medium": "blob1",
+          "large": "blob1",
           "caption": "A new image"
         }
       }
@@ -48,12 +48,12 @@ test.actions = [
   },
 
   // This should fail, if there's no publication for that doc
-  "Create version", function(doc, cb) {
-    session.createVersion(function(err) {
-      assert.isNull(err);
-      cb(err, doc);
-    });
-  }
+  // "Create version", function(doc, cb) {
+  //   session.createVersion(function(err) {
+  //     assert.isNull(err);
+  //     cb(err, doc);
+  //   });
+  // }
 ];
 
 Substance.registerTest(test);

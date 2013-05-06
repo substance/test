@@ -20,8 +20,8 @@ var OP = [
         "type": "image",
         "target": "back",
         "data": {
-          "medium": "blob:1",
-          "large": "blob:1",
+          "medium": "blob1",
+          "large": "blob1",
           "caption": "A new image"
         }
       }
@@ -41,7 +41,7 @@ test.actions = [
   },
 
   "Add a blob with commit locally", function(data, cb) {
-    session.createBlob("lorem_ipsum", "blob:1", "BASE64_BLOBDATA", function(err) {
+    session.createBlob("lorem_ipsum", "blob1", "BASE64_BLOBDATA", function(err) {
       if (err) return cb(err);
       session.document.apply(OP);
       cb(null);
@@ -53,7 +53,7 @@ test.actions = [
   },
 
   "Now the remote store should contain the blob", function(data, cb) {
-    session.remoteStore.getBlob("lorem_ipsum", "blob:1", function(err, blob) {
+    session.remoteStore.getBlob("lorem_ipsum", "blob1", function(err, blob) {
       assert.notNull(blob);
       cb(err);
     });

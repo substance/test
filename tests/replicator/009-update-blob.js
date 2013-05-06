@@ -19,8 +19,8 @@ var INSERT_IMAGE = [
         "type": "image",
         "target": "back",
         "data": {
-          "medium": "blob:1",
-          "large": "blob:1",
+          "medium": "blob1",
+          "large": "blob1",
           "caption": "A new image"
         }
       }
@@ -31,8 +31,8 @@ var UPDATED_IMAGE = [
       {
         "id": "image:1",
         "data": {
-          "medium": "blob:2",
-          "large": "blob:2",
+          "medium": "blob2",
+          "large": "blob2",
           "caption": "Updated image"
         }
       }
@@ -52,7 +52,7 @@ test.actions = [
   },
 
   "Add a blob with commit locally", function(data, cb) {
-    session.createBlob("lorem_ipsum", "blob:1", "BASE64_BLOBDATA", function(err) {
+    session.createBlob("lorem_ipsum", "blob1", "BASE64_BLOBDATA", function(err) {
       if (err) return cb(err);
       session.document.apply(INSERT_IMAGE);
       cb(null);
@@ -64,7 +64,7 @@ test.actions = [
   },
 
   "Update the image", function(data, cb) {
-    session.createBlob("lorem_ipsum", "blob:2", "BASE64_BLOBDATA", function(err) {
+    session.createBlob("lorem_ipsum", "blob2", "BASE64_BLOBDATA", function(err) {
       if (err) return cb(err);
       session.document.apply(UPDATED_IMAGE);
       cb(null);
