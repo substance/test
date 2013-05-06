@@ -1,7 +1,7 @@
 var test = {};
 
-test.id = 'replicator-006-update-remote';
-test.name = 'Update Remote';
+test.id = 'replicator-006-push-changes';
+test.name = 'Push Changes';
 test.category = 'Replicator';
 
 test.seeds = [
@@ -33,9 +33,9 @@ var COMMITS = [
       "update",
       {
        "id": "text:newtext",
-       "data": [
-        "Hello World!"
-       ]
+       "data": {
+        "content": "Hello World"
+       }
       }
      ],
      "sha": "new-commit-2",
@@ -56,8 +56,8 @@ test.actions = [
     // TODO: it should be easier to update the refs implicitely
     var refs = {
       master: {
-        head: COMMITS[1].sha,
-        last: COMMITS[1].sha
+        head: _.last(COMMITS).sha,
+        last: _.last(COMMITS).sha
       }
     };
     var options = {commits: COMMITS, refs: refs}
