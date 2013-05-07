@@ -89,20 +89,20 @@ var Test = function(testSpec) {
 
     self.seeds = []
 
+    // TODO: this can be done statically (without using selector)
     var _loadSeed = util.async.iterator({
-      selector: function(test) { return test.spec.seeds; },
-      iterator: function(seedName_or_seedSpec, idx, test, cb) {
-        console.log("load seed...");
+      selector: function() { return self.spec.seeds; },
+      iterator: function(seedName_or_seedSpec, cb) {
+        // console.log("load seed...");
         // do not load a seed if it is defined inline or has been loaded already
         var isInline = !_.isString(seedName_or_seedSpec);
         if (isInline) {
-          var seedSpec = seedName_or_seedSpec;
-          util.prepareSeedSpec(seedSpec, function(err, seedSpec) {
+          util.prepareSeedSpec(seedName_or_seedSpec, function(err, seedSpec) {
             if (err) return cb(err);
             util.loadSeed(seedSpec, function(err, seed) {
               if (err) return cb(err);
-              test.seeds.push(seed);
-              cb(null, test);
+              self.seeds.push(seed);
+              cb(null);
             });
           });
         } else {
@@ -110,8 +110,8 @@ var Test = function(testSpec) {
             if (err) return cb(err);
             util.loadSeed(seedSpec, function(err, seed) {
               if (err) return cb(err);
-              test.seeds.push(seed);
-              cb(null, test);
+              self.seeds.push(seed);
+              cb(null);
             });
           });
         }
@@ -119,56 +119,56 @@ var Test = function(testSpec) {
     });
 
     var _seed = util.async.iterator({
-      selector: function(test) { return test.seeds; },
+      selector: function() { return self.seeds; },
       iterator: function(seedSpec, cb) {
 
-        function _seedLocal(seedData, cb) {
-          console.log("Seeding local store...", seedData.local);
+        function _seedLocal(cb) {
+          // console.log("Seeding local store...", seedData.local);
           // find this in model.js
-          seedLocalStore(seedData.local, function(err) {
+          seedLocalStore(seedSpec.local, function(err) {
             if (err) return cb(err);
-            cb(null, seedData);
+            cb(null);
           });
         };
 
-        function _seedRemote(seedData, cb) {
+        function _seedRemote(cb) {
           // TODO: make sure the remote store is cleared
-          console.log("Seeding remote store...", seedData.remote);
+
+          // console.log("Seeding remote store...", seedData.remote);
           // console.log('SEEDDATA', seedData);
 
-          session.client.seed(seedData, function(err, data) {
-            if(err) cb(err);
-            else cb(null, data)
+          session.client.seed(seedSpec, function(err) {
+            if(err) return cb(err);
+            cb(null)
           });
         };
 
-        util.async([_seedLocal, _seedRemote], seedSpec, cb);
+        util.async.sequential([_seedLocal, _seedRemote], cb);
       }
     });
 
-    // TODO: prepare the actions for execution in composer or on hub, respectively
-    var funcs = _.map(this.actions, function(action) {
-      return function(data, cb) {
-        try {
-          console.log("####### Test action:", action.label);
-          action.func.call(self, data, function(err, data) {
-            if (err) self.trigger('action:error', err, action);
-            else self.trigger('action:success', null, action);
-            cb(err, data);
-          });
-        } catch(err) {
-          self.trigger('action:error', err, action);
-          cb(err, data);
-        }
-      };
-    });
-
     function runActions(data, cb) {
-      util.async(funcs, self, cb);
+      // TODO: prepare the actions for execution in composer or on hub, respectively
+      var funcs = _.map(self.actions, function(action) {
+        return function(data, cb) {
+          try {
+            console.log("####### Test action:", action.label);
+            action.func.call(self, data, function(err, data) {
+              if (err) self.trigger('action:error', err, action);
+              else self.trigger('action:success', null, action);
+              cb(err, data);
+            });
+          } catch(err) {
+            self.trigger('action:error', err, action);
+            cb(err, data);
+          }
+        };
+      });
+      util.async.sequential(funcs, cb);
     }
 
     // Use our simple asynch chaining call
-    util.async([_loadSeed, _seed, runActions], self, cb);
+    util.async.sequential([_loadSeed, _seed, runActions], cb);
   };
 
   // convenience function to create propagating callbacks instead of needing to define callbacks inline
