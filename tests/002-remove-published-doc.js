@@ -1,3 +1,5 @@
+(function(root) {
+
 var test = {}
 
 test.id = '002-remove-published-doc';
@@ -7,61 +9,43 @@ test.category = 'Publishing';
 test.seeds = ['002-some-docs'];
 
 test.actions = [
-  "Login", function(test, cb) {
+  "Login", function(cb) {
     session.authenticate("michael", "abcd", cb);
   },
 
-  "Open Doc for editing", function(test, cb) {
-    session.loadDocument("test-doc-michael-1", function(err, doc) {
-      assert.isNull(err);
-      cb(err, doc);
-    });
+  "Open Doc for editing", function() {
+    doc = session.loadDocument("test-doc-michael-1");
   },
 
   // TODO: try to create version before publication. Ensure this properly fails
 
   // Creating a publication implicitly creates a document entry on the hub
-  "Create publication", function(doc, cb) {
-    session.createPublication("substance", function(err) {
-      assert.isNull(err);
-      cb(err, doc);
-    });
+  "Create publication", function(cb) {
+    session.createPublication("substance", cb);
   },
 
   // This should fail, if there's no publication for that doc
-  "Create version", function(doc, cb) {
-    session.createVersion(function(err) {
-      assert.isNull(err);
-      cb(err, doc);
-    });
+  "Create version", function(cb) {
+    session.createVersion(cb);
   },
 
   // Check if replication still works now that a document entry has been created implicitly by createPublication
-  "Replicate with the server", function(docCount, cb) {
+  "Replicate with the server", function(cb) {
     session.replicate(cb);
   },
 
-  "Delete doc locally", function(doc, cb) {
-    session.deleteDocument("test-doc-michael-1", function(err) {
-      assert.isNull(err);
-      session.loadDocument("test-doc-michael-1", function(err, doc) {
-        assert.isTrue(!doc);
-        cb(null, doc);
-      })
-    });
+  "Delete doc locally", function() {
+    session.deleteDocument("test-doc-michael-1");
   },
 
-  "Trigger replication again", function(doc, cb) {
-    session.replicate(function(err){
-      assert.isTrue(!err);
-      cb(null, doc);
-    });
+  "Trigger replication again", function(cb) {
+    session.replicate(cb);
   },
 
-  "After the sync all publications for that doc should be gone", function(doc, cb) {
+  "After the sync all publications for that doc should be gone", function(cb) {
     session.loadPublications(function(err) {
-      assert.isTrue(session.publications.length === 0);
-      cb(null, doc);
+      assert.isTrue(session.publications.length === 0, cb);
+      cb(null);
     });
   },
 
@@ -80,4 +64,5 @@ test.actions = [
   // }]
 ];
 
-Substance.registerTest(test);
+root.Substance.registerTest(test);
+})(this);

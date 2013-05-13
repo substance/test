@@ -1,3 +1,5 @@
+(function(root) {
+
 var test = {};
 
 test.id = 'replicator-001-create-local';
@@ -12,28 +14,22 @@ test.seeds = [
 ];
 
 test.actions = [
-  "Init the session", function(test, cb) {
+  "Init the session", function(cb) {
     session.authenticate("oliver", "abcd", cb);
   },
 
-  "Document should not exist locally", function(data, cb) {
-    session.localStore.exists("lorem_ipsum", function(err, exists) {
-      assert.equal(false, exists);
-      cb(null, data);
-    });
+  "Document should not exist locally", function() {
+    assert.isFalse(session.localStore.exists("lorem_ipsum"));
   },
 
-  "Replicate", function(data, cb) {
-    session.replicate(this.proceed(data, cb));
+  "Replicate", function(cb) {
+    session.replicate(cb);
   },
 
-  "Now the document should exist locally", function(data, cb) {
-    session.localStore.exists("lorem_ipsum", function(err, exists) {
-      if (err) return cb(err);
-      assert.equal(true, exists);
-      cb(null, data);
-    });
+  "Now the document should exist locally", function() {
+    assert.isTrue(session.localStore.exists("lorem_ipsum"));
   }
 ];
 
-Substance.registerTest(test);
+root.Substance.registerTest(test);
+})(this);

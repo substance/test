@@ -1,3 +1,5 @@
+(function(root) {
+
 var test = {};
 
 test.id = 'replicator-001-create-remote';
@@ -12,24 +14,28 @@ test.seeds = [
 ];
 
 test.actions = [
-  "Init the session", function(test, cb) {
+  "Init the session", function(cb) {
     session.authenticate("oliver", "abcd", cb);
   },
-  "Document should not exist remotely", function(data, cb) {
+
+  "Document should not exist remotely", function(cb) {
     session.remoteStore.exists("lorem_ipsum", function(err, exists) {
-      assert.equal(false, exists);
-      cb(null, data);
+      assert.isFalse(exists, cb);
+      cb(null);
     });
   },
-  "Replicate", function(data, cb) {
-    session.replicate(this.proceed(data, cb));
+
+  "Replicate", function(cb) {
+    session.replicate(cb);
   },
-  "Now the document should exist remotely", function(data, cb) {
+
+  "Now the document should exist remotely", function(cb) {
     session.remoteStore.exists("lorem_ipsum", function(err, exists) {
-      assert.equal(true, exists);
-      cb(null, data);
+      assert.isTrue(exists, cb);
+      cb(null);
     });
   }
 ];
 
-Substance.registerTest(test);
+root.Substance.registerTest(test);
+})(this);

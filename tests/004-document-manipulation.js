@@ -1,3 +1,5 @@
+(function(root) {
+
 var test = {};
 
 test.id = '004-document-manipulation';
@@ -10,12 +12,11 @@ test.seeds = ['002-some-docs'];
 var doc;
 
 test.actions = [
-  "Initialize empty document", function(data, cb) {
+  "Initialize empty document", function() {
     doc = new Substance.Document({"id": "substance-doc"});
-    cb(null);
   },
 
-  "Create heading", function(data, cb) {
+  "Create heading", function() {
     var op = [
       "insert",
       {
@@ -29,11 +30,9 @@ test.actions = [
     ];
 
     doc.apply(op);
-
-    cb(null);
   },
 
-  "Create text element", function(data, cb) {
+  "Create text element", function() {
     var op = [
       "insert",
       {
@@ -47,12 +46,9 @@ test.actions = [
     ];
 
     doc.apply(op);
-
-
-    cb(null);
   },
 
-  "Create some more text elements", function(data, cb) {
+  "Create some more text elements", function() {
 
     var op1 = [
       "insert",
@@ -80,16 +76,13 @@ test.actions = [
 
     doc.apply(op1);
     doc.apply(op2);
-
-    cb(null);
   },
 
-  "Verify populated doc", function(data, cb) {
+  "Verify populated doc", function() {
     assert.isTrue(_.isEqual(doc.views.content, ["text:2", "heading:1", "text:1", "text:3"]));
-    cb(null);
   },
 
-  "Move operation", function(data, cb) {
+  "Move operation", function() {
     var op = [
       "move",
       {
@@ -100,10 +93,9 @@ test.actions = [
 
     doc.apply(op);
     assert.isTrue(_.isEqual(doc.views["content"], ["text:1", "text:2", "heading:1", "text:3"]));
-    cb(null);
   },
 
-  "Create a new comment", function(data, cb) {
+  "Create a new comment", function() {
     var op = [
       "insert",
       {
@@ -117,11 +109,10 @@ test.actions = [
     ];
 
     doc.apply(op);
-    cb(null);
   },
 
 
-  "Create a new annotation", function(data, cb) {
+  "Create a new annotation", function() {
     var op = [
       "insert",
       {
@@ -149,10 +140,9 @@ test.actions = [
 
     doc.apply(op);
     doc.apply(op2);
-    cb(null);
   },
 
-  "Test indexes", function(data, cb) {
+  "Test indexes", function() {
 
     // Get comments for text:1
     var comments = doc.find("comments", "text:1");
@@ -169,11 +159,9 @@ test.actions = [
     assert.equal(comments.length, 1);
     assert.equal(comments[0].id, "comment:2");
 
-    cb(null);
-
   },
 
-  "Delete some comments", function(data, cb) {
+  "Delete some comments", function() {
     var op = [
       "delete",
       {
@@ -187,21 +175,18 @@ test.actions = [
     // Get comments for annotation:1
     var comments = doc.find("comments", "annotation:1");
     assert.equal(comments.length, 0);
-    cb(null);
   },
 
-  "Iteration", function(data, cb) {
+  "Iteration", function() {
     var count = 0;
     doc.each(function(element) {
       count++;
     });
 
     assert.equal(count, 4);
-
-    cb(null);
   },
 
-  "Update Annotation", function(data, cb) {
+  "Update Annotation", function() {
     var op = [
       "update",
       {
@@ -222,11 +207,9 @@ test.actions = [
     // Should be returned when querying for annotations, text:2
     var annotations = doc.find('annotations', 'text:2');
     assert.equal(annotations.length, 1);
-
-    cb(null);
   },
 
-  "OT Updates for multiple properties", function(data, cb) {
+  "OT Updates for multiple properties", function() {
     var op = [
       "insert",
       {
@@ -255,10 +238,9 @@ test.actions = [
     var node = doc.nodes["comment:3"];
     assert.equal(node.content, "John Doe");
 
-    cb(null);
   },
 
-  "Support objects as values", function(data, cb) {
+  "Support objects as values", function() {
 
     var op = [
       "update",
@@ -274,8 +256,8 @@ test.actions = [
 
     var node = doc.nodes["annotation:1"];
     assert.isTrue(_.isEqual(node.pos, [1, 27]));
-    cb(null);
   },
 ];
 
-Substance.registerTest(test);
+root.Substance.registerTest(test);
+})(this);

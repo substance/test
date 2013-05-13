@@ -24,16 +24,7 @@ function seedLocalStore(seeds, cb) {
 
 var Test = function(testSpec) {
   var self = this;
-
-  this.id = testSpec.id;
-  this.name = testSpec.name;
-  this.category = testSpec.category;
-  this.spec = testSpec;
-
-  // A list of actions which will be executed in turn.
-  // In test specs actions can be defined in a sparse/sloppy way.
-  // They get expanded to a unified format automatically.
-  this.actions = [];
+  var def
 
   // Expands the actions into a unified format.
   // For convenienve, tests maybe be declared in a simpler format.
@@ -45,7 +36,7 @@ var Test = function(testSpec) {
     function action_template() {
       return {
         'label': [],
-        'type': test.defaultType,
+        'type': testSpec.defaultType || "composer",
         'func': null
       };
     }
@@ -57,7 +48,7 @@ var Test = function(testSpec) {
 
     _action = action_template();
 
-    _.each(test.actions, function(elem) {
+    _.each(self.spec.actions, function(elem) {
       var objType = Object.prototype.toString.call(elem);
       // actions can be declared in a declarative way in as a sequence of
       // functions (=actions) separated by strings which are used
@@ -147,20 +138,28 @@ var Test = function(testSpec) {
       }
     });
 
-    function runActions(data, cb) {
+    function runActions(cb) {
       // TODO: prepare the actions for execution in composer or on hub, respectively
       var funcs = _.map(self.actions, function(action) {
-        return function(data, cb) {
+        return function(cb) {
           try {
             console.log("####### Test action:", action.label);
-            action.func.call(self, data, function(err, data) {
-              if (err) self.trigger('action:error', err, action);
-              else self.trigger('action:success', null, action);
-              cb(err, data);
-            });
+            // asynchronous actions
+            if (action.func.length == 0) {
+              action.func.call(self);
+              self.trigger('action:success', null, action);
+              cb(null);
+            } else {
+              action.func.call(self, function(err, data) {
+                if (err) self.trigger('action:error', err, action);
+                else self.trigger('action:success', null, action);
+                cb(err, data);
+              });
+            }
           } catch(err) {
+            console.log(err.toString());
             self.trigger('action:error', err, action);
-            cb(err, data);
+            cb(err);
           }
         };
       });
@@ -173,6 +172,16 @@ var Test = function(testSpec) {
 
   // convenience function to create propagating callbacks instead of needing to define callbacks inline
   this.proceed = util.propagate;
+
+  this.id = testSpec.id;
+  this.name = testSpec.name;
+  this.category = testSpec.category;
+  this.spec = testSpec;
+
+  // A list of actions which will be executed in turn.
+  // In test specs actions can be defined in a sparse/sloppy way.
+  // They get expanded to a unified format automatically.
+  this.actions = [];
 
   // initialization
   buildActions();

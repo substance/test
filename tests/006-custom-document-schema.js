@@ -1,3 +1,5 @@
+(function(root) {
+
 var test = {};
 
 test.id = '006-custom-document-schema';
@@ -292,7 +294,7 @@ function convert(eLifeDoc) {
     delete data.type;
 
     var op = [
-      "insert", 
+      "insert",
       {
         "id": node.id,
         "type": node.type,
@@ -357,19 +359,15 @@ function convert(eLifeDoc) {
 
 
 test.actions = [
-  "Initialize empty document", function(data, cb) {
-    cb(null);
-  },
 
-  "Import eLife document", function(data, cb) {
+  "Import eLife document", function() {
     var doc = convert(ELIFE_DOCUMENT);
 
     var figrefs = doc.find('figure_references', 'text:854');
     assert.equal(figrefs.length, 2);
-
-    cb(null);
   }
 
 ];
 
-Substance.registerTest(test);
+root.Substance.registerTest(test);
+})(this);

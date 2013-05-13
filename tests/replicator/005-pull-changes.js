@@ -1,3 +1,5 @@
+(function(root) {
+
 var test = {};
 
 test.id = 'replicator-005-pull-changes';
@@ -44,15 +46,15 @@ var COMMITS = [
 ];
 
 test.actions = [
-  "Init the session", function(test, cb) {
+  "Init the session", function(cb) {
     session.authenticate("oliver", "abcd", cb);
   },
 
-  "Initial replication", function(data, cb) {
-    session.replicate(this.proceed(data, cb));
+  "Initial replication", function(cb) {
+    session.replicate(cb);
   },
 
-  "Update the remote document", function(data, cb) {
+  "Update the remote document", function(cb) {
     // TODO: it should be easier to update the refs implicitely
     var refs = {
       master: {
@@ -61,21 +63,19 @@ test.actions = [
       }
     };
     var options = {commits: COMMITS, refs: refs};
-    session.remoteStore.update("lorem_ipsum", options, this.proceed(data, cb));
+    session.remoteStore.update("lorem_ipsum", options, cb);
   },
 
-  "Replicate", function(data, cb) {
-    session.replicate(this.proceed(data, cb));
+  "Replicate", function(cb) {
+    session.replicate(cb);
   },
 
-  "Now the local document should contain the new commit", function(data, cb) {
-    session.localStore.get("lorem_ipsum", function(err, doc) {
-      assert.isDefined(doc.commits[COMMITS[0].sha]);
-      assert.isDefined(doc.commits[COMMITS[1].sha]);
-      cb(null, data);
-    });
+  "Now the local document should contain the new commit", function() {
+    var doc = session.localStore.get("lorem_ipsum");
+    assert.isDefined(doc.commits[COMMITS[0].sha]);
+    assert.isDefined(doc.commits[COMMITS[1].sha]);
   }
 ];
 
-Substance.registerTest(test);
-
+root.Substance.registerTest(test);
+})(this);

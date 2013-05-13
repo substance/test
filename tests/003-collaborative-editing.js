@@ -1,3 +1,5 @@
+(function(root) {
+
 var test = {};
 
 test.id = '003-collaborative-editing';
@@ -7,46 +9,41 @@ test.category = '';
 test.seeds = ['002-some-docs'];
 
 test.actions = [
-  "Login", function(test, cb) {
+  "Login", function(cb) {
     session.authenticate("michael", "abcd", cb);
   },
 
-  "Open Doc for editing", function(data, cb) {
-    session.loadDocument("test-doc-michael-1", cb);
+  "Open Doc for editing", function() {
+    session.loadDocument("test-doc-michael-1");
   },
 
-  "Add collaborator", function(data, cb) {
+  "Add collaborator", function(cb) {
     session.createCollaborator("oliver", cb);
   },
 
   // Check if replication still works now that a document entry has been created implicitly by createPublication
-  "Replicate with the server", function(data, cb) {
+  "Replicate with the server", function(cb) {
     session.replicate(cb);
   },
 
-  "Login as Oliver", function(data, cb) {
+  "Login as Oliver", function(cb) {
     session.authenticate("oliver", "abcd", cb);
   },
 
-  "Shared document should not be available yet", function(data, cb) {
-    session.loadDocument("test-doc-michael-1", function(err) {
-      assert.notNull(err);
-      cb(null, data);
-    });
+  "Shared document should not be available yet", function() {
+    assert.isFalse(session.localStore.exists("test-doc-michael-1"));
   },
 
-  "Replicate with the server", function(data, cb) {
+  "Replicate with the server", function(cb) {
     session.replicate(cb);
   },
 
-  "After sync shared doc should be available", function(data, cb) {
-    session.loadDocument("test-doc-michael-1", function(err, doc) {
-      assert.isNull(err);
-      cb(null, data);
-    });
+  "After sync shared doc should be available", function() {
+    assert.isTrue(session.localStore.exists("test-doc-michael-1"));
+    session.loadDocument("test-doc-michael-1");
   },
 
-  "Oliver modifies doc", function(data, cb) {
+  "Oliver modifies doc", function() {
     var op = [
       "insert",
       {
@@ -60,10 +57,9 @@ test.actions = [
     ];
 
     session.document.apply(op);
-    cb(null);
   },
 
-  "In the meanwhile Michael also modifies the doc", function(data, cb) {
+  "In the meanwhile Michael also modifies the doc", function(cb) {
     var op = [
       "insert",
       {
@@ -77,30 +73,29 @@ test.actions = [
     ];
 
     session.authenticate("michael", "abcd", function(err) {
-      session.loadDocument("test-doc-michael-1", function(err, doc) {
-        session.document.apply(op);
-        cb(null);
-      });
+      session.loadDocument("test-doc-michael-1");
+      session.document.apply(op);
+      cb(null);
     });
   },
 
-  "Replicate with the server", function(data, cb) {
+  "Replicate with the server", function(cb) {
     session.replicate(cb);
   },
 
-  "Now Oliver performs a sync (conflict situation!)", function(data, cb) {
+  "Now Oliver performs a sync (conflict situation!)", function(cb) {
     session.authenticate("oliver", "abcd", function(err) {
       session.replicate(cb);
     });
   },
 
-  "Michael's change should be the winner", function(data, cb) {
-    session.loadDocument("test-doc-michael-1", function(err, doc) {
-      assert.isTrue(doc.nodes['text:xyz'].content === "Michael's text.");
-      assert.isTrue(doc.nodes['text:abcd'] === undefined);
-      cb(null);
-    });
+  "Michael's change should be the winner", function() {
+    session.loadDocument("test-doc-michael-1");
+    var doc = session.document;
+    assert.isTrue(doc.nodes['text:xyz'].content === "Michael's text.");
+    assert.isTrue(doc.nodes['text:abcd'] === undefined);
   }
 ];
 
-Substance.registerTest(test);
+root.Substance.registerTest(test);
+})(this);

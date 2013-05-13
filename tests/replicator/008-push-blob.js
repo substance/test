@@ -1,3 +1,5 @@
+(function(root) {
+
 var test = {};
 
 test.id = 'replicator-008-push-blob';
@@ -28,37 +30,34 @@ var OP = [
      ];
 
 test.actions = [
-  "Init the session", function(test, cb) {
+  "Init the session", function(cb) {
     session.authenticate("oliver", "abcd", cb);
   },
 
-  "Initial replication", function(data, cb) {
-    session.replicate(this.proceed(data, cb));
+  "Initial replication", function(cb) {
+    session.replicate(cb);
   },
 
-  "Load document", function(data, cb) {
-    session.loadDocument("lorem_ipsum", cb);
+  "Load document", function() {
+    session.loadDocument("lorem_ipsum");
   },
 
-  "Add a blob with commit locally", function(data, cb) {
-    session.createBlob("lorem_ipsum", "blob1", "BASE64_BLOBDATA", function(err) {
-      if (err) return cb(err);
-      session.document.apply(OP);
-      cb(null);
-    });
+  "Add a blob with commit locally", function() {
+    session.localStore.createBlob("lorem_ipsum", "blob1", "BASE64_BLOBDATA");
+    session.document.apply(OP);
   },
 
-  "Replicate", function(data, cb) {
-    session.replicate(this.proceed(data, cb));
+  "Replicate", function(cb) {
+    session.replicate(cb);
   },
 
-  "Now the remote store should contain the blob", function(data, cb) {
+  "Now the remote store should contain the blob", function(cb) {
     session.remoteStore.getBlob("lorem_ipsum", "blob1", function(err, blob) {
-      assert.notNull(blob);
+      assert.notNull(blob, cb);
       cb(err);
     });
   }
 ];
 
-Substance.registerTest(test);
-
+root.Substance.registerTest(test);
+})(this);

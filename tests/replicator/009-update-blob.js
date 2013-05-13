@@ -1,3 +1,5 @@
+(function(root) {
+
 var test = {};
 
 test.id = 'replicator-009-update-blob';
@@ -39,42 +41,36 @@ var UPDATED_IMAGE = [
      ];
 
 test.actions = [
-  "Init the session", function(test, cb) {
+  "Init the session", function(cb) {
     session.authenticate("oliver", "abcd", cb);
   },
 
-  "Initial replication", function(data, cb) {
-    session.replicate(this.proceed(data, cb));
+  "Initial replication", function(cb) {
+    session.replicate(cb);
   },
 
-  "Load document", function(data, cb) {
-    session.loadDocument("lorem_ipsum", cb);
+  "Load document", function() {
+    session.loadDocument("lorem_ipsum");
   },
 
-  "Add a blob with commit locally", function(data, cb) {
-    session.createBlob("lorem_ipsum", "blob1", "BASE64_BLOBDATA", function(err) {
-      if (err) return cb(err);
-      session.document.apply(INSERT_IMAGE);
-      cb(null);
-    });
+  "Add a blob with commit locally", function() {
+    session.localStore.createBlob("lorem_ipsum", "blob1", "BASE64_BLOBDATA");
+    session.document.apply(INSERT_IMAGE);
   },
 
-  "Replicate", function(data, cb) {
-    session.replicate(this.proceed(data, cb));
+  "Replicate", function(cb) {
+    session.replicate(cb);
   },
 
-  "Update the image", function(data, cb) {
-    session.createBlob("lorem_ipsum", "blob2", "BASE64_BLOBDATA", function(err) {
-      if (err) return cb(err);
-      session.document.apply(UPDATED_IMAGE);
-      cb(null);
-    });
+  "Update the image", function() {
+    session.localStore.createBlob("lorem_ipsum", "blob2", "BASE64_BLOBDATA");
+    session.document.apply(UPDATED_IMAGE);
   },
 
-  "Replicate", function(data, cb) {
+  "Replicate", function(cb) {
     session.replicate(cb);
   },
 ];
 
-Substance.registerTest(test);
-
+root.Substance.registerTest(test);
+})(this);

@@ -1,3 +1,5 @@
+(function(root) {
+
 var test = {};
 
 test.id = '005-publish-with-blobs';
@@ -7,19 +9,19 @@ test.category = '';
 test.seeds = ['002-some-docs'];
 
 test.actions = [
-  "Login", function(test, cb) {
+  "Login", function(cb) {
     session.authenticate("michael", "abcd", cb);
   },
 
-  "Open Doc for editing", function(data, cb) {
-    session.loadDocument("test-doc-michael-1", cb);
+  "Open Doc for editing", function() {
+    session.loadDocument("test-doc-michael-1");
   },
 
-  "Create a new blob locally", function(data, cb) {
-    session.createBlob("test-doc-michael-1", "blob1", "BASE64_BLOBDATA", cb);
+  "Create a new blob locally", function() {
+    session.document.store.createBlob("blob1", "BASE64_BLOBDATA");
   },
 
-  "Create a new image locally", function(data, cb) {
+  "Create a new image locally", function() {
     var op = [
       "insert",
       {
@@ -35,16 +37,12 @@ test.actions = [
     ];
 
     session.document.apply(op);
-    cb(null);
   },
 
   // TODO: try to create version before publication. Ensure this properly fails
   // Creating a publication implicitly creates a document entry on the hub
-  "Create publication", function(doc, cb) {
-    session.createPublication("substance", function(err) {
-      assert.isNull(err);
-      cb(err, doc);
-    });
+  "Create publication", function(cb) {
+    session.createPublication("substance", cb);
   },
 
   // This should fail, if there's no publication for that doc
@@ -56,4 +54,5 @@ test.actions = [
   // }
 ];
 
-Substance.registerTest(test);
+root.Substance.registerTest(test);
+})(this);

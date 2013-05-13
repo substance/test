@@ -1,3 +1,5 @@
+(function(root) {
+
 var test = {};
 
 test.id = 'replicator-004-delete-remote';
@@ -13,28 +15,29 @@ test.seeds = [
 ];
 
 test.actions = [
-  "Init the session", function(test, cb) {
+  "Init the session", function(cb) {
     session.authenticate("oliver", "abcd", cb);
   },
 
-  "Initial replication", function(data, cb) {
-    session.replicate(this.proceed(data, cb));
+  "Initial replication", function(cb) {
+    session.replicate(cb);
   },
 
-  "Delete local document", function(data, cb) {
-    session.localStore.delete("lorem_ipsum", this.proceed(data, cb));
+  "Delete local document", function() {
+    session.localStore.delete("lorem_ipsum");
   },
 
-  "Replicate", function(data, cb) {
-    session.replicate(this.proceed(data, cb));
+  "Replicate", function(cb) {
+    session.replicate(cb);
   },
 
-  "Now the document should have been removed remotely", function(data, cb) {
+  "Now the document should have been removed remotely", function(cb) {
     session.remoteStore.exists("lorem_ipsum", function(err, exists) {
-      assert.equal(false, exists);
-      cb(null, data);
+      assert.isFalse(exists, cb);
+      cb(null);
     });
   }
 ];
 
-Substance.registerTest(test);
+root.Substance.registerTest(test);
+})(this);

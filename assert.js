@@ -52,13 +52,35 @@ var _assert = function(assertion, msg, cb) {
   }
 }
 
+assert.fail = function(msg, cb) {
+  var exc = new assert.AssertionError(msg);
+  if (cb) cb(msg);
+  throw exc;
+};
+
+assert.exception = function(func, cb) {
+  var thrown = false;
+  try {
+    func();
+  } catch (err) {
+    thrown = true;
+  }
+  _assert(thrown, "Assertion failed. Expected an exception in "+func.toString());
+};
+
 assert.equal = function(expected, actual, cb) {
   var msg = "Assertion failed. Expected="+expected+", actual="+actual;
   _assert(expected === actual, msg, cb);
-}
+};
+
+assert.isEqual = assert.equal;
 
 assert.isTrue = function(stmt, cb) {
   assert.equal(true, stmt, cb);
+};
+
+assert.isFalse = function(stmt, cb) {
+  assert.equal(false, stmt, cb);
 };
 
 assert.isNull = function(obj, cb) {
