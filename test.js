@@ -4,22 +4,9 @@ var root = this;
 var util = (typeof exports === 'undefined') ? Substance.util : require("../util/util");
 
 
-function seedLocalStore(seeds, cb) {
+function seedLocalStore(seeds) {
   console.log('Seeding the docstore...', seeds);
-
-  // flush the test store
-  session.localStore.clear();
-
-  if (seeds) {
-    _.each(seeds, function(seed, scope) {
-       new Substance.RedisStore({
-        scope: session.env+":"+scope
-      }).seed(seed);
-    });
-  }
-
-  if (cb) cb(null);
-  return true;
+  session.seed(seeds);
 }
 
 var Test = function(testSpec) {
@@ -112,29 +99,13 @@ var Test = function(testSpec) {
     var _seed = util.async.iterator({
       selector: function() { return self.seeds; },
       iterator: function(seedSpec, cb) {
-
-        function _seedLocal(cb) {
-          // console.log("Seeding local store...", seedData.local);
-          // find this in model.js
-          seedLocalStore(seedSpec.local, function(err) {
-            if (err) return cb(err);
-            cb(null);
-          });
-        };
-
-        function _seedRemote(cb) {
-          // TODO: make sure the remote store is cleared
-
-          // console.log("Seeding remote store...", seedData.remote);
-          // console.log('SEEDDATA', seedData);
-
-          session.client.seed(seedSpec, function(err) {
-            if(err) return cb(err);
-            cb(null)
-          });
-        };
-
-        util.async.sequential([_seedLocal, _seedRemote], cb);
+        // console.log("Seeding local store...", seedSpec.local);
+        seedLocalStore(seedSpec.local);
+        // console.log("Seeding remote store...", seedSpec.remote);
+        session.client.seed(seedSpec, function(err) {
+          if(err) return cb(err);
+          cb(null)
+        });
       }
     });
 
