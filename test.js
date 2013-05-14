@@ -157,7 +157,8 @@ var Test = function(testSpec) {
               });
             }
           } catch(err) {
-            console.log(err.toString());
+            if(err.log) err.log();
+            else console.log(err.toString(), err);
             self.trigger('action:error', err, action);
             cb(err);
           }

@@ -3,6 +3,9 @@
 var assert = {};
 
 assert.AssertionError = function (message) {
+  var SAFARI_STACK_ELEM = /([^@]*)@(.*):(\d+)/;
+  var CHROME_STACK_ELEM = /\s*at ([^(]*)[(](.*):(\d+):(\d+)[)]/;
+
   this.message = message;
   try { throw new Error(); } catch (trace) {
     var idx;
@@ -10,16 +13,17 @@ assert.AssertionError = function (message) {
     // parse the stack trace: each line is a tuple (function, file, lineNumber)
     // TODO: is this interpreter specific?
     // for safari it is "<function>@<file>:<lineNumber>"
-    var expr = /([^@]*)@(.*):(\d+)/;
 
     var stack = [];
     for (idx = 0; idx < stackTrace.length; idx++) {
-      var match = expr.exec(stackTrace[idx]);
+      var match = SAFARI_STACK_ELEM.exec(stackTrace[idx]);
+      if (!match) match = CHROME_STACK_ELEM.exec(stackTrace[idx]);
       if (match) {
         var entry = {
           func: match[1],
           file: match[2],
-          line: match[3]
+          line: match[3],
+          col: match[4] || 0
         };
         if (entry.func === "") entry.func = "<anonymous>";
         stack.push(entry);
@@ -39,6 +43,12 @@ assert.AssertionError.prototype = new Error();
 assert.AssertionError.prototype.constructor = assert.AssertionError;
 assert.AssertionError.prototype.name = 'AssertionError';
 
+assert.AssertionError.prototype.log = function() {
+  console.log(this.message);
+  _.each(this.stack, function(frame) {
+    console.log(frame.file+":"+frame.line);
+  })
+}
 assert.AssertionError.prototype.toString = function() {
   var errorPos = this.stack[0];
   return this.message + " at " + errorPos.file+":"+errorPos.line;
