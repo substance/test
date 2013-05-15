@@ -5,7 +5,7 @@ var util = (typeof exports === 'undefined') ? Substance.util : require("../util/
 
 
 function seedLocalStore(seeds) {
-  console.log('Seeding the docstore...', seeds);
+  //console.log('Seeding the docstore...', seeds);
   session.seed(seeds);
 }
 
