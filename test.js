@@ -129,7 +129,7 @@ var Test = function(testSpec) {
             }
           } catch(err) {
             if(err.log) err.log();
-            else console.log(err.toString(), err);
+            else console.log(err.toString(), err, err.stack);
             self.trigger('action:error', err, action);
             cb(err);
           }

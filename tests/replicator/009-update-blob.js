@@ -17,7 +17,7 @@ test.seeds = [
 var INSERT_IMAGE = [
       "insert",
       {
-        "id": "image:1",
+        "id": "image1",
         "type": "image",
         "target": "back",
         "data": {
@@ -31,7 +31,7 @@ var INSERT_IMAGE = [
 var UPDATED_IMAGE = [
       "update",
       {
-        "id": "image:1",
+        "id": "image1",
         "data": {
           "medium": "blob2",
           "large": "blob2",
