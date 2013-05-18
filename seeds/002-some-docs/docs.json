@@ -6,8 +6,7 @@
         "meta": {
           "creator": "michael",
           "title": "Oliver",
-          "abstract": "Enter abstract",
-          "updated_at": "2013-04-13T11:14:10.586Z"
+          "abstract": "Enter abstract"
         },
         "commits": {
           "989bc3a32e70fb69d8ae7761a1a0a647": {
@@ -19,7 +18,8 @@
               }
             ],
             "sha": "989bc3a32e70fb69d8ae7761a1a0a647",
-            "parent": null
+            "parent": null,
+            "date": "2013-04-13T11:14:10.586Z"
           },
           "e37d538ad8f1607277cc4edfb394ab26": {
             "op": [
@@ -37,7 +37,8 @@
               }
             ],
             "sha": "e37d538ad8f1607277cc4edfb394ab26",
-            "parent": "989bc3a32e70fb69d8ae7761a1a0a647"
+            "parent": "989bc3a32e70fb69d8ae7761a1a0a647",
+            "date": "2013-04-13T11:14:10.586Z"
           }
         },
         "refs": {
@@ -52,8 +53,7 @@
         "meta": {
           "creator": "michael",
           "title": "Hello World",
-          "abstract": "Enter abstract",
-          "updated_at": "2013-04-13T11:14:03.412Z"
+          "abstract": "Enter abstract"
         },
         "commits": {
           "8c25e2566b359cd2269d122a2717d345": {
@@ -65,7 +65,8 @@
               }
             ],
             "sha": "8c25e2566b359cd2269d122a2717d345",
-            "parent": null
+            "parent": null,
+            "date": "2013-04-13T11:14:10.586Z"
           },
           "e5362404da8e5518761f31ff1b9e68b5": {
             "op": [
@@ -81,7 +82,8 @@
               }
             ],
             "sha": "e5362404da8e5518761f31ff1b9e68b5",
-            "parent": "8c25e2566b359cd2269d122a2717d345"
+            "parent": "8c25e2566b359cd2269d122a2717d345",
+            "date": "2013-04-13T11:14:10.586Z"
           }
         },
         "refs": {
@@ -101,8 +103,7 @@
         "meta": {
           "creator": "oliver",
           "title": "Oliver 500",
-          "abstract": "Enter abstract",
-          "updated_at": "2013-04-13T13:46:56.537Z"
+          "abstract": "Enter abstract"
         },
         "commits": {
           "64eeb9521ccd8a290cebd015d4fb58a1": {
@@ -114,7 +115,8 @@
               }
             ],
             "sha": "64eeb9521ccd8a290cebd015d4fb58a1",
-            "parent": null
+            "parent": null,
+            "date": "2013-04-13T11:14:10.586Z"
           },
           "803a64ebc84820aff9453fbd82335510": {
             "op": [
@@ -133,7 +135,8 @@
               }
             ],
             "sha": "803a64ebc84820aff9453fbd82335510",
-            "parent": "64eeb9521ccd8a290cebd015d4fb58a1"
+            "parent": "64eeb9521ccd8a290cebd015d4fb58a1",
+            "date": "2013-04-13T11:14:10.586Z"
           }
         },
         "refs": {
@@ -148,8 +151,7 @@
         "meta": {
           "creator": "oliver",
           "title": "Oliver 3000",
-          "abstract": "Enter abstract",
-          "updated_at": "2013-04-13T13:30:21.347Z"
+          "abstract": "Enter abstract"
         },
         "commits": {
           "72ef60d8e59ef7b693e48a4600972f2d": {
@@ -161,7 +163,8 @@
               }
             ],
             "sha": "72ef60d8e59ef7b693e48a4600972f2d",
-            "parent": null
+            "parent": null,
+            "date": "2013-04-13T11:14:10.586Z"
           },
           "06e12eb047b04e7c1f919e4422b65c1a": {
             "op": [
@@ -179,7 +182,8 @@
               }
             ],
             "sha": "06e12eb047b04e7c1f919e4422b65c1a",
-            "parent": "72ef60d8e59ef7b693e48a4600972f2d"
+            "parent": "72ef60d8e59ef7b693e48a4600972f2d",
+            "date": "2013-04-13T11:14:10.586Z"
           }
         },
         "refs": {

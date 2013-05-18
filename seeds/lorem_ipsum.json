@@ -6,8 +6,7 @@
      "meta": {
       "creator": "oliver",
       "title": "Lorem ipsum",
-      "abstract": "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...",
-      "updated_at": "2013-04-16T12:28:42.593Z"
+      "abstract": "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit..."
      },
      "commits": {
       "2e0982fee1f81d0eec92171cff55593c": {
@@ -19,7 +18,8 @@
         }
        ],
        "sha": "2e0982fee1f81d0eec92171cff55593c",
-       "parent": null
+       "parent": null,
+       "date": "2013-04-16T12:28:42.593Z"
       },
       "55135e3a8994b403debba06f44cb3519": {
        "op": [
@@ -35,7 +35,8 @@
         }
        ],
        "sha": "55135e3a8994b403debba06f44cb3519",
-       "parent": "2e0982fee1f81d0eec92171cff55593c"
+       "parent": "2e0982fee1f81d0eec92171cff55593c",
+       "date": "2013-04-16T12:28:42.593Z"
       },
       "a28bc1fd2131b3d7845ecd81dd251030": {
        "op": [
@@ -69,7 +70,8 @@
         }
        ],
        "sha": "a28bc1fd2131b3d7845ecd81dd251030",
-       "parent": "55135e3a8994b403debba06f44cb3519"
+       "parent": "55135e3a8994b403debba06f44cb3519",
+       "date": "2013-04-16T12:28:42.593Z"
       },
       "477fdfda09b92eb6eebd3e0b4bbd112e": {
        "op": [
@@ -83,7 +85,8 @@
         }
        ],
        "sha": "477fdfda09b92eb6eebd3e0b4bbd112e",
-       "parent": "a28bc1fd2131b3d7845ecd81dd251030"
+       "parent": "a28bc1fd2131b3d7845ecd81dd251030",
+       "date": "2013-04-16T12:28:42.593Z"
       },
       "18055b209dae666744c0913672985cb5": {
        "op": [
@@ -98,7 +101,8 @@
         }
        ],
        "sha": "18055b209dae666744c0913672985cb5",
-       "parent": "477fdfda09b92eb6eebd3e0b4bbd112e"
+       "parent": "477fdfda09b92eb6eebd3e0b4bbd112e",
+       "date": "2013-04-16T12:28:42.593Z"
       },
       "d94fc16ca7bd1d06f6d9fd3d1465b498": {
        "op": [
@@ -113,7 +117,8 @@
         }
        ],
        "sha": "d94fc16ca7bd1d06f6d9fd3d1465b498",
-       "parent": "18055b209dae666744c0913672985cb5"
+       "parent": "18055b209dae666744c0913672985cb5",
+       "date": "2013-04-16T12:28:42.593Z"
       },
       "9bad95652f0469b7d341f31c8d3f0c4a": {
        "op": [
@@ -126,7 +131,8 @@
         }
        ],
        "sha": "9bad95652f0469b7d341f31c8d3f0c4a",
-       "parent": "d94fc16ca7bd1d06f6d9fd3d1465b498"
+       "parent": "d94fc16ca7bd1d06f6d9fd3d1465b498",
+       "date": "2013-04-16T12:28:42.593Z"
       },
       "73aad250b1893138a9770350dde9b23a": {
        "op": [
@@ -141,7 +147,8 @@
         }
        ],
        "sha": "73aad250b1893138a9770350dde9b23a",
-       "parent": "9bad95652f0469b7d341f31c8d3f0c4a"
+       "parent": "9bad95652f0469b7d341f31c8d3f0c4a",
+       "date": "2013-04-16T12:28:42.593Z"
       },
       "39c905dc06a3211fbe8f298076a665fa": {
        "op": [
@@ -154,7 +161,8 @@
         }
        ],
        "sha": "39c905dc06a3211fbe8f298076a665fa",
-       "parent": "73aad250b1893138a9770350dde9b23a"
+       "parent": "73aad250b1893138a9770350dde9b23a",
+       "date": "2013-04-16T12:28:42.593Z"
       },
       "d1e4f4ae31985b51378644e977328ad8": {
        "op": [
@@ -169,7 +177,8 @@
         }
        ],
        "sha": "d1e4f4ae31985b51378644e977328ad8",
-       "parent": "39c905dc06a3211fbe8f298076a665fa"
+       "parent": "39c905dc06a3211fbe8f298076a665fa",
+       "date": "2013-04-16T12:28:42.593Z"
       },
       "f4d2a8b46d663a9813494f2c19b91da5": {
        "op": [
@@ -182,7 +191,8 @@
         }
        ],
        "sha": "f4d2a8b46d663a9813494f2c19b91da5",
-       "parent": "d1e4f4ae31985b51378644e977328ad8"
+       "parent": "d1e4f4ae31985b51378644e977328ad8",
+       "date": "2013-04-16T12:28:42.593Z"
       },
       "021a04e27d927fdc019d48253e714dc3": {
        "op": [
@@ -197,7 +207,8 @@
         }
        ],
        "sha": "021a04e27d927fdc019d48253e714dc3",
-       "parent": "f4d2a8b46d663a9813494f2c19b91da5"
+       "parent": "f4d2a8b46d663a9813494f2c19b91da5",
+       "date": "2013-04-16T12:28:42.593Z"
       },
       "f77a5f01b66243135e5e4a2f9b2645fa": {
        "op": [
@@ -210,7 +221,8 @@
         }
        ],
        "sha": "f77a5f01b66243135e5e4a2f9b2645fa",
-       "parent": "021a04e27d927fdc019d48253e714dc3"
+       "parent": "021a04e27d927fdc019d48253e714dc3",
+       "date": "2013-04-16T12:28:42.593Z"
       }
      },
      "refs": {
