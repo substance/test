@@ -1,106 +1,129 @@
 (function() {
 
 var root = this;
-var util = (typeof exports === 'undefined') ? Substance.util : require("../util/util");
+if (typeof exports !== 'undefined') {
+  var _    = require('underscore');
+  var util   = require('./lib/util/util');
+  var seeds   = require('./lib/util/seeds');
+} else {
+  var _ = root._;
+  var util = root.Substance.util;
+  var seeds   = root.Substance.seeds;
+}
 
+// Expands the actions into a unified format.
+// For convenienve, tests maybe be declared in a simpler format.
+function compileActions(testSpec) {
 
-function seedLocalStore(seeds) {
-  //console.log('Seeding the docstore...', seeds);
-  session.seed(seeds);
+  // console.log("expand actions...");
+  var actions = [];
+  var action = null;
+
+  function action_template() {
+    return {
+      'label': [],
+      'type': testSpec.defaultType || "composer",
+      'func': null
+    };
+  }
+
+  function complete_action() {
+     actions.push(action);
+     action = action_template();
+  };
+
+  action = action_template();
+
+  _.each(testSpec.actions, function(elem) {
+    var objType = Object.prototype.toString.call(elem);
+    // actions can be declared in a declarative way in as a sequence of
+    // functions (=actions) separated by strings which are used
+    // as labels or to specify the platform
+    if(objType === '[object String]') {
+        if (elem === 'composer' || elem === 'hub') {
+          action.type = elem;
+        } else {
+          action.label.push(elem);
+        }
+    }
+    // alternatively, only the action body can be given
+    else if (objType === '[object Function]') {
+      action.func = elem;
+      complete_action();
+    }
+    // and also a direct version as object
+    else {
+      if (elem.func) action.func = action.func;
+      if (elem.label) action.label = action.label;
+      if (elem.type) action.type = action.type;
+      complete_action();
+    };
+  });
+
+  return actions;
 }
 
 var Test = function(testSpec) {
-  var self = this;
-  var def
 
-  // Expands the actions into a unified format.
-  // For convenienve, tests maybe be declared in a simpler format.
-  function buildActions() {
-    // console.log("expand actions...");
-    var _actions = [];
-    var _action = null;
+  this.id = testSpec.id;
+  this.name = testSpec.name;
+  this.category = testSpec.category;
+  this.spec = testSpec;
 
-    function action_template() {
-      return {
-        'label': [],
-        'type': testSpec.defaultType || "composer",
-        'func': null
-      };
-    }
+  // A list of actions which will be executed in turn.
+  // In test specs actions can be defined in a sparse/sloppy way.
+  // They get expanded to a unified format automatically.
+  this.actions = compileActions(testSpec);
 
-    function complete_action() {
-       _actions.push(_action);
-       _action = action_template();
-    };
+};
 
-    _action = action_template();
-
-    _.each(self.spec.actions, function(elem) {
-      var objType = Object.prototype.toString.call(elem);
-      // actions can be declared in a declarative way in as a sequence of
-      // functions (=actions) separated by strings which are used
-      // as labels or to specify the platform
-      if(objType === '[object String]') {
-          if (elem === 'composer' || elem === 'hub') {
-            _action.type = elem;
-          } else {
-            _action.label.push(elem);
-          }
-      }
-      // alternatively, only the action body can be given
-      else if (objType === '[object Function]') {
-        _action.func = elem;
-        complete_action();
-      }
-      // and also a direct version as object
-      else {
-        if (elem.func) _action.func = action.func;
-        if (elem.label) _action.label = action.label;
-        if (elem.type) _action.type = action.type;
-        complete_action();
-      };
-    });
-    self.actions = _actions;
-  }
+Test.__prototype__ = function() {
 
   this.run = function(cb) {
-
+    var self = this;
+    var spec = self.spec;
     self.seeds = []
 
     // TODO: this can be done statically (without using selector)
-    var _loadSeed = util.async.iterator({
-      selector: function() { return self.spec.seeds; },
-      iterator: function(seedName_or_seedSpec, cb) {
+    var loadSeed = util.async.iterator({
+      selector: function() { return spec.seeds; },
+      iterator: function(seedSpec, cb) {
         // console.log("load seed...");
-        // do not load a seed if it is defined inline or has been loaded already
-        var isInline = !_.isString(seedName_or_seedSpec);
-        if (isInline) {
-          util.prepareSeedSpec(seedName_or_seedSpec, function(err, seedSpec) {
-            if (err) return cb(err);
-            util.loadSeed(seedSpec, function(err, seed) {
-              if (err) return cb(err);
-              self.seeds.push(seed);
-              cb(null);
+        var isInlineSpec = !_.isString(seedSpec);
+
+        // The seed can be specified inline or be given as string referencing a seed file.
+        // For the former, the spec has to be pre-processed to initialize optional settings.
+        // For the latter, the referenced seed spec file has to be loaded.
+        function loadSeedSpec(cb) {
+          if(!isInlineSpec) {
+            seeds.loadSeedSpec(seedSpec, function(err, data) {
+              seedSpec = data;
+              cb(err);
             });
-          });
-        } else {
-          util.loadSeedSpec(seedName_or_seedSpec, function(err, seedSpec) {
-            if (err) return cb(err);
-            util.loadSeed(seedSpec, function(err, seed) {
-              if (err) return cb(err);
-              self.seeds.push(seed);
-              cb(null);
+          } else {
+            seeds.prepareSeedSpec(seedSpec, function(err, data) {
+              seedSpec = data;
+              cb(err);
             });
+          }
+        }
+
+        function loadSeed(cb) {
+          seeds.loadSeed(seedSpec, function(err, seed) {
+            if (seed) self.seeds.push(seed);
+            cb(err);
           });
         }
+
+        util.async.sequential([loadSeedSpec, loadSeed], cb);
       }
     });
 
-    var _seed = util.async.iterator({
+    var seedAll = util.async.iterator({
       selector: function() { return self.seeds; },
       iterator: function(seedSpec, cb) {
         // console.log("Seeding local store...", seedSpec.local);
-        seedLocalStore(seedSpec.local);
+        session.seed(seedSpec.local);
         // console.log("Seeding remote store...", seedSpec.remote);
         session.client.seed(seedSpec, function(err) {
           if(err) return cb(err);
@@ -139,39 +162,40 @@ var Test = function(testSpec) {
     }
 
     // Use our simple asynch chaining call
-    util.async.sequential([_loadSeed, _seed, runActions], cb);
+    util.async.sequential([loadSeed, seedAll, runActions], cb);
   };
 
-  // convenience function to create propagating callbacks instead of needing to define callbacks inline
-  this.proceed = util.propagate;
-
-  this.id = testSpec.id;
-  this.name = testSpec.name;
-  this.category = testSpec.category;
-  this.spec = testSpec;
-
-  // A list of actions which will be executed in turn.
-  // In test specs actions can be defined in a sparse/sloppy way.
-  // They get expanded to a unified format automatically.
-  this.actions = [];
-
-  // initialization
-  buildActions();
 };
 
-
+Test.prototype = new Test.__prototype__();
 _.extend(Test.prototype, util.Events);
 
-root.Substance.registerTest = function(testSpec) {
-  var test = new Test(testSpec);
+// a module used for exporting
+var test = {
+
+  Test: Test,
+
+  // a place to register tests
+  tests: {}
+
+};
+
+// a global method to register a test
+test.registerTest = function(testSpec) {
+  var newTest = new Test(testSpec);
   // HACK: for now only composer side test execution
-  test.env = "composer";
-  Substance.tests[testSpec.id] = test;
+  newTest.env = "composer";
+  test.tests[testSpec.id] = newTest;
 }
 
-root.Substance.Test = Test;
 
-// registry for all tests
-root.Substance.tests = {};
+// Export Module
+// --------
+
+if (typeof exports === 'undefined') {
+  _.extend(root.Substance, test);
+} else {
+  module.exports = test;
+}
 
 }).call(this);
