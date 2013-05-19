@@ -133,11 +133,12 @@ Test.__prototype__ = function() {
     });
 
     function runActions(cb) {
-      // TODO: prepare the actions for execution in composer or on hub, respectively
-      var funcs = _.map(self.actions, function(action) {
-        return function(cb) {
+
+      var options = {
+        items: self.actions,
+        iterator: function(action, cb) {
           try {
-            console.log("####### Test action:", action.label);
+            console.log("## Action:", action.label.join(" "));
             // asynchronous actions
             if (action.func.length == 0) {
               action.func.call(self);
@@ -156,12 +157,12 @@ Test.__prototype__ = function() {
             self.trigger('action:error', err, action);
             cb(err);
           }
-        };
-      });
-      util.async.sequential(funcs, cb);
+        }
+      };
+      util.async.each(options, cb);
     }
 
-    // Use our simple asynch chaining call
+    console.log("# Test:", self.category,"/", self.name);
     util.async.sequential([loadSeed, seedAll, runActions], cb);
   };
 
