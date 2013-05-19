@@ -6,13 +6,11 @@ test.id = '004-document-manipulation';
 test.name = 'Document Manipulation';
 test.category = 'Document';
 
-test.seeds = ['002-some-docs'];
-
 // Empty document
 var doc;
 
 test.actions = [
-  "Initialize empty document", function() {
+  "Initialization", function() {
     doc = new Substance.Document({"id": "substance-doc"});
   },
 

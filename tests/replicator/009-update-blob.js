@@ -6,13 +6,8 @@ test.id = 'replicator-009-update-blob';
 test.name = 'Replicate an Updated Blob';
 test.category = 'Replicator';
 
-test.seeds = [
-  {
-    requires: "001-boilerplate",
-    local: "lorem_ipsum.json",
-    remote: "lorem_ipsum.json"
-  }
-];
+var SEED = "lorem_ipsum.json";
+var local, remote;
 
 var INSERT_IMAGE = [
       "insert",
@@ -41,8 +36,17 @@ var UPDATED_IMAGE = [
      ];
 
 test.actions = [
-  "Init the session", function(cb) {
-    session.authenticate("oliver", "abcd", cb);
+  "Initialization", function(cb) {
+    local =  new Substance.MemoryStore();
+    remote = new Substance.MemoryStore();
+    session.localStore = local;
+    session.remoteStore = new Substance.AsyncStore(remote);
+    Substance.seeds.loadStoreSeed(SEED, function(err, seed) {
+      if(err) return cb(err);
+      local.seed(seed['oliver']);
+      remote.seed(seed['oliver']);
+      cb(null);
+    });
   },
 
   "Initial replication", function(cb) {

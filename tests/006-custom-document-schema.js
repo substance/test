@@ -6,9 +6,6 @@ test.id = '006-custom-document-schema';
 test.name = 'Custom Document Schema';
 test.category = 'Document';
 
-test.seeds = ['002-some-docs'];
-
-
 var SCHEMA = {
 
   // Views for storing order

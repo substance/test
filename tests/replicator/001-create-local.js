@@ -6,16 +6,20 @@ test.id = 'replicator-001-create-local';
 test.name = 'Create Local';
 test.category = 'Replicator';
 
-test.seeds = [
-  {
-    requires: "001-boilerplate",
-    remote: "lorem_ipsum.json"
-  }
-];
+var SEED = "lorem_ipsum.json";
+var local, remote;
 
 test.actions = [
-  "Init the session", function(cb) {
-    session.authenticate("oliver", "abcd", cb);
+  "Initialization", function(cb) {
+    local = new Substance.MemoryStore();
+    remote = new Substance.MemoryStore();
+    session.localStore = local;
+    session.remoteStore = new Substance.AsyncStore(remote);
+    Substance.seeds.loadStoreSeed(SEED, function(err, seed) {
+      if(err) return cb(err);
+      remote.seed(seed['oliver']);
+      cb(null);
+    });
   },
 
   "Document should not exist locally", function() {

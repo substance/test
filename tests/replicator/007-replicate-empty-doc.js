@@ -6,11 +6,14 @@ test.id = '007-replicate-empty-doc';
 test.name = 'Replicate Empty Doc';
 test.category = 'Replicator';
 
-test.seeds = ['002-some-docs'];
+var local, remote;
 
 test.actions = [
-  "Login", function(cb) {
-    session.authenticate("michael", "abcd", cb);
+  "Initialization", function() {
+    local =  new Substance.MemoryStore();
+    remote = new Substance.MemoryStore();
+    session.localStore = local;
+    session.remoteStore = new Substance.AsyncStore(remote);
   },
 
   "Create another doc", function() {
