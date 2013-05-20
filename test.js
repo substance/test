@@ -125,7 +125,7 @@ Test.__prototype__ = function() {
         // console.log("Seeding local store...", seedSpec.local);
         session.seed(seedSpec.local);
         // console.log("Seeding remote store...", seedSpec.remote);
-        session.client.seed(seedSpec, function(err) {
+        session.client.store.seed(seedSpec, function(err) {
           if(err) return cb(err);
           cb(null)
         });
