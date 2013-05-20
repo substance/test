@@ -8,6 +8,7 @@ test.category = 'Replicator';
 
 var SEED = "lorem_ipsum.json";
 var local, remote;
+var replicator;
 
 test.actions = [
   "Initialization", function(cb) {
@@ -15,6 +16,7 @@ test.actions = [
     remote = new Substance.MemoryStore();
     session.localStore = local;
     session.remoteStore = new Substance.AsyncStore(remote);
+    replicator = new Substance.Replicator2({local: local, remote: session.remoteStore, remoteID: "substance.io"});
     Substance.seeds.loadStoreSeed(SEED, function(err, seed) {
       if(err) return cb(err);
       remote.seed(seed['oliver']);
@@ -23,15 +25,21 @@ test.actions = [
   },
 
   "Document should not exist locally", function() {
-    assert.isFalse(session.localStore.exists("lorem_ipsum"));
+    assert.isFalse(local.exists("lorem_ipsum"));
   },
 
   "Replicate", function(cb) {
-    session.replicate(cb);
+    replicator.synch(cb);
   },
 
   "Now the document should exist locally", function() {
-    assert.isTrue(session.localStore.exists("lorem_ipsum"));
+    assert.isTrue(local.exists("lorem_ipsum"));
+  },
+
+  "Check the document's content", function() {
+    session.loadDocument("lorem_ipsum");
+    assert.isTrue(!!session.document);
+    assert.isFalse(_.isEmpty(session.document.commits));
   }
 ];
 
