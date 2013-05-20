@@ -46,7 +46,7 @@ test.actions = [
   },
 
   "Add a blob with commit locally", function() {
-    session.localStore.createBlob("lorem_ipsum", "blob1", "BASE64_BLOBDATA");
+    local.blobs.create("lorem_ipsum", "blob1", "BASE64_BLOBDATA");
     session.document.apply(OP);
   },
 
@@ -54,11 +54,9 @@ test.actions = [
     session.replicate(cb);
   },
 
-  "Now the remote store should contain the blob", function(cb) {
-    session.remoteStore.getBlob("lorem_ipsum", "blob1", function(err, blob) {
-      assert.notNull(blob, cb);
-      cb(err);
-    });
+  "Now the remote store should contain the blob", function() {
+    var blob = remote.blobs.get("lorem_ipsum", "blob1");
+    assert.notNull(blob);
   }
 ];
 

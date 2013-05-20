@@ -18,7 +18,7 @@ test.actions = [
   },
 
   "Create a new blob locally", function() {
-    session.document.store.createBlob("blob1", "BASE64_BLOBDATA");
+    session.document.store.blobs.create("blob1", "BASE64_BLOBDATA");
   },
 
   "Create a new image locally", function() {
