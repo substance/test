@@ -47,7 +47,7 @@ test.actions = [
     var info = store.getInfo(ID);
     var last = info.refs["bla"]["last"];
     // omitting the 'since' parameter should the whole branch
-    var commits = store.commits(ID, last);
+    var commits = store.commits(ID, {last: last});
     assert.isEqual(3, commits.length);
   },
 
