@@ -58,7 +58,7 @@ test.actions = [
   },
 
   "Add a blob with commit locally", function() {
-    session.localStore.createBlob("lorem_ipsum", "blob1", "BASE64_BLOBDATA");
+    local.blobs.create("lorem_ipsum", "blob1", "BASE64_BLOBDATA");
     session.document.apply(INSERT_IMAGE);
   },
 
@@ -67,7 +67,7 @@ test.actions = [
   },
 
   "Update the image", function() {
-    session.localStore.createBlob("lorem_ipsum", "blob2", "BASE64_BLOBDATA");
+    local.blobs.create("lorem_ipsum", "blob2", "BASE64_BLOBDATA");
     session.document.apply(UPDATED_IMAGE);
   },
 
