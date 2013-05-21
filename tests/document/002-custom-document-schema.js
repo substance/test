@@ -2,10 +2,6 @@
 
 var test = {};
 
-test.id = '006-custom-document-schema';
-test.name = 'Custom Document Schema';
-test.category = 'Document';
-
 var SCHEMA = {
 
   // Views for storing order
@@ -366,5 +362,6 @@ test.actions = [
 
 ];
 
-root.Substance.registerTest(test);
+root.Substance.registerTest(['Document', 'Custom Document Schema'], test);
+
 })(this);

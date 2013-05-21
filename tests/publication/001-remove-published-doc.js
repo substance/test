@@ -2,10 +2,6 @@
 
 var test = {}
 
-test.id = '002-remove-published-doc';
-test.name = 'Remove Published Doc';
-test.category = 'Publishing';
-
 test.seeds = ['002-some-docs'];
 
 test.actions = [
@@ -64,5 +60,6 @@ test.actions = [
   // }]
 ];
 
-root.Substance.registerTest(test);
+root.Substance.registerTest(['Publishing', 'Remove Published Doc'], test);
+
 })(this);

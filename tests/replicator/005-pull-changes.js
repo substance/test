@@ -2,10 +2,6 @@
 
 var test = {};
 
-test.id = 'replicator-005-pull-changes';
-test.name = 'Pull Changes';
-test.category = 'Replicator';
-
 var SEED = "lorem_ipsum.json";
 var local, remote;
 
@@ -81,5 +77,6 @@ test.actions = [
   }
 ];
 
-root.Substance.registerTest(test);
+root.Substance.registerTest(['Replicator', 'Pull Changes'], test);
+
 })(this);

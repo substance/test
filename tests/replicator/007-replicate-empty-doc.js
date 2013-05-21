@@ -1,21 +1,8 @@
 (function(root) {
 
-var test = {}
-
-test.id = '007-replicate-empty-doc';
-test.name = 'Replicate Empty Doc';
-test.category = 'Replicator';
-
-var local, remote;
+var test = new Substance.test.ReplicatorTest();
 
 test.actions = [
-  "Initialization", function() {
-    local =  new Substance.MemoryStore();
-    remote = new Substance.MemoryStore();
-    session.localStore = local;
-    session.remoteStore = new Substance.AsyncStore(remote);
-  },
-
   "Create another doc", function() {
     session.localStore.create('hello');
   },
@@ -29,5 +16,6 @@ test.actions = [
   }
 ];
 
-root.Substance.registerTest(test);
+root.Substance.registerTest(['Replicator', 'Replicate Empty Doc'], test);
+
 })(this);

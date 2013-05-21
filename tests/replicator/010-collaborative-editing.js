@@ -2,10 +2,6 @@
 
 var test = {};
 
-test.id = '003-collaborative-editing';
-test.name = 'Collaborative Editing';
-test.category = '';
-
 test.seeds = ['002-some-docs'];
 
 test.actions = [
@@ -97,5 +93,5 @@ test.actions = [
   }
 ];
 
-root.Substance.registerTest(test);
+root.Substance.registerTest(['Replicator', 'Collaborative Editing'], test);
 })(this);

@@ -11,8 +11,9 @@ assert.AssertionError = function (message) {
     var idx;
     var stackTrace = trace.stack.split('\n');
     // parse the stack trace: each line is a tuple (function, file, lineNumber)
-    // TODO: is this interpreter specific?
-    // for safari it is "<function>@<file>:<lineNumber>"
+    // Note: unfortunately this is interpreter specific
+    // safari: "<function>@<file>:<lineNumber>"
+    // chrome: "at <function>(<file>:<line>:<col>"
 
     var stack = [];
     for (idx = 0; idx < stackTrace.length; idx++) {

@@ -1,28 +1,22 @@
 (function(root) {
 
-var test = {};
+function Test(impl) {
+  this.actions = Test.actions;
+  _.extend(this, impl);
+};
 
-test.id = 'store-001-create';
-test.name = 'Create';
-test.category = 'Store';
-
-var store;
 var ID = "mydoc";
 var ID2 = "mydoc2";
 var META = {"bla": "blupp"};
 var REFS = {"bla": {"foo": "bar"}};
 
-test.actions = [
-  "Init", function() {
-    store = new Substance.MemoryStore();
-  },
-
+Test.actions = [
   "Create a doc", function() {
-    store.create(ID);
+    this.store.create(ID);
   },
 
   "Doc should exist", function() {
-    assert.isTrue(store.exists(ID));
+    assert.isTrue(this.store.exists(ID));
   },
 
   "Create a document with intial data", function() {
@@ -30,11 +24,11 @@ test.actions = [
       meta: META,
       refs: REFS
     };
-    store.create(ID2, options)
+    this.store.create(ID2, options)
   },
 
   "Document should have initial content", function() {
-    var doc = store.get(ID2);
+    var doc = this.store.get(ID2);
     assert.isDefined(doc.meta);
     assert.isEqual(META["bla"], doc.meta["bla"]);
     assert.isDefined(doc.refs);
@@ -45,5 +39,7 @@ test.actions = [
 
 ];
 
-root.Substance.registerTest(test);
+if (!root.Substance.test.store) root.Substance.test.store = {};
+root.Substance.test.store.Create = Test;
+
 })(this);

@@ -2,10 +2,6 @@
 
 var test = {};
 
-test.id = 'replicator-001-create-remote';
-test.name= 'Create Remote';
-test.category = 'Replicator';
-
 var SEED = "lorem_ipsum.json";
 var local, remote;
 
@@ -41,5 +37,6 @@ test.actions = [
   }
 ];
 
-root.Substance.registerTest(test);
+root.Substance.registerTest(['Replicator', 'Create Remote'], test);
+
 })(this);

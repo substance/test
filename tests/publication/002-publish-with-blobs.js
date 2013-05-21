@@ -1,11 +1,6 @@
 (function(root) {
 
 var test = {};
-
-test.id = '005-publish-with-blobs';
-test.name = 'Publish a version containing blobs';
-test.category = '';
-
 test.seeds = ['002-some-docs'];
 
 test.actions = [
@@ -54,5 +49,6 @@ test.actions = [
   // }
 ];
 
-root.Substance.registerTest(test);
+root.Substance.registerTest(['Publishing', 'Publish a version containing blobs'], test);
+
 })(this);

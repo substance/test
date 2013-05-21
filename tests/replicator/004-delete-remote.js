@@ -2,10 +2,6 @@
 
 var test = {};
 
-test.id = 'replicator-004-delete-remote';
-test.name = 'Delete Remote';
-test.category = 'Replicator';
-
 var SEED = "lorem_ipsum.json";
 var local, remote;
 
@@ -43,5 +39,6 @@ test.actions = [
   }
 ];
 
-root.Substance.registerTest(test);
+root.Substance.registerTest(['Replicator', 'Delete Remote'], test);
+
 })(this);

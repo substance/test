@@ -2,10 +2,6 @@
 
 var test = {};
 
-test.id = '004-document-manipulation';
-test.name = 'Document Manipulation';
-test.category = 'Document';
-
 // Empty document
 var doc;
 
@@ -257,5 +253,6 @@ test.actions = [
   },
 ];
 
-root.Substance.registerTest(test);
+root.Substance.registerTest(['Document', 'Document Manipulation'], test);
+
 })(this);
