@@ -63,30 +63,19 @@ function compileActions(testSpec) {
   return actions;
 }
 
-var Test = function(testSpec) {
-
-  this.id = testSpec.id;
-  this.name = testSpec.name;
-  this.category = testSpec.category;
-  this.spec = testSpec;
-
-  // A list of actions which will be executed in turn.
-  // In test specs actions can be defined in a sparse/sloppy way.
-  // They get expanded to a unified format automatically.
-  this.actions = compileActions(testSpec);
-
-};
+// TODO: refactor tests. Defining tests should be simple. OTOH, it should be possible to reuse
+//  tests via sub-classing...
+var Test = function() {};
 
 Test.__prototype__ = function() {
 
   this.run = function(cb) {
     var self = this;
-    var spec = self.spec;
-    self.seeds = []
+    var seedData = []
 
     // TODO: this can be done statically (without using selector)
     var loadSeed = util.async.iterator({
-      selector: function() { return spec.seeds; },
+      selector: function() { return self.seeds; },
       iterator: function(seedSpec, cb) {
         // console.log("load seed...");
         var isInlineSpec = !_.isString(seedSpec);
@@ -110,7 +99,7 @@ Test.__prototype__ = function() {
 
         function loadSeed(cb) {
           seeds.loadSeed(seedSpec, function(err, seed) {
-            if (seed) self.seeds.push(seed);
+            if (seed) seedData.push(seed);
             cb(err);
           });
         }
@@ -120,17 +109,34 @@ Test.__prototype__ = function() {
     });
 
     var seedAll = util.async.iterator({
-      selector: function() { return self.seeds; },
-      iterator: function(seedSpec, cb) {
+      selector: function() { return seedData; },
+      iterator: function(seed, cb) {
         // console.log("Seeding local store...", seedSpec.local);
-        session.seed(seedSpec.local);
+        session.seed(seed.local);
         // console.log("Seeding remote store...", seedSpec.remote);
-        session.client.store.seed(seedSpec, function(err) {
+        session.client.seed(seed, function(err) {
           if(err) return cb(err);
           cb(null)
         });
       }
     });
+
+    function setup(cb) {
+      try {
+        console.log("## Setup");
+        // asynchronous actions
+        if (self.setup.length == 0) {
+          self.setup();
+          cb(null);
+        } else {
+          self.setup(cb);
+        }
+      } catch(err) {
+        if(err.log) err.log();
+        else console.log(err.toString(), err, err.stack);
+        cb(err);
+      }
+    }
 
     function runActions(cb) {
 
@@ -159,44 +165,105 @@ Test.__prototype__ = function() {
           }
         }
       };
+
       util.async.each(options, cb);
     }
 
     console.log("# Test:", self.category,"/", self.name);
-    util.async.sequential([loadSeed, seedAll, runActions], cb);
+    util.async.sequential([loadSeed, seedAll, setup, runActions], cb);
   };
+
+  // a stub setup function called before running test action
+  this.setup = function() {};
 
 };
 
 Test.prototype = new Test.__prototype__();
 _.extend(Test.prototype, util.Events);
 
-// a module used for exporting
-var test = {
+// a place to register tests
+var tests = {}
+var testTree = {};
 
-  Test: Test,
-
-  // a place to register tests
-  tests: {}
-
-};
-
-// a global method to register a test
-test.registerTest = function(testSpec) {
-  var newTest = new Test(testSpec);
-  // HACK: for now only composer side test execution
-  newTest.env = "composer";
-  test.tests[testSpec.id] = newTest;
+function pathToId(path) {
+  var id = path.join("_");
+  id = id.replace(/[:@/]/g, "").replace(/\s/g, "_");
+  console.log("pathToId", path, id);
+  return id;
 }
 
+// a global method to register a test
+var registerTest = function(path, newTest) {
+
+  // TODO remove this legacy after refactoring old style tests
+  if(arguments.length == 1) {
+
+    newTest = path;
+    path = newTest.category ? [newTest.category] : [];
+    newTest.path = path;
+
+  } else {
+    // create an id from the path
+    newTest.id = pathToId(path);
+
+    // the last entry of the path is taken as name
+    newTest.name = path.pop();
+    newTest.path = path;
+  }
+
+  if (!(newTest instanceof Test) ) {
+    newTest = _.extend(new Test(), newTest);
+  }
+
+  // A list of actions which will be executed in turn.
+  // In test specs actions can be defined in a sparse/sloppy way.
+  // They get expanded to a unified format automatically.
+  newTest.actions = compileActions(newTest);
+
+  // HACK: for now only composer side test execution
+  newTest.env = "composer";
+  tests[newTest.id] = newTest;
+}
+
+function getTestTree() {
+  var tree = {};
+
+  _.each(tests, function(test, key) {
+    var obj = tree;
+    var subpath = [];
+    _.each(test.path, function(key) {
+      subpath.push(key);
+      if(!obj[key]) {
+        obj[key] = {
+          id: pathToId(subpath),
+          name: key
+        };
+      }
+      obj = obj[key];
+    });
+    obj[test.name] = test;
+  });
+
+  console.log(tree);
+
+  return tree;
+}
 
 // Export Module
 // --------
 
+// a module used for exporting
+var _module = {
+  Test: Test,
+  tests: tests,
+  registerTest: registerTest,
+  getTestTree: getTestTree
+};
+
 if (typeof exports === 'undefined') {
-  _.extend(root.Substance, test);
+  _.extend(root.Substance, _module);
 } else {
-  module.exports = test;
+  module.exports = _module;
 }
 
 }).call(this);
