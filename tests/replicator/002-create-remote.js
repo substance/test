@@ -1,39 +1,25 @@
 (function(root) {
 
-var test = {};
-
-var SEED = "lorem_ipsum.json";
-var local, remote;
+var test = new Substance.test.ReplicatorTest({local: true});
 
 test.actions = [
-  "Initialization", function(cb) {
-    local =  new Substance.MemoryStore();
-    remote = new Substance.MemoryStore();
-    session.localStore = local;
-    session.remoteStore = new Substance.AsyncStore(remote);
-    Substance.seeds.loadStoreSeed(SEED, function(err, seed) {
-      if(err) return cb(err);
-      local.seed(seed['oliver']);
-      cb(null);
-    });
-  },
 
-  "Document should not exist remotely", function(cb) {
-    session.remoteStore.exists("lorem_ipsum", function(err, exists) {
-      assert.isFalse(exists, cb);
-      cb(null);
-    });
+  "Document should not exist remotely", function() {
+    assert.isFalse(this.remote.exists("lorem_ipsum"));
   },
 
   "Replicate", function(cb) {
-    session.replicate(cb);
+    this.replicator.sync(cb);
   },
 
-  "Now the document should exist remotely", function(cb) {
-    session.remoteStore.exists("lorem_ipsum", function(err, exists) {
-      assert.isTrue(exists, cb);
-      cb(null);
-    });
+  "Now the document should exist remotely", function() {
+    assert.isTrue(this.remote.exists("lorem_ipsum"));
+  },
+
+  "Check the document's content", function() {
+    var doc = this.remote.get("lorem_ipsum");
+    assert.isTrue(!!doc);
+    assert.isFalse(_.isEmpty(doc.commits));
   }
 ];
 

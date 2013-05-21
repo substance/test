@@ -9,7 +9,7 @@ test.actions = [
   },
 
   "Replicate", function(cb) {
-    this.replicator.synch(cb);
+    this.replicator.sync(cb);
   },
 
   "Now the document should exist locally", function() {
