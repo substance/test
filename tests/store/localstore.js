@@ -8,13 +8,10 @@ var impl = {
     this.store.impl.clear();
   }
 };
-var test = new root.Substance.test.store.Create(impl);
-root.Substance.registerTest(["Store", "LocalStore", "Create"], test);
 
-var test = new root.Substance.test.store.Update(impl);
-root.Substance.registerTest(["Store", "LocalStore", "Update"], test);
-
-var test = new root.Substance.test.store.Commits(impl);
-root.Substance.registerTest(["Store", "LocalStore", "Commits"], test);
+_.each(root.Substance.test.store, function(testClass, name) {
+  var test = new testClass(impl);
+  root.Substance.registerTest(["Store", "LocalStore", name], test);
+});
 
 })(this);

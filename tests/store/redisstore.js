@@ -11,13 +11,10 @@ var impl = {
     this.store.impl.clear();
   }
 };
-var test = new root.Substance.test.store.Create(impl);
-root.Substance.registerTest(["Store", "RedisStore", "Create"], test);
 
-var test = new root.Substance.test.store.Update(impl);
-root.Substance.registerTest(["Store", "RedisStore", "Update"], test);
-
-var test = new root.Substance.test.store.Commits(impl);
-root.Substance.registerTest(["Store", "RedisStore", "Commits"], test);
+_.each(root.Substance.test.store, function(testClass, name) {
+  var test = new testClass(impl);
+  root.Substance.registerTest(["Store", "RedisStore", name], test);
+});
 
 })(this);
