@@ -5,10 +5,10 @@ var SEED = "lorem_ipsum.json";
 // A basic implementation used by all replicator tests.
 function ReplicatorTest(options) {
   options = options || {};
-  
+
   this.setup = function(cb) {
     var self = this;
-    
+
     this.local = new Substance.MemoryStore();
     session.localStore = this.local;
     this.remote = new Substance.MemoryStore();
@@ -17,6 +17,9 @@ function ReplicatorTest(options) {
 
     Substance.seeds.loadStoreSeed(SEED, function(err, seed) {
       if (err) return cb(err);
+      // Note: the seed contains an extra user scope which is not necessary here
+      seed = seed.oliver;
+
       if (options.local) {
         self.local.seed(seed);
       }
