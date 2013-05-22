@@ -93,5 +93,6 @@ test.actions = [
   }
 ];
 
-root.Substance.registerTest(['Replicator', 'Collaborative Editing'], test);
+root.Substance.registerTest(['Collaboration', 'Collaborative Editing'], test);
+
 })(this);
