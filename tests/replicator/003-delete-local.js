@@ -6,7 +6,6 @@ var DeleteLocal = function() {
 
   this.seeds = [{
     requires: "001-boilerplate",
-    local: "lorem_ipsum.json",
     remote: "lorem_ipsum.json"
   }];
 
