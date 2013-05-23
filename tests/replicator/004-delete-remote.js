@@ -27,6 +27,7 @@ var DeleteRemote = function() {
 
     "Now the document should have been removed remotely", function(cb) {
       this.remote.exists("lorem_ipsum", function(err, exists) {
+        if(err) return cb(err);
         assert.isFalse(exists);
         cb(null);
       });

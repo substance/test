@@ -14,6 +14,7 @@ var CreateRemote = function() {
 
     "Document should not exist remotely", function(cb) {
       this.remote.exists("lorem_ipsum", function(err, exists) {
+        if(err) return cb(err);
         assert.isFalse(exists);
         cb(null);
       });
@@ -25,6 +26,7 @@ var CreateRemote = function() {
 
     "Now the document should exist remotely", function(cb) {
       this.remote.get("lorem_ipsum", function(err, data) {
+        if(err) return cb(err);
         this.doc = data;
         assert.isDefined(data);
         cb(null);
