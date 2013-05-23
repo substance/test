@@ -2,35 +2,48 @@
 
 var SEED = "lorem_ipsum.json";
 
-// A basic implementation used by all replicator tests.
-function ReplicatorTest(options) {
-  options = options || {};
-
-  this.setup = function(cb) {
-    var self = this;
-
-    this.local = new Substance.MemoryStore();
-    session.localStore = this.local;
-    this.remote = new Substance.MemoryStore();
-    session.remoteStore = new Substance.AsyncStore(this.remote);
-    this.replicator = new Substance.Replicator2({local: this.local, remote: session.remoteStore, remoteID: "substance.io"});
-
-    Substance.seeds.loadStoreSeed(SEED, function(err, seed) {
-      if (err) return cb(err);
-      // Note: the seed contains an extra user scope which is not necessary here
-      seed = seed.oliver;
-
-      if (options.local) {
-        self.local.seed(seed);
-      }
-      if (options.remote) {
-        self.remote.seed(seed);
-      }
-      cb(null);
-    });
+// This will be mixed into a Session instance, i.e., 'this' = session
+var NEW_REPLICATOR = {
+  createReplicator: function() {
+    return new Substance.Replicator2({local: this.localStore, remote: this.remoteStore, remoteID: "substance-testing"});
   }
 };
 
-root.Substance.test.ReplicatorTest = ReplicatorTest;
+function ReplicatorTest() {
+
+}
+
+ReplicatorTest.__prototype__ = function() {
+
+  this.setup = function() {
+    // mix in the TestSession and the replicator factory
+    this.session = _.extend(new Substance.Session({env: "test"}),
+      new Substance.test.TestSession(), NEW_REPLICATOR);
+    // now re-initialize the stores
+    this.session.initStores();
+
+    console.log("Setup: this.session=", this.session);
+  };
+
+  this.tearDown = function() {
+  }
+
+};
+ReplicatorTest.prototype = new ReplicatorTest.__prototype__();
+
+ReplicatorTest.login = function(username, password) {
+  return function(cb) {
+    var self = this;
+    this.session.authenticate("oliver", "abcd", function(err) {
+      self.local = self.session.localStore;
+      self.remote = self.session.remoteStore;
+      cb(err);
+    });
+  };
+}
+
+
+root.Substance.test.replicator = root.Substance.test.replicator || {};
+root.Substance.test.replicator.ReplicatorTest = ReplicatorTest;
 
 })(this);
