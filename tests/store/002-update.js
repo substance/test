@@ -1,10 +1,5 @@
 (function(root) {
 
-function Test(impl) {
-  this.actions = Test.actions;
-  _.extend(this, impl);
-};
-
 var ID = "mydoc";
 var ID2 = ID+"2";
 var ID3 = ID+"3";
@@ -36,68 +31,106 @@ var COMMITS_INVALID = [C2_1, C2_2];
 var COMMITS_INVALID2 = [C1, C2_2];
 var TREE_REFS = {"bla": { "head": "c2_2" }, "blupp": {"head": "c3_2"}};
 
-Test.actions = [
-  "Init", function() {
-    var options = {
-      meta: META,
-      refs: REFS
-    };
-    this.store.create(ID, options);
-  },
+function Update(impl) {
+  _.extend(this, impl);
 
-  "Updating meta should preserver other data", function() {
-    this.store.update(ID, {meta: META2});
-    var doc = this.store.get(ID);
-    assert.isEqual(META["bla"], doc.meta["bla"]);
-  },
+  this.actions = [
+    "Init", function(cb) {
+      var options = {
+        meta: META,
+        refs: REFS
+      };
+      this.store.create(ID, options, cb);
+    },
 
-  "Updating refs should preserve other refs", function() {
-    this.store.update(ID, {refs: REFS2});
-    var doc = this.store.get(ID);
-    assert.isEqual(REFS["bla"]["foo"], doc.refs["bla"]["foo"]);
-  },
+    "Updating meta should preserve other data", function(cb) {
+      var self = this;
+      this.store.update(ID, {meta: META2}, function(err) {
+        if (err) return cb(err);
+        self.store.get(ID, function(err, doc) {
+          if (err) return cb(err);
+          assert.isEqual(META["bla"], doc.meta["bla"]);
+          cb(null);
+        });
+      });
+    },
 
-  "Multiple commit trees can be applied at once", function() {
-    this.store.create(ID2)
-    var success = this.store.update(ID2, {commits: COMMITS, refs: TREE_REFS});
-    assert.isTrue(success);
-    var doc = this.store.get(ID2);
-    _.each(COMMITS, function(c) {
-      assert.isDefined(doc.commits[c.sha]);
-    });
-  },
+    "Updating refs should preserve other refs", function(cb) {
+      var self = this;
+      this.store.update(ID, {refs: REFS2}, function(err) {
+        if (err) return cb(err);
+        self.store.get(ID, function(err, doc) {
+          if (err) return cb(err);
+          assert.isEqual(REFS["bla"]["foo"], doc.refs["bla"]["foo"]);
+          cb(null);
+        });
+      });
+    },
 
-  "Commits can be unsorted", function() {
-    this.store.create(ID3)
-    var success = this.store.update(ID3, {commits: COMMITS_SHUFFLED});
-    assert.isTrue(success);
-    var doc = this.store.get(ID3);
-    _.each(COMMITS, function(c) {
-      assert.isDefined(doc.commits[c.sha]);
-    });
-  },
+    "Multiple commit trees can be applied at once", function(cb) {
+      var self = this;
+      this.store.create(ID2, function(err) {
+        if (err) return cb(err);
+        self.store.update(ID2, {commits: COMMITS, refs: TREE_REFS}, function(err) {
+          if (err) return cb(err);
+          self.store.get(ID2, function(err, doc) {
+            if (err) return cb(err);
+            _.each(COMMITS, function(c) {
+              assert.isDefined(doc.commits[c.sha]);
+            });
+            cb(null);
+          });
+        });
+      });
+    },
 
-  "Reject commits with invalid parent chains", function() {
-    this.store.create(ID4)
+    "Commits can be unsorted", function(cb) {
+      var self = this;
+      this.store.create(ID3, function(err) {
+        if (err) return cb(err);
+        self.store.update(ID3, {commits: COMMITS_SHUFFLED}, function(err) {
+          if (err) return cb(err);
+          self.store.get(ID3, function(err, doc) {
+            if (err) return cb(err);
+            _.each(COMMITS, function(c) {
+              assert.isDefined(doc.commits[c.sha]);
+            });
+            cb(null);
+          });
+        });
+      });
+    },
 
-    assert.exception(function() {
-      this.store.update(ID4, {commits: COMMITS_INVALID});
-    });
+    "Reject commits with invalid parent chains", function(cb) {
+      var self = this;
+      this.store.create(ID4, function(err) {
+        if (err) return cb(err);
+        self.store.update(ID4, {commits: COMMITS_INVALID}, function(err) {
+          assert.notNull(err);
+          cb(null);
+        });
+      });
+    },
 
-    var doc = this.store.get(ID4);
-    assert.isTrue(_.isEmpty(doc.commits));
-
-    assert.exception(function() {
-      this.store.update(ID4, {commits: COMMITS_INVALID2});
-    });
-
-    doc = this.store.get(ID4);
-    assert.isTrue(_.isEmpty(doc.commits));
-  }
-
-];
+    "Reject commits with invalid parent chains - II", function(cb) {
+      var self = this;
+      this.store.get(ID4, function(err, doc) {
+        if (err) return cb(err);
+        assert.isTrue(_.isEmpty(doc.commits));
+        self.store.update(ID4, {commits: COMMITS_INVALID2}, function(err) {
+          assert.notNull(err);
+          self.store.get(ID4, function(err, doc) {
+            if (err) return cb(err);
+            assert.isTrue(_.isEmpty(doc.commits));
+            cb(null);
+          });
+        });
+      });
+    }
+  ];
+};
 
 if (!root.Substance.test.store) root.Substance.test.store = {};
-root.Substance.test.store.Update = Test;
+root.Substance.test.store.Update = Update;
 
 })(this);

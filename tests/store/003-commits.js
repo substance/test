@@ -1,10 +1,5 @@
 (function(root){
 
-function Test(impl) {
-  this.actions = Test.actions;
-  _.extend(this, impl);
-};
-
 var ID = "mydoc";
 
 function commit(id, parent) {
@@ -27,33 +22,44 @@ var C3_3 = commit("c3_3", "c3_2");
 var COMMITS = [C1, C2_1, C2_2, C3_1, C3_2, C3_3];
 var REFS = {"bla": { "last": "c2_2" }, "blupp": {"last": "c3_3"}};
 
-Test.actions = [
-  "Init", function() {
-    var options = {
-      commits: COMMITS,
-      refs: REFS
-    };
-    this.store.create(ID, options);
-  },
+function Commits(impl) {
+  _.extend(this, impl);
 
-  "Getting all commits", function() {
-    var info = this.store.getInfo(ID);
-    // omitting the 'since' parameter should the whole branch
-    var commits = this.store.commits(ID);
-    assert.isEqual(COMMITS.length, commits.length);
-  },
+  this.actions = [
+    "Init", function(cb) {
+      var options = {
+        commits: COMMITS,
+        refs: REFS
+      };
+      this.store.create(ID, options, cb);
+    },
 
-  "Getting a whole commit chain", function() {
-    var info = this.store.getInfo(ID);
-    var last = info.refs["bla"]["last"];
-    // omitting the 'since' parameter should the whole branch
-    var commits = this.store.commits(ID, {last: last});
-    assert.isEqual(3, commits.length);
-  },
+    "Getting all commits", function(cb) {
+      // omitting the 'since' parameter should the whole branch
+      this.store.commits(ID, {}, function(err, commits) {
+        if(err) return cb(err);
+        assert.isEqual(COMMITS.length, commits.length);
+        cb(null);
+      });
+    },
 
-];
+    "Getting a whole commit chain", function(cb) {
+      var self = this;
+      this.store.getInfo(ID, function(err, info) {
+        if(err) return cb(err);
+        var last = info.refs["bla"]["last"];
+        self.store.commits(ID, {last: last}, function(err, commits) {
+          if(err) return cb(err);
+          assert.isEqual(3, commits.length);
+          cb(null);
+        });
+      });
+    },
+
+  ];
+};
 
 if (!root.Substance.test.store) root.Substance.test.store = {};
-root.Substance.test.store.Commits = Test;
+root.Substance.test.store.Commits = Commits;
 
 })(this);
