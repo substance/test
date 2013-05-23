@@ -212,7 +212,7 @@ var testTree = {};
 
 function pathToId(path) {
   var id = path.join("_");
-  id = id.replace(/[:@/]/g, "").replace(/\s/g, "_");
+  id = id.replace(/[:@/()]/g, "").replace(/\s/g, "_");
   return id;
 }
 

@@ -9,7 +9,7 @@ _.each(replicationTests, function(f, name) {
 
   var test = new f();
   test.setup = function() {};
-  root.Substance.registerTest(['Replicator', "HubStore", name], test);
+  root.Substance.registerTest(['Replicator (Old)', "HubStore", name], test);
 });
 
 })(this);
