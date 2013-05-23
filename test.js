@@ -73,6 +73,31 @@ Test.__prototype__ = function() {
     var self = this;
     var seedData = []
 
+    function setup(cb) {
+
+      // Note: the global session is a singleton and must not be replaced
+      //  as event observers are attached...
+
+      // To allow to change this in future we provide the session as a member variable.
+      // Make sure to use 'this.session' in tests.
+      self.session = new Substance.Session({env:"test"});
+
+      try {
+        console.log("## Setup");
+        // asynchronous actions
+        if (self.setup.length == 0) {
+          self.setup();
+          cb(null);
+        } else {
+          self.setup(cb);
+        }
+      } catch(err) {
+        console.log("Caught error during setup:", err);
+        util.printStackTrace(err, 1);
+        cb(err);
+      }
+    }
+
     // TODO: this can be done statically (without using selector)
     var loadSeed = util.async.iterator({
       selector: function() { return self.seeds; },
@@ -112,31 +137,14 @@ Test.__prototype__ = function() {
       selector: function() { return seedData; },
       iterator: function(seed, cb) {
         // console.log("Seeding local store...", seedSpec.local);
-        session.seed(seed.local);
+        self.session.seed(seed.local);
         // console.log("Seeding remote store...", seedSpec.remote);
-        session.client.seed(seed, function(err) {
+        self.session.client.seed(seed, function(err) {
           if(err) return cb(err);
           cb(null)
         });
       }
     });
-
-    function setup(cb) {
-      try {
-        console.log("## Setup");
-        // asynchronous actions
-        if (self.setup.length == 0) {
-          self.setup();
-          cb(null);
-        } else {
-          self.setup(cb);
-        }
-      } catch(err) {
-        if(err.log) err.log();
-        else console.log(err.toString(), err, err.stack);
-        cb(err);
-      }
-    }
 
     function runActions(cb) {
 
@@ -152,14 +160,17 @@ Test.__prototype__ = function() {
               cb(null);
             } else {
               action.func.call(self, function(err, data) {
-                if (err) self.trigger('action:error', err, action);
-                else self.trigger('action:success', null, action);
+                if (err) {
+                  console.error(err.toString());
+                  util.printStackTrace(err, 1);
+                  self.trigger('action:error', err, action);
+                } else self.trigger('action:success', null, action);
                 cb(err, data);
               });
             }
           } catch(err) {
-            if(err.log) err.log();
-            else console.log(err.toString(), err, err.stack);
+            console.error(err.name+":", err.message);
+            util.printStackTrace(err, 1);
             self.trigger('action:error', err, action);
             cb(err);
           }
@@ -169,13 +180,27 @@ Test.__prototype__ = function() {
       util.async.each(options, cb);
     }
 
+    function finish(cb) {
+      console.log("# Finished Test: ", self.name);
+      cb(null);
+    }
+
     console.log("# Test:", self.category,"/", self.name);
-    util.async.sequential([loadSeed, seedAll, setup, runActions], cb);
+    var options = {
+      functions: [setup, loadSeed, seedAll, runActions, finish],
+      finally: function(err) {
+        self.tearDown();
+        initSession("test");
+        cb(err);
+      }
+    };
+    util.async.sequential(options, cb);
   };
 
   // a stub setup function called before running test action
   this.setup = function() {};
 
+  this.tearDown = function() {};
 };
 
 Test.prototype = new Test.__prototype__();
@@ -188,7 +213,6 @@ var testTree = {};
 function pathToId(path) {
   var id = path.join("_");
   id = id.replace(/[:@/]/g, "").replace(/\s/g, "_");
-  console.log("pathToId", path, id);
   return id;
 }
 
@@ -243,8 +267,6 @@ function getTestTree() {
     });
     obj[test.name] = test;
   });
-
-  console.log(tree);
 
   return tree;
 }
