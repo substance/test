@@ -2,8 +2,8 @@
 
 var TestSession = function() {
 
-  this.localStores = new TestSession.UserStores(this);
-  this.remoteStores = new TestSession.UserStores(this);
+  this.localStores = new TestSession.UserStores(this, "test:local");
+  this.remoteStores = new TestSession.UserStores(this, "test:remote");
 
   this.getUserStore = function(username) {
     return this.localStores.getUserStore(username);
@@ -22,23 +22,31 @@ var TestSession = function() {
   // Store factory
   // ----
 
-  this.createStore = function() {
+  this.createStore = function(scope) {
+
+    if (TestSession.useLocalStorage) {
+      return new Substance.LocalStore(scope);
+    }
+
     return new Substance.MemoryStore();
   }
 }
 
-TestSession.UserStores = function(factory) {
+
+TestSession.UserStores = function(factory, scope) {
   this.userStores = {};
 
   this.getUserStore = function(username) {
 
     if(!this.userStores[username]) {
-      this.userStores[username] = factory.createStore(username);
+      this.userStores[username] = factory.createStore(scope+":"+username);
     }
 
     return this.userStores[username];
   }
 }
+
+TestSession.useLocalStorage = false;
 
 root.Substance.test.TestSession = TestSession;
 
