@@ -7,8 +7,9 @@ var impl = {
     var settings = {
       scope: "test:redisstore"
     };
-    this.store = new Substance.RedisStore(settings);
-    this.store.impl.clear();
+    var _store = new Substance.RedisStore(settings);
+    _store.impl.clear();
+    this.store = new Substance.AsyncStore(_store);
   }
 };
 

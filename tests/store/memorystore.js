@@ -2,7 +2,7 @@
 
 var impl = {
   setup: function() {
-    this.store = new Substance.MemoryStore();
+    this.store = new Substance.AsyncStore(new Substance.MemoryStore());
   }
 };
 

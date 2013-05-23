@@ -1,9 +1,7 @@
 (function(root) {
 
-var test = {};
-
-var SEED = "lorem_ipsum.json";
-var local, remote;
+var util = root.Substance.util;
+var replicator = root.Substance.test.replicator;
 
 var COMMITS = [
     {
@@ -36,49 +34,50 @@ var COMMITS = [
    }
 ];
 
-test.actions = [
-  "Initialization", function(cb) {
-    local =  new Substance.MemoryStore();
-    remote = new Substance.MemoryStore();
-    this.session.localStore = local;
-    this.session.remoteStore = new Substance.AsyncStore(remote);
-    Substance.seeds.loadStoreSeed(SEED, function(err, seed) {
-      if(err) return cb(err);
-      local.seed(seed['oliver']);
-      remote.seed(seed['oliver']);
-      cb(null);
-    });
-  },
+var PushChanges = function() {
 
-  "Initial replication", function(cb) {
-    this.session.replicate(cb);
-  },
+  this.seeds = [{
+    requires: "001-boilerplate",
+    local: "lorem_ipsum.json"
+  }];
 
-  "Update the local document", function() {
-    // TODO: it should be easier to update the refs implicitely
-    var refs = {
-      master: {
-        head: _.last(COMMITS).sha,
-        last: _.last(COMMITS).sha
-      }
-    };
-    var options = {commits: COMMITS, refs: refs}
-    this.session.localStore.update("lorem_ipsum", options);
-  },
+  this.actions = [
+    "Login", replicator.ReplicatorTest.login("oliver", "abcd"),
 
-  "Replicate", function(cb) {
-    this.session.replicate(cb);
-  },
+    "Initial replication", function(cb) {
+      this.session.replicate(cb);
+    },
 
-  "Now the remote document should contain the new commit", function(cb) {
-    this.session.remoteStore.get("lorem_ipsum", function(err, doc) {
-      assert.isDefined(doc.commits[COMMITS[0].sha]);
-      assert.isDefined(doc.commits[COMMITS[1].sha]);
-      cb(null);
-    });
-  }
-];
+    "Update the local document", function() {
+      // TODO: it should be easier to update the refs implicitely
+      var refs = {
+        master: {
+          head: _.last(COMMITS).sha,
+          last: _.last(COMMITS).sha
+        }
+      };
+      var options = {commits: COMMITS, refs: refs}
+      this.session.localStore.update("lorem_ipsum", options);
+    },
 
-root.Substance.registerTest(['Replicator', 'Push Changes'], test);
+    "Replicate", function(cb) {
+      this.session.replicate(cb);
+    },
+
+    "Now the remote document should contain the new commit", function(cb) {
+      this.session.remoteStore.get("lorem_ipsum", function(err, doc) {
+        if(err) return cb(err);
+        assert.isDefined(doc);
+        assert.isDefined(doc.commits[COMMITS[0].sha]);
+        assert.isDefined(doc.commits[COMMITS[1].sha]);
+        cb(null);
+      });
+    }
+  ];
+};
+PushChanges.prototype = replicator.ReplicatorTest.prototype;
+
+replicator.PushChanges = PushChanges;
+root.Substance.registerTest(['Replicator', 'Push Changes'], new PushChanges());
 
 })(this);

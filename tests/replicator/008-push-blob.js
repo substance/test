@@ -1,13 +1,7 @@
 (function(root) {
 
-var test = {};
-
-test.id = 'replicator-008-push-blob';
-test.name = 'Push Blob';
-test.category = 'Replicator';
-
-var SEED = "lorem_ipsum.json";
-var local, remote;
+var util = root.Substance.util;
+var replicator = root.Substance.test.replicator;
 
 var OP = [
       "insert",
@@ -23,42 +17,45 @@ var OP = [
       }
      ];
 
-test.actions = [
-  "Initialization", function(cb) {
-    local =  new Substance.MemoryStore();
-    remote = new Substance.MemoryStore();
-    this.session.localStore = local;
-    this.session.remoteStore = new Substance.AsyncStore(remote);
-    Substance.seeds.loadStoreSeed(SEED, function(err, seed) {
-      if(err) return cb(err);
-      local.seed(seed['oliver']);
-      remote.seed(seed['oliver']);
-      cb(null);
-    });
-  },
+var PushBlob = function() {
 
-  "Initial replication", function(cb) {
-    this.session.replicate(cb);
-  },
+  this.seeds = [{
+    requires: "001-boilerplate",
+    local: "lorem_ipsum.json"
+  }];
 
-  "Load document", function() {
-    this.session.loadDocument("lorem_ipsum");
-  },
+  this.actions = [
+    "Login", replicator.ReplicatorTest.login("oliver", "abcd"),
 
-  "Add a blob with commit locally", function() {
-    local.createBlob("lorem_ipsum", "blob1", "BASE64_BLOBDATA");
-    this.session.document.apply(OP);
-  },
+    "Initial replication", function(cb) {
+      this.session.replicate(cb);
+    },
 
-  "Replicate", function(cb) {
-    this.session.replicate(cb);
-  },
+    "Load document", function() {
+      this.session.loadDocument("lorem_ipsum");
+    },
 
-  "Now the remote store should contain the blob", function() {
-    var blob = remote.getBlob("lorem_ipsum", "blob1");
-    assert.notNull(blob);
-  }
-];
+    "Add a blob with commit locally", function() {
+      this.session.localStore.createBlob("lorem_ipsum", "blob1", "BASE64_BLOBDATA");
+      this.session.document.apply(OP);
+    },
 
-root.Substance.registerTest(test);
+    "Replicate", function(cb) {
+      this.session.replicate(cb);
+    },
+
+    "Now the remote store should contain the blob", function(cb) {
+      this.session.remoteStore.getBlob("lorem_ipsum", "blob1", function(err, blob) {
+        if(err) return cb(err);
+        assert.isDefined(blob);
+        cb(null);
+      });
+    }
+  ];
+};
+PushBlob.prototype = replicator.ReplicatorTest.prototype;
+
+replicator.PushBlob = PushBlob;
+root.Substance.registerTest(['Replicator', 'Push Blob'], new PushBlob());
+
 })(this);

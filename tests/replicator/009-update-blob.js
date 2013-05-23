@@ -1,13 +1,7 @@
 (function(root) {
 
-var test = {};
-
-test.id = 'replicator-009-update-blob';
-test.name = 'Replicate an Updated Blob';
-test.category = 'Replicator';
-
-var SEED = "lorem_ipsum.json";
-var local, remote;
+var util = root.Substance.util;
+var replicator = root.Substance.test.replicator;
 
 var INSERT_IMAGE = [
       "insert",
@@ -35,46 +29,55 @@ var UPDATED_IMAGE = [
       }
      ];
 
-test.actions = [
-  "Initialization", function(cb) {
-    local =  new Substance.MemoryStore();
-    remote = new Substance.MemoryStore();
-    this.session.localStore = local;
-    this.session.remoteStore = new Substance.AsyncStore(remote);
-    Substance.seeds.loadStoreSeed(SEED, function(err, seed) {
-      if(err) return cb(err);
-      local.seed(seed['oliver']);
-      remote.seed(seed['oliver']);
-      cb(null);
-    });
-  },
+var UpdateBlob = function() {
 
-  "Initial replication", function(cb) {
-    this.session.replicate(cb);
-  },
+  this.seeds = [{
+    requires: "001-boilerplate",
+    local: "lorem_ipsum.json"
+  }];
 
-  "Load document", function() {
-    this.session.loadDocument("lorem_ipsum");
-  },
+  this.actions = [
+    "Login", replicator.ReplicatorTest.login("oliver", "abcd"),
 
-  "Add a blob with commit locally", function() {
-    local.createBlob("lorem_ipsum", "blob1", "BASE64_BLOBDATA");
-    this.session.document.apply(INSERT_IMAGE);
-  },
+    "Initial replication", function(cb) {
+      this.session.replicate(cb);
+    },
 
-  "Replicate", function(cb) {
-    this.session.replicate(cb);
-  },
+    "Load document", function() {
+      this.session.loadDocument("lorem_ipsum");
+    },
 
-  "Update the image", function() {
-    local.createBlob("lorem_ipsum", "blob2", "BASE64_BLOBDATA");
-    this.session.document.apply(UPDATED_IMAGE);
-  },
+    "Add a blob with commit locally", function() {
+      this.session.localStore.createBlob("lorem_ipsum", "blob1", "BASE64_BLOBDATA");
+      this.session.document.apply(INSERT_IMAGE);
+    },
 
-  "Replicate", function(cb) {
-    this.session.replicate(cb);
-  },
-];
+    "Replicate", function(cb) {
+      this.session.replicate(cb);
+    },
 
-root.Substance.registerTest(test);
+    "Update the image", function() {
+      this.session.localStore.createBlob("lorem_ipsum", "blob2", "BASE64_BLOBDATA");
+      this.session.document.apply(UPDATED_IMAGE);
+    },
+
+    "Replicate", function(cb) {
+      this.session.replicate(cb);
+    },
+
+    "Now the remote store should contain the new blob", function(cb) {
+      this.session.remoteStore.getBlob("lorem_ipsum", "blob2", function(err, blob) {
+        if(err) return cb(err);
+        assert.isDefined(blob);
+        cb(null);
+      });
+    }
+
+  ];
+};
+UpdateBlob.prototype = replicator.ReplicatorTest.prototype;
+
+replicator.UpdateBlob = UpdateBlob;
+root.Substance.registerTest(['Replicator', 'Replicate an Updated Blob'], new UpdateBlob());
+
 })(this);

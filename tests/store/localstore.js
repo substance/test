@@ -4,8 +4,9 @@ if (!Substance.LocalStore) return;
 
 var impl = {
   setup: function() {
-    this.store = new Substance.LocalStore("test:localstore");
-    this.store.impl.clear();
+    var _store = new Substance.LocalStore("test:localstore");
+    _store.impl.clear();
+    this.store = new Substance.AsyncStore(_store);
   }
 };
 

@@ -11,7 +11,7 @@ test.actions = [
     this.session.replicate(cb);
   },
 
-  "Pull empy again", function(cb) {
+  "Pull empty doc again", function(cb) {
     this.session.replicate(cb);
   }
 ];
