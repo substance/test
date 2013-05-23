@@ -3,17 +3,19 @@
 var test = {};
 test.seeds = ['002-some-docs'];
 
+var ID = "test-doc-michael-1";
+
 test.actions = [
   "Login", function(cb) {
-    session.authenticate("michael", "abcd", cb);
+    this.session.authenticate("michael", "abcd", cb);
   },
 
   "Open Doc for editing", function() {
-    session.loadDocument("test-doc-michael-1");
+    this.session.loadDocument(ID);
   },
 
   "Create a new blob locally", function() {
-    session.document.store.blobs.create("blob1", "BASE64_BLOBDATA");
+    this.session.localStore.createBlob(ID, "blob1", "BASE64_BLOBDATA");
   },
 
   "Create a new image locally", function() {
@@ -31,18 +33,18 @@ test.actions = [
       }
     ];
 
-    session.document.apply(op);
+    this.session.document.apply(op);
   },
 
   // TODO: try to create version before publication. Ensure this properly fails
   // Creating a publication implicitly creates a document entry on the hub
   "Create publication", function(cb) {
-    session.createPublication("substance", cb);
+    this.session.createPublication("substance", cb);
   },
 
   // This should fail, if there's no publication for that doc
   // "Create version", function(doc, cb) {
-  //   session.createVersion(function(err) {
+  //   self.session.createVersion(function(err) {
   //     assert.isNull(err);
   //     cb(err, doc);
   //   });

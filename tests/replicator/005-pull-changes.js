@@ -40,8 +40,8 @@ test.actions = [
   "Initialization", function(cb) {
     local =  new Substance.MemoryStore();
     remote = new Substance.MemoryStore();
-    session.localStore = local;
-    session.remoteStore = new Substance.AsyncStore(remote);
+    this.session.localStore = local;
+    this.session.remoteStore = new Substance.AsyncStore(remote);
     Substance.seeds.loadStoreSeed(SEED, function(err, seed) {
       if(err) return cb(err);
       local.seed(seed['oliver']);
@@ -51,7 +51,7 @@ test.actions = [
   },
 
   "Initial replication", function(cb) {
-    session.replicate(cb);
+    this.session.replicate(cb);
   },
 
   "Update the remote document", function(cb) {
@@ -63,15 +63,15 @@ test.actions = [
       }
     };
     var options = {commits: COMMITS, refs: refs};
-    session.remoteStore.update("lorem_ipsum", options, cb);
+    this.session.remoteStore.update("lorem_ipsum", options, cb);
   },
 
   "Replicate", function(cb) {
-    session.replicate(cb);
+    this.session.replicate(cb);
   },
 
   "Now the local document should contain the new commit", function() {
-    var doc = session.localStore.get("lorem_ipsum");
+    var doc = this.session.localStore.get("lorem_ipsum");
     assert.isDefined(doc.commits[COMMITS[0].sha]);
     assert.isDefined(doc.commits[COMMITS[1].sha]);
   }

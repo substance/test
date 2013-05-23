@@ -27,8 +27,8 @@ test.actions = [
   "Initialization", function(cb) {
     local =  new Substance.MemoryStore();
     remote = new Substance.MemoryStore();
-    session.localStore = local;
-    session.remoteStore = new Substance.AsyncStore(remote);
+    this.session.localStore = local;
+    this.session.remoteStore = new Substance.AsyncStore(remote);
     Substance.seeds.loadStoreSeed(SEED, function(err, seed) {
       if(err) return cb(err);
       local.seed(seed['oliver']);
@@ -38,24 +38,24 @@ test.actions = [
   },
 
   "Initial replication", function(cb) {
-    session.replicate(cb);
+    this.session.replicate(cb);
   },
 
   "Load document", function() {
-    session.loadDocument("lorem_ipsum");
+    this.session.loadDocument("lorem_ipsum");
   },
 
   "Add a blob with commit locally", function() {
-    local.blobs.create("lorem_ipsum", "blob1", "BASE64_BLOBDATA");
-    session.document.apply(OP);
+    local.createBlob("lorem_ipsum", "blob1", "BASE64_BLOBDATA");
+    this.session.document.apply(OP);
   },
 
   "Replicate", function(cb) {
-    session.replicate(cb);
+    this.session.replicate(cb);
   },
 
   "Now the remote store should contain the blob", function() {
-    var blob = remote.blobs.get("lorem_ipsum", "blob1");
+    var blob = remote.getBlob("lorem_ipsum", "blob1");
     assert.notNull(blob);
   }
 ];
