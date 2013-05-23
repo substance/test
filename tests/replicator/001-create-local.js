@@ -1,28 +1,40 @@
 (function(root) {
 
-var test = new Substance.test.ReplicatorTest({remote: true});
+var util = root.Substance.util;
+var replicator = root.Substance.test.replicator;
 
-test.actions = [
+var CreateLocal = function() {
 
-  "Document should not exist locally", function() {
-    assert.isFalse(this.local.exists("lorem_ipsum"));
-  },
+  this.seeds = [{
+    requires: "001-boilerplate",
+    remote: "lorem_ipsum.json"
+  }];
 
-  "Replicate", function(cb) {
-    this.replicator.sync(cb);
-  },
+  this.actions = [
+    "Login", replicator.ReplicatorTest.login("oliver", "abcd"),
 
-  "Now the document should exist locally", function() {
-    assert.isTrue(this.local.exists("lorem_ipsum"));
-  },
+    "Document should not exist locally", function() {
+      assert.isFalse(this.session.localStore.exists("lorem_ipsum"));
+    },
 
-  "Check the document's content", function() {
-    session.loadDocument("lorem_ipsum");
-    assert.isTrue(!!session.document);
-    assert.isFalse(_.isEmpty(session.document.commits));
-  }
-];
+    "Replicate", function(cb) {
+      this.session.replicate(cb);
+    },
 
-root.Substance.registerTest(['Replicator', 'Create Local'], test);
+    "Now the document should exist locally", function() {
+      assert.isTrue(this.session.localStore.exists("lorem_ipsum"));
+    },
+
+    "Check the document's content", function() {
+      this.session.loadDocument("lorem_ipsum");
+      assert.isTrue(!!this.session.document);
+      assert.isFalse(_.isEmpty(this.session.document.commits));
+    }
+  ];
+};
+CreateLocal.prototype = replicator.ReplicatorTest.prototype;
+
+replicator.CreateLocal = CreateLocal;
+root.Substance.registerTest(['Replicator', 'Create Local'], new CreateLocal());
 
 })(this);

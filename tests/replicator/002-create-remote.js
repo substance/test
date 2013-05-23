@@ -1,28 +1,45 @@
 (function(root) {
 
-var test = new Substance.test.ReplicatorTest({local: true});
+var replicator = root.Substance.test.replicator;
 
-test.actions = [
+var CreateRemote = function() {
 
-  "Document should not exist remotely", function() {
-    assert.isFalse(this.remote.exists("lorem_ipsum"));
-  },
+  this.seeds = [{
+    requires: "001-boilerplate",
+    local: "lorem_ipsum.json"
+  }];
 
-  "Replicate", function(cb) {
-    this.replicator.sync(cb);
-  },
+  this.actions = [
+    "Login", replicator.ReplicatorTest.login("oliver", "abcd"),
 
-  "Now the document should exist remotely", function() {
-    assert.isTrue(this.remote.exists("lorem_ipsum"));
-  },
+    "Document should not exist remotely", function(cb) {
+      this.remote.exists("lorem_ipsum", function(err, exists) {
+        assert.isFalse(exists);
+        cb(null);
+      });
+    },
 
-  "Check the document's content", function() {
-    var doc = this.remote.get("lorem_ipsum");
-    assert.isTrue(!!doc);
-    assert.isFalse(_.isEmpty(doc.commits));
-  }
-];
+    "Replicate", function(cb) {
+      this.session.replicate(cb);
+    },
 
-root.Substance.registerTest(['Replicator', 'Create Remote'], test);
+    "Now the document should exist remotely", function(cb) {
+      this.remote.get("lorem_ipsum", function(err, data) {
+        this.doc = data;
+        assert.isDefined(data);
+        cb(null);
+      });
+    },
+
+    "Check the document's content", function() {
+      assert.isTrue(!!doc);
+      assert.isFalse(_.isEmpty(doc.commits));
+    }
+  ];
+}
+CreateRemote.prototype = replicator.ReplicatorTest.prototype;
+
+replicator.CreateRemote = CreateRemote;
+root.Substance.registerTest(['Replicator', 'Create Remote'], new CreateRemote());
 
 })(this);

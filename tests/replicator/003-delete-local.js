@@ -1,41 +1,36 @@
 (function(root) {
 
-var test = {};
+var replicator = root.Substance.test.replicator;
+var test = new replicator.ReplicatorTest({local: true, remote:true});
 
-var SEED = "lorem_ipsum.json";
-var local, remote;
+test.seeds = [{
+  requires: "001-boilerplate",
+  local: "lorem_ipsum.json",
+  remote: "lorem_ipsum.json"
+}];
 
 test.actions = [
-  "Initialization", function(cb) {
-    local =  new Substance.MemoryStore();
-    remote = new Substance.MemoryStore();
-    session.localStore = local;
-    session.remoteStore = new Substance.AsyncStore(remote);
-    Substance.seeds.loadStoreSeed(SEED, function(err, seed) {
-      if(err) return cb(err);
-      local.seed(seed['oliver']);
-      remote.seed(seed['oliver']);
-      cb(null);
-    });
-  },
+  "Login", replicator.ReplicatorTest.login("oliver", "abcd"),
 
   "Initial replication", function(cb) {
-    session.replicate(cb);
+    this.session.replicate(cb);
   },
 
   "Delete remote document", function(cb) {
-    session.remoteStore.delete("lorem_ipsum", cb);
+    this.remote.delete("lorem_ipsum", cb);
   },
 
   "Replicate", function(cb) {
-    session.replicate(cb);
+    this.session.replicate(cb);
   },
 
   "Now the document should have been removed locally", function() {
-    assert.isFalse(session.localStore.exists("lorem_ipsum"));
+    assert.isFalse(this.local.exists("lorem_ipsum"));
   }
 ];
 
+replicator.DeleteLocal = test;
 root.Substance.registerTest(['Replicator', 'Delete Local'], test);
 
 })(this);
+
