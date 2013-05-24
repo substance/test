@@ -41,6 +41,7 @@ test.actions = [
   "After the sync all publications for that doc should be gone", function(cb) {
     var self = this;
     this.session.loadPublications(function(err) {
+      if (err) return cb(err);
       assert.isTrue(self.session.publications.length === 0);
       cb(null);
     });
