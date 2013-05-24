@@ -2,7 +2,10 @@
 
 var test = {}
 
-test.seeds = ['002-some-docs'];
+test.seeds = [{
+  requires: "boilerplate",
+  local: "some_docs.json"
+}];
 
 test.actions = [
   "Login", function(cb) {
@@ -11,6 +14,16 @@ test.actions = [
 
   "Open Doc for editing", function() {
     doc = this.session.loadDocument("test-doc-michael-1");
+  },
+
+  // Note: I think there is an inconsistency with keeping publications independent from replication.
+  // Publications should not be created by unauthorized persons, but only by creators or collaborators.
+  // Without any previous document replication the hub can not verify this.
+  // Furthermore, having a second way to claim document ids via publiations brings an extra inconsistency.
+  // Anyways, I don't see much gain in separating publications from replication - only more problems.
+  // TODO: discuss.
+  "Replicate", function(cb) {
+    this.session.replicate(cb);
   },
 
   // TODO: try to create version before publication. Ensure this properly fails

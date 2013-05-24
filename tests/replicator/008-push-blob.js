@@ -20,7 +20,7 @@ var OP = [
 var PushBlob = function() {
 
   this.seeds = [{
-    requires: "001-boilerplate",
+    requires: "boilerplate",
     local: "lorem_ipsum.json"
   }];
 

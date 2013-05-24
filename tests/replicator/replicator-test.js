@@ -1,7 +1,5 @@
 (function(root) {
 
-var SEED = "lorem_ipsum.json";
-
 // This will be mixed into a Session instance, i.e., 'this' = session
 var NEW_REPLICATOR = {
   createReplicator: function() {
@@ -9,9 +7,7 @@ var NEW_REPLICATOR = {
   }
 };
 
-function ReplicatorTest() {
-
-}
+function ReplicatorTest() {}
 
 ReplicatorTest.__prototype__ = function() {
 

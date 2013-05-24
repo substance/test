@@ -1,7 +1,11 @@
 (function(root) {
 
 var test = {};
-test.seeds = ['002-some-docs'];
+
+test.seeds = [{
+  requires: "boilerplate",
+  local: "some_docs.json"
+}];
 
 var ID = "test-doc-michael-1";
 
@@ -34,6 +38,10 @@ test.actions = [
     ];
 
     this.session.document.apply(op);
+  },
+
+  "Replicate", function(cb) {
+    this.session.replicate(cb);
   },
 
   // TODO: try to create version before publication. Ensure this properly fails

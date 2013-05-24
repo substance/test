@@ -37,7 +37,7 @@ var COMMITS = [
 var PullChanges = function() {
 
   this.seeds = [{
-    requires: "001-boilerplate",
+    requires: "boilerplate",
     remote: "lorem_ipsum.json"
   }];
 

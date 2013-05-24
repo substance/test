@@ -2,11 +2,18 @@
 
 var test = {};
 
-test.seeds = ['002-some-docs'];
+test.seeds = [{
+  requires: "boilerplate",
+  local: "some_docs.json"
+}];
 
 test.actions = [
   "Login", function(cb) {
     this.session.authenticate("michael", "abcd", cb);
+  },
+
+  "Initial replication", function(cb) {
+    this.session.replicate(cb);
   },
 
   "Open Doc for editing", function() {

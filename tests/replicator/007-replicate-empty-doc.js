@@ -2,6 +2,10 @@
 
 var test = new Substance.test.replicator.ReplicatorTest();
 
+test.seeds = [{
+  requires: "boilerplate",
+}]
+
 test.actions = [
   "Create another doc", function() {
     this.session.localStore.create('hello');

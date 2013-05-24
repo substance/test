@@ -6,7 +6,7 @@ var replicator = root.Substance.test.replicator;
 var CreateLocal = function() {
 
   this.seeds = [{
-    requires: "001-boilerplate",
+    requires: "boilerplate",
     remote: "lorem_ipsum.json"
   }];
 

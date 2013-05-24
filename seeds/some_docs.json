@@ -5,7 +5,7 @@
         "id": "test-doc-michael-1",
         "meta": {
           "creator": "michael",
-          "title": "Oliver",
+          "title": "Michael 1",
           "abstract": "Enter abstract"
         },
         "commits": {
@@ -26,13 +26,8 @@
               "set",
               {
                 "title": [
-                  -5,
-                  "O",
-                  1,
-                  "iv",
-                  1,
-                  -1,
-                  "r"
+                  -8,
+                  "Michael 1"
                 ]
               }
             ],

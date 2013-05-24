@@ -32,7 +32,7 @@ var UPDATED_IMAGE = [
 var UpdateBlob = function() {
 
   this.seeds = [{
-    requires: "001-boilerplate",
+    requires: "boilerplate",
     local: "lorem_ipsum.json"
   }];
 
