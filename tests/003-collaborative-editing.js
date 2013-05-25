@@ -91,12 +91,21 @@ test.actions = [
   "Now Oliver performs a sync (conflict situation!)", function(cb) {
     var self = this;
     this.session.authenticate("oliver", "abcd", function(err) {
-      self.session.replicate(cb);
+      self.session.replicate(function(err) {
+        if(err && !(err instanceof Substance.errors.ReplicationError)) return cb(err);
+        assert.isTrue(err instanceof Substance.errors.ReplicationError);
+        cb(null);
+      });
     });
   },
 
+  // TODO: eventually this is probably not what we want.
+  // It would be better, to let the user decide what to do
+  //  (e.g., revert + sync + trying to reapply the changes)
+
   "Michael's change should be the winner", function() {
     var doc = this.session.loadDocument("test-doc-michael-1");
+    assert.isDefined(doc.nodes['text:xyz']);
     assert.isTrue(doc.nodes['text:xyz'].content === "Michael's text.");
     assert.isTrue(doc.nodes['text:abcd'] === undefined);
   }
