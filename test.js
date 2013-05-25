@@ -75,12 +75,10 @@ Test.__prototype__ = function() {
 
     function setup(cb) {
 
-      // Note: the global session is a singleton and must not be replaced
-      //  as event observers are attached...
-
       // To allow to change this in future we provide the session as a member variable.
       // Make sure to use 'this.session' in tests.
       self.session = new Substance.Session({env:"test"});
+      Substance.session = self.session;
 
       try {
         console.log("## Setup");
@@ -190,7 +188,6 @@ Test.__prototype__ = function() {
       functions: [setup, loadSeed, seedAll, runActions, finish],
       finally: function(err) {
         self.tearDown();
-        initSession("test");
         cb(err);
       }
     };

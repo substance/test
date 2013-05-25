@@ -18,6 +18,8 @@ ReplicatorTest.__prototype__ = function() {
     // now re-initialize the stores
     this.session.initStores();
 
+    Substance.session = this.session;
+
     console.log("Setup: this.session=", this.session);
   };
 
