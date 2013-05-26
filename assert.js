@@ -109,3 +109,16 @@ assert.isDefined = function(obj, cb) {
 assert.isUndefined = function(obj, cb) {
   assert.equal(undefined, obj, cb);
 };
+
+assert.isArrayEqual = function(expected, actual) {
+  var msg = "Assertion failed. Expected="+JSON.stringify(expected)+", actual="+JSON.stringify(actual);
+  if (expected === actual) return;
+
+  // false when only one is null or undefined
+  if ((!expected || !actual)
+    || (expected.length !== actual.length)) assert.fail(msg);
+
+  for (var idx=0; idx < expected.length; idx++) {
+    if (expected[idx] !== actual[idx]) assert.fail(msg);
+  }
+};
