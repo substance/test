@@ -35,16 +35,22 @@ RESULTS = _.reduce(INDEX, function(memo, e) {
 }, {});
 RESULTS[ROOT] = 0;
 
-ID_IDX = 0;
+ID_IDX = 1;
+function _uuid(idx) {
+  return (idx < 10) ? "0"+idx : ""+idx;
+}
 function uuid() {
-  return ID(ID_IDX++);
+  return _uuid(ID_IDX++);
 }
 
+function next_uuid() {
+  return _uuid(ID_IDX);
+}
 
 var Basics = function() {
 
   this.setup = function() {
-    ID_IDX = 0;
+    ID_IDX = 1;
     this.index = Chronicle.Index.create();
     this.chronicle = Chronicle.create(this.index);
     Chronicle.HYSTERICAL = true;
@@ -57,24 +63,18 @@ var Basics = function() {
   this.actions = [
 
     "Apply some more operations", function() {
+      // Attention: these call will automatically increment the UUIDs
       for (var idx=0; idx < 4; idx++) {
         this.comp[OP(idx)](VAL(idx));
       }
-
       this.chronicle.reset("03");
-
       for (var idx=4; idx < 6; idx++) {
         this.comp[OP(idx)](VAL(idx));
       }
-
       this.chronicle.reset(ROOT);
-
       for (var idx=6; idx < 8; idx++) {
         this.comp[OP(idx)](VAL(idx));
       }
-
-      console.log("oooO", this.index);
-
       this.comp.reset();
     },
 
@@ -145,9 +145,49 @@ var Basics = function() {
       _.each(seq, function(id) {
         this.chronicle.reset(id);
         assert.isEqual(RESULTS[id], this.comp.result);
+        assert.isEqual(id, this.comp.getHead());
       }, this);
     },
 
+    "Merge 01 into 02 (nothing to be done)", function() {
+      this.chronicle.reset("02");
+      var count = this.index.list().length;
+      this.chronicle.merge("01");
+      // no additional change should have been applied
+      assert.isEqual(count, this.index.list().length);
+    },
+
+    "Merge 02 into 01 (fast-forward, no extra change)", function() {
+      this.chronicle.reset("01");
+      var count = this.index.list().length;
+      this.chronicle.merge("02");
+      // no additional change should have been applied
+      assert.isEqual(count, this.index.list().length);
+      assert.isEqual("02", this.comp.getHead());
+    },
+
+    "Merge 08 into 02 by rejecting theirs", function() {
+      this.chronicle.reset("02");
+      this.M1 = next_uuid();
+      this.chronicle.merge("08", "mine");
+      // a new change should have been created
+      assert.isTrue(this.index.contains(this.M1));
+      assert.isEqual(this.M1, this.comp.getHead());
+
+      this.chronicle.reset(ROOT);
+      this.chronicle.reset(this.M1);
+
+      // the value should be the same as that of 02
+      assert.isEqual(this.M1, this.comp.getHead());
+      assert.isEqual(RESULTS["02"], this.comp.result);
+    },
+
+    "Move from M1 to 08 (reverting the merge)", function() {
+      this.chronicle.reset(this.M1);
+      this.chronicle.apply("08");
+      assert.isEqual("08", this.comp.getHead());
+      assert.isEqual(RESULTS["08"], this.comp.result);
+    },
   ];
 };
 
