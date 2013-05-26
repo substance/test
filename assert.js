@@ -69,14 +69,37 @@ assert.fail = function(msg, cb) {
   throw exc;
 };
 
-assert.exception = function(func, cb) {
-  var thrown = false;
-  try {
-    func();
-  } catch (err) {
-    thrown = true;
+assert.exception = function(clazz, func, that) {
+
+  if (arguments.length == 1) {
+    func = clazz;
+    clazz = undefined;
+    that = undefined;
+  } else if (arguments.length == 2) {
+    if (!_.isFunction(arguments[1])) {
+      that = func;
+      func = clazz;
+      clazz = undefined;
+    }
   }
-  _assert(thrown, "Assertion failed. Expected an exception in "+func.toString());
+
+  var thrown = false;
+  var typeOk = clazz ? false : true;
+
+  var err;
+  try {
+    func.call(that);
+  } catch (_err) {
+    err = _err;
+    thrown = true;
+    if (clazz && err instanceof clazz) typeOk = true;
+  }
+  if (thrown && typeOk) return;
+  if(thrown) {
+    console.log(err.toString());
+    assert.fail("Assertion failed. Caught exception of wrong type in "+func.toString());
+  }
+  assert.fail("Assertion failed. Expected an exception in "+func.toString());
 };
 
 assert.equal = function(expected, actual, cb) {
