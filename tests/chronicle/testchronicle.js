@@ -46,51 +46,33 @@ VersionedComputador.__prototype__ = function() {
     div:  __super__.times
   };
 
-  this.plus = function(val) {
-    __super__.plus.call(this, val);
+  function adapt(name) {
+    return function(val) {
+      __super__[name].call(this, val);
+      this.chronicle.record({
+        op: name,
+        val: val
+      });
+    };
+  }
 
-    this.chronicle.record({
-      op: "plus",
-      val: val
-    });
-  };
-  
-  this.minus = function(val) {
-    __super__.minus.call(this, val);
-
-    this.chronicle.record({
-      op: "minus",
-      val: val
-    });
-    
-  };
+  this.plus = adapt("plus");
+  this.minus = adapt("minus");
+  this.div = adapt("div");
   
   this.times = function(val) {
     var orig = this.result;
-    
     __super__.times.call(this, val);
-
     var rec = {
       op: "times",
       val: val
     };
-
     // to preserve invertibility we have to store the old value
     // in this case
     if(val < 10E-8) {
       rec.orig = orig;
     }
-
     this.chronicle.record(rec);
-  };
-  
-  div = function(change) {
-    __super__.div.call(this, val);
-
-    this.chronicle.record({
-      op: "div",
-      val: val
-    });
   };
   
   this.apply = function(change) {
