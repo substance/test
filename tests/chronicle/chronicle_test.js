@@ -59,13 +59,11 @@ var ChronicleTest = function() {
   };
 
   this.setup = function() {
+    Chronicle.HYSTERICAL = true;
     ID_IDX = 1;
     this.index = Chronicle.Index.create();
     this.chronicle = Chronicle.create(this.index);
-    Chronicle.HYSTERICAL = true;
     this.comp = new testchronicle.VersionedComputador(this.chronicle);
-    // TODO: the cyclic dependency is somewhat messy... rethink.
-    this.chronicle.manage(this.comp);
     Chronicle.uuid = this.uuid;
 
     this.fixture();

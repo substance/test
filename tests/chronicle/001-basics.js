@@ -107,44 +107,44 @@ var Basics = function() {
 
       var seq = ["07", "05", "04", ROOT, "06", "08", "03", "01", "02"];
       _.each(seq, function(id) {
-        this.chronicle.reset(id);
+        this.chronicle.open(id);
         assert.isEqual(this.RESULTS[id], this.comp.result);
-        assert.isEqual(id, this.comp.getHead());
+        assert.isEqual(id, this.comp.getState());
       }, this);
     },
 
     "Transition: simple forward", function() {
 
-      this.chronicle.reset(ROOT);
-      this.chronicle.apply("01", "02", "03");
-      assert.isEqual("03", this.comp.getHead());
+      this.chronicle.open(ROOT);
+      this.chronicle.step("01", "02", "03");
+      assert.isEqual("03", this.comp.getState());
       assert.isEqual(this.RESULTS["03"], this.comp.result);
 
     },
 
     "Transition: simple revert", function() {
 
-      this.chronicle.reset("02");
-      this.chronicle.apply("01");
-      assert.isEqual("01", this.comp.getHead());
+      this.chronicle.open("02");
+      this.chronicle.step("01");
+      assert.isEqual("01", this.comp.getState());
       assert.isEqual(this.RESULTS["01"], this.comp.result);
 
     },
 
     "Transition: revert and apply", function() {
 
-      this.chronicle.reset("04");
-      this.chronicle.apply("03", "05");
-      assert.isEqual("05", this.comp.getHead());
+      this.chronicle.open("04");
+      this.chronicle.step("03", "05");
+      assert.isEqual("05", this.comp.getState());
       assert.isEqual(this.RESULTS["05"], this.comp.result);
 
     },
 
     "Transition: across ROOT", function() {
 
-      this.chronicle.reset("01");
-      this.chronicle.apply(ROOT, "07");
-      assert.isEqual("07", this.comp.getHead());
+      this.chronicle.open("01");
+      this.chronicle.step(ROOT, "07");
+      assert.isEqual("07", this.comp.getState());
       assert.isEqual(this.RESULTS["07"], this.comp.result);
 
     },
