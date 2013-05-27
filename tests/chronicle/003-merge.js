@@ -5,6 +5,13 @@ var Chronicle = root.Substance.Chronicle;
 var ChronicleTest = root.Substance.test.ChronicleTest;
 var ROOT = Chronicle.Index.ROOT_ID;
 
+// Index structure:
+//
+// ROOT - 01 - 02 - 03 - 04
+//    |              |
+//    |                - 05 - 06
+//      - 07 - 08
+
 var Merge = function() {
 
   ChronicleTest.call(this);
@@ -60,7 +67,7 @@ var Merge = function() {
       assert.isEqual(this.RESULTS["08"], this.comp.result);
     },
 
-    "Move across merge (reverting the merge)", function() {
+    "Traversal across merge (reverting the merge)", function() {
       this.chronicle.reset(this.M1);
       var path = [this.M1, "08"];
       for (var idx=0; idx < 2; idx++) {
@@ -70,6 +77,28 @@ var Merge = function() {
       this.chronicle.apply(path);
       assert.isEqual("08", this.comp.getHead());
       assert.isEqual(this.RESULTS["08"], this.comp.result);
+    },
+
+    "Manual merging", function() {
+      this.chronicle.reset("04");
+      // to compare the result apply "06" manually
+      this.op(5);
+      var expected = this.comp.result;
+
+      this.chronicle.reset("04");
+      this.M3 = this.next_uuid();
+      this.chronicle.merge("06", "manual", {sequence: ["04", "06"]});
+      assert.isTrue(this.index.contains(this.M3));
+      assert.isEqual(this.M3, this.comp.getHead());
+
+      assert.isEqual(expected, this.comp.result);
+    },
+
+    "Traversal across manual merge", function() {
+      this.chronicle.reset(this.M3);
+      this.chronicle.apply(["06", "05"]);
+      assert.isEqual("05", this.comp.getHead());
+      assert.isEqual(this.RESULTS["05"], this.comp.result);
     },
   ];
 };
