@@ -37,8 +37,7 @@ var Merge = function() {
 
     "Merge 08 into 02 by rejecting theirs", function() {
       this.chronicle.open("02");
-      this.M1 = this.next_uuid();
-      this.chronicle.merge("08", "mine");
+      this.M1 = this.chronicle.merge("08", "mine");
       // a new change should have been created
       assert.isTrue(this.index.contains(this.M1));
       assert.isEqual(this.M1, this.comp.getState());
@@ -53,8 +52,7 @@ var Merge = function() {
 
     "Merge 08 into 02 by rejecting mine", function() {
       this.chronicle.open("02");
-      this.M2 = this.next_uuid();
-      this.chronicle.merge("08", "theirs");
+      this.M2 = this.chronicle.merge("08", "theirs");
       // a new change should have been created
       assert.isTrue(this.index.contains(this.M2));
       assert.isEqual(this.M2, this.comp.getState());
@@ -86,8 +84,7 @@ var Merge = function() {
       var expected = this.comp.result;
 
       this.chronicle.open("04");
-      this.M3 = this.next_uuid();
-      this.chronicle.merge("06", "manual", {sequence: ["04", "06"]});
+      this.M3 = this.chronicle.merge("06", "manual", {sequence: ["04", "06"]});
       assert.isTrue(this.index.contains(this.M3));
       assert.isEqual(this.M3, this.comp.getState());
 
