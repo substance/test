@@ -1,6 +1,7 @@
 (function(root) {
 
-var util = root.Substance.util;
+var assert = root.Substance.assert;
+var _ = root._;
 var replicator = root.Substance.test.replicator;
 
 var CreateLocal = function() {

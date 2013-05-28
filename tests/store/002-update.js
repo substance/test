@@ -1,5 +1,8 @@
 (function(root) {
 
+var assert = root.Substance.assert;
+var _ = root._;
+
 var ID = "mydoc";
 var ID2 = ID+"2";
 var ID3 = ID+"3";
@@ -8,6 +11,8 @@ var META = {"bla": "blupp"};
 var META2 = {"foo": "bar"};
 var REFS = {"bla": {"foo": "bar"}};
 var REFS2 = {"bla": {"bla": "blupp"}};
+var BLA = "bla";
+var FOO = "foo";
 
 function commit(id, parent) {
   var target = parent || "back";
@@ -29,7 +34,7 @@ var COMMITS = [C1, C2_1, C2_2, C3_1, C3_2];
 var COMMITS_SHUFFLED = [C2_1, C3_2, C1, C2_2, C3_1];
 var COMMITS_INVALID = [C2_1, C2_2];
 var COMMITS_INVALID2 = [C1, C2_2];
-var TREE_REFS = {"bla": { "head": "c2_2" }, "blupp": {"head": "c3_2"}};
+var TREE_REFS = {BLA: { "head": "c2_2" }, "blupp": {"head": "c3_2"}};
 
 function Update(impl) {
   _.extend(this, impl);
@@ -49,7 +54,7 @@ function Update(impl) {
         if (err) return cb(err);
         self.store.get(ID, function(err, doc) {
           if (err) return cb(err);
-          assert.isEqual(META["bla"], doc.meta["bla"]);
+          assert.isEqual(META[BLA], doc.meta[BLA]);
           cb(null);
         });
       });
@@ -61,7 +66,7 @@ function Update(impl) {
         if (err) return cb(err);
         self.store.get(ID, function(err, doc) {
           if (err) return cb(err);
-          assert.isEqual(REFS["bla"]["foo"], doc.refs["bla"]["foo"]);
+          assert.isEqual(REFS[BLA][FOO], doc.refs[BLA][FOO]);
           cb(null);
         });
       });
@@ -128,7 +133,7 @@ function Update(impl) {
       });
     }
   ];
-};
+}
 
 if (!root.Substance.test.store) root.Substance.test.store = {};
 root.Substance.test.store.Update = Update;

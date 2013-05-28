@@ -1,5 +1,7 @@
 (function(root) {
 
+var assert = root.Substance.assert;
+
 var test = {};
 
 test.seeds = [{

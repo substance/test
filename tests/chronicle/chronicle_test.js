@@ -1,13 +1,13 @@
 (function(root) {
 
-var util = root.Substance.util;
+var _ = root._;
 var testchronicle = root.Substance.test.chronicle;
 var Chronicle = root.Substance.Chronicle;
 
-__ID__ = 0;
-__OP__ = 1;
-__VAL__ = 2;
-__RESULT__ = 3;
+var __ID__ = 0;
+var __OP__ = 1;
+var __VAL__ = 2;
+var __RESULT__ = 3;
 
 var ROOT = Chronicle.Index.ROOT_ID;
 
@@ -29,13 +29,13 @@ var INDEX = [
   ["08", "minus", 2, -3], // = -3
 ];
 
-function ID(i) {return INDEX[i][__ID__];};
-function OP(i) {return INDEX[i][__OP__];};
-function VAL(i) {return INDEX[i][__VAL__];};
+//function ID(i) {return INDEX[i][__ID__];}
+function OP(i) {return INDEX[i][__OP__];}
+function VAL(i) {return INDEX[i][__VAL__];}
+
+var ID_IDX = 1;
 
 var ChronicleTest = function() {
-
-  this.ID_IDX = 1;
 
   this.RESULTS = _.reduce(INDEX, function(memo, e) {
     memo[e[__ID__]] = e[__RESULT__]; return memo;
@@ -44,7 +44,7 @@ var ChronicleTest = function() {
 
   function _uuid(idx) {
     return (idx < 10) ? "0"+idx : ""+idx;
-  };
+  }
 
   this.uuid = function() {
     return _uuid(ID_IDX++);
@@ -71,19 +71,20 @@ var ChronicleTest = function() {
 
   this.fixture = function() {
     // Attention: these call will automatically increment the UUIDs
-    for (var idx=0; idx < 4; idx++) {
+    var idx;
+    for (idx=0; idx < 4; idx++) {
       this.comp[OP(idx)](VAL(idx));
     }
     this.chronicle.reset("03");
-    for (var idx=4; idx < 6; idx++) {
+    for (idx=4; idx < 6; idx++) {
       this.comp[OP(idx)](VAL(idx));
     }
     this.chronicle.reset(ROOT);
-    for (var idx=6; idx < 8; idx++) {
+    for (idx=6; idx < 8; idx++) {
       this.comp[OP(idx)](VAL(idx));
     }
     this.comp.reset();
-  }
+  };
 
 };
 

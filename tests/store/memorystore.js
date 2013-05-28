@@ -1,5 +1,8 @@
 (function(root) {
 
+var _ = root._;
+var Substance = root.Substance;
+
 var impl = {
   setup: function() {
     this.store = new Substance.AsyncStore(new Substance.MemoryStore());

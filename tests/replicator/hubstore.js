@@ -1,5 +1,6 @@
 (function(root) {
 
+var _ = root._;
 var replicationTests = root.Substance.test.replicator;
 var without = ["ReplicatorTest"];
 

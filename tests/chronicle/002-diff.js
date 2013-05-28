@@ -1,6 +1,6 @@
 (function(root) {
 
-var util = root.Substance.util;
+var assert = root.Substance.assert;
 var Chronicle = root.Substance.Chronicle;
 var ChronicleTest = root.Substance.test.ChronicleTest;
 var ROOT = Chronicle.Index.ROOT_ID;

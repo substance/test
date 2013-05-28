@@ -1,5 +1,7 @@
 (function(root) {
 
+var Substance = root.Substance;
+
 var TestSession = function() {
 
   this.localStores = new TestSession.UserStores(this, "test:local");
@@ -7,7 +9,7 @@ var TestSession = function() {
 
   this.getUserStore = function(username) {
     return this.localStores.getUserStore(username);
-  }
+  };
 
   this.getClient = function() {
     var self = this;
@@ -17,7 +19,7 @@ var TestSession = function() {
         return new Substance.AsyncStore(self.remoteStores.getUserStore(username));
       }
     });
-  }
+  };
 
   // Store factory
   // ----
@@ -29,8 +31,8 @@ var TestSession = function() {
     }
 
     return new Substance.MemoryStore();
-  }
-}
+  };
+};
 
 
 TestSession.UserStores = function(factory, scope) {
@@ -43,8 +45,8 @@ TestSession.UserStores = function(factory, scope) {
     }
 
     return this.userStores[username];
-  }
-}
+  };
+};
 
 TestSession.useLocalStorage = false;
 

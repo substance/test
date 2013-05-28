@@ -1,5 +1,7 @@
 (function(root) {
 
+var assert = root.Substance.assert;
+var _ = root._;
 var replicator = root.Substance.test.replicator;
 
 var CreateRemote = function() {
@@ -25,20 +27,21 @@ var CreateRemote = function() {
     },
 
     "Now the document should exist remotely", function(cb) {
+      var self = this;
       this.remote.get("lorem_ipsum", function(err, data) {
         if(err) return cb(err);
-        this.doc = data;
+        self.doc = data;
         assert.isDefined(data);
         cb(null);
       });
     },
 
     "Check the document's content", function() {
-      assert.isTrue(!!doc);
-      assert.isFalse(_.isEmpty(doc.commits));
+      assert.isTrue(!!this.doc);
+      assert.isFalse(_.isEmpty(this.doc.commits));
     }
   ];
-}
+};
 CreateRemote.prototype = replicator.ReplicatorTest.prototype;
 
 replicator.CreateRemote = CreateRemote;

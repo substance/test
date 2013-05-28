@@ -1,5 +1,10 @@
 (function(root) {
 
+var Substance = root.Substance;
+var assert = root.Substance.assert;
+var _ = root._;
+var ELIFE_DOCUMENT = root.ELIFE_DOCUMENT;
+
 var test = {};
 
 var SCHEMA = {

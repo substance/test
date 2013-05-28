@@ -1,5 +1,6 @@
 (function(root) {
 
+var assert = root.Substance.assert;
 var replicator = root.Substance.test.replicator;
 
 var DeleteLocal = function() {
@@ -28,7 +29,7 @@ var DeleteLocal = function() {
       assert.isFalse(this.local.exists("lorem_ipsum"));
     }
   ];
-}
+};
 DeleteLocal.prototype = replicator.ReplicatorTest.prototype;
 
 replicator.DeleteLocal = DeleteLocal;

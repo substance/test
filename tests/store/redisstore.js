@@ -1,5 +1,8 @@
 (function(root) {
 
+var _ = root._;
+var Substance = root.Substance;
+
 if (!Substance.RedisStore) return;
 
 var impl = {

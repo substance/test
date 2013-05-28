@@ -1,6 +1,6 @@
 (function(root) {
 
-var util = root.Substance.util;
+var assert = root.Substance.assert;
 var Chronicle = root.Substance.Chronicle;
 var ChronicleTest = root.Substance.test.ChronicleTest;
 var ROOT = Chronicle.Index.ROOT_ID;
@@ -70,7 +70,7 @@ var Merge = function() {
       var path = [this.M1, "08"];
       for (var idx=0; idx < 2; idx++) {
         path.unshift(this.next_uuid());
-        this.op(idx);;
+        this.op(idx);
       }
       this.chronicle.step(path);
       assert.isEqual("08", this.comp.getState());

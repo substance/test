@@ -1,6 +1,7 @@
 (function(root) {
 
-var util = root.Substance.util;
+var assert = root.Substance.assert;
+var _ = root._;
 var replicator = root.Substance.test.replicator;
 
 var COMMITS = [
@@ -56,7 +57,7 @@ var PushChanges = function() {
           last: _.last(COMMITS).sha
         }
       };
-      var options = {commits: COMMITS, refs: refs}
+      var options = {commits: COMMITS, refs: refs};
       this.session.localStore.update("lorem_ipsum", options);
     },
 

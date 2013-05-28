@@ -1,13 +1,14 @@
 (function(root) {
 
-var test = {};
+var assert = root.Substance.assert;
+var Document = root.Substance.Document;
+var _ = root._;
 
-// Empty document
-var doc;
+var test = {};
 
 test.actions = [
   "Initialization", function() {
-    doc = new Substance.Document({"id": "substance-doc"});
+    this.doc = new Document({"id": "substance-doc"});
   },
 
   "Create heading", function() {
@@ -23,7 +24,7 @@ test.actions = [
       }
     ];
 
-    doc.apply(op);
+    this.doc.apply(op);
   },
 
   "Create text element", function() {
@@ -39,7 +40,7 @@ test.actions = [
       }
     ];
 
-    doc.apply(op);
+    this.doc.apply(op);
   },
 
   "Create some more text elements", function() {
@@ -68,12 +69,12 @@ test.actions = [
       }
     ];
 
-    doc.apply(op1);
-    doc.apply(op2);
+    this.doc.apply(op1);
+    this.doc.apply(op2);
   },
 
   "Verify populated doc", function() {
-    assert.isTrue(_.isEqual(doc.views.content, ["text:2", "heading:1", "text:1", "text:3"]));
+    assert.isTrue(_.isEqual(this.doc.views.content, ["text:2", "heading:1", "text:1", "text:3"]));
   },
 
   "Move operation", function() {
@@ -85,8 +86,8 @@ test.actions = [
       }
     ];
 
-    doc.apply(op);
-    assert.isTrue(_.isEqual(doc.views["content"], ["text:1", "text:2", "heading:1", "text:3"]));
+    this.doc.apply(op);
+    assert.isTrue(_.isEqual(this.doc.views["content"], ["text:1", "text:2", "heading:1", "text:3"]));
   },
 
   "Create a new comment", function() {
@@ -102,7 +103,7 @@ test.actions = [
       }
     ];
 
-    doc.apply(op);
+    this.doc.apply(op);
   },
 
 
@@ -132,24 +133,24 @@ test.actions = [
       }
     ];
 
-    doc.apply(op);
-    doc.apply(op2);
+    this.doc.apply(op);
+    this.doc.apply(op2);
   },
 
   "Test indexes", function() {
 
     // Get comments for text:1
-    var comments = doc.find("comments", "text:1");
+    var comments = this.doc.find("comments", "text:1");
     assert.equal(comments.length, 1);
     assert.equal(comments[0].id, "comment:1");
 
     // Get annotations for text:1
-    var annotations = doc.find("annotations", "text:1");
+    var annotations = this.doc.find("annotations", "text:1");
     assert.equal(annotations.length, 1);
     assert.equal(annotations[0].id, "annotation:1");
 
     // Get comments for annotation:1
-    var comments = doc.find("comments", "annotation:1");
+    comments = this.doc.find("comments", "annotation:1");
     assert.equal(comments.length, 1);
     assert.equal(comments[0].id, "comment:2");
 
@@ -164,16 +165,16 @@ test.actions = [
     ];
 
     // Delete element, then check indexes again
-    doc.apply(op);
+    this.doc.apply(op);
 
     // Get comments for annotation:1
-    var comments = doc.find("comments", "annotation:1");
+    var comments = this.doc.find("comments", "annotation:1");
     assert.equal(comments.length, 0);
   },
 
   "Iteration", function() {
     var count = 0;
-    doc.each(function(element) {
+    this.doc.each(function() {
       count++;
     });
 
@@ -192,14 +193,14 @@ test.actions = [
       }
     ];
 
-    doc.apply(op);
+    this.doc.apply(op);
 
     // Annotation no longer sticks on text:1
-    var annotations = doc.find('annotations', 'text:1');
+    var annotations = this.doc.find('annotations', 'text:1');
     assert.equal(annotations.length, 0);
 
     // Should be returned when querying for annotations, text:2
-    var annotations = doc.find('annotations', 'text:2');
+    annotations = this.doc.find('annotations', 'text:2');
     assert.equal(annotations.length, 1);
   },
 
@@ -226,10 +227,10 @@ test.actions = [
       }
     ];
 
-    doc.apply(op);
-    doc.apply(op2);
+    this.doc.apply(op);
+    this.doc.apply(op2);
 
-    var node = doc.nodes["comment:3"];
+    var node = this.doc.nodes["comment:3"];
     assert.equal(node.content, "John Doe");
 
   },
@@ -246,9 +247,9 @@ test.actions = [
       }
     ];
 
-    doc.apply(op);
+    this.doc.apply(op);
 
-    var node = doc.nodes["annotation:1"];
+    var node = this.doc.nodes["annotation:1"];
     assert.isTrue(_.isEqual(node.pos, [1, 27]));
   },
 ];

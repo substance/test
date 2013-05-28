@@ -1,5 +1,8 @@
 (function(root) {
 
+var Substance = root.Substance;
+var _ = root._;
+
 // This will be mixed into a Session instance, i.e., 'this' = session
 var NEW_REPLICATOR = {
   createReplicator: function() {
@@ -24,7 +27,7 @@ ReplicatorTest.__prototype__ = function() {
   };
 
   this.tearDown = function() {
-  }
+  };
 
 };
 ReplicatorTest.prototype = new ReplicatorTest.__prototype__();
@@ -32,13 +35,13 @@ ReplicatorTest.prototype = new ReplicatorTest.__prototype__();
 ReplicatorTest.login = function(username, password) {
   return function(cb) {
     var self = this;
-    this.session.authenticate("oliver", "abcd", function(err) {
+    this.session.authenticate(username, password, function(err) {
       self.local = self.session.localStore;
       self.remote = self.session.remoteStore;
       cb(err);
     });
   };
-}
+};
 
 
 root.Substance.test.replicator = root.Substance.test.replicator || {};

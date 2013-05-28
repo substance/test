@@ -1,9 +1,12 @@
 (function(root) {
 
-var util = root.Substance.util;
-var errors = root.Substance.errors;
-var Chronicle = root.Substance.Chronicle;
-var ChronicleTest = root.Substance.test.ChronicleTest;
+var Substance = root.Substance;
+var errors = Substance.errors;
+var assert = Substance.assert;
+var _ = root._;
+
+var Chronicle = Substance.Chronicle;
+var ChronicleTest = Substance.test.ChronicleTest;
 var ROOT = Chronicle.Index.ROOT_ID;
 
 // Index structure:
@@ -13,17 +16,15 @@ var ROOT = Chronicle.Index.ROOT_ID;
 //    |                - 05 - 06
 //      - 07 - 08
 
-C1 = {id: "01", data: "bla", parents: [ROOT]};
-OP = function(op, val, id, parents) {
-  return new Chronicle.Change({
-    id: id,
-    data: { op: op, val: val},
-    parents: _.isArray(parents) ? parents : [parents]
-  });
+var C1 = new Chronicle.Change(ROOT, "bla", {id: "01"});
+var OP = function(op, val, id, parent) {
+  var data = { op: op, val: val };
+  var options = { id: id };
+  return new Chronicle.Change(parent, data, options);
 };
-PLUS = function(id, parents) {
+var PLUS = function(id, parents) {
   return OP("plus", 1, id, parents);
-}
+};
 
 var Basics = function() {
 
@@ -37,12 +38,12 @@ var Basics = function() {
   this.actions = [
 
     "Index: add", function() {
-      this.index.add(new Chronicle.Change(C1));
+      this.index.add(C1);
       assert.isTrue(this.index.contains(C1.id));
 
       // should reject
       assert.exception(errors.SubstanceError, function() {
-        this.index.add(PLUS())
+        this.index.add(PLUS("bla", "doesnotexist"));
       }, this);
     },
 

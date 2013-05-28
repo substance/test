@@ -1,6 +1,6 @@
 (function(root) {
 
-var util = root.Substance.util;
+var assert = root.Substance.assert;
 var replicator = root.Substance.test.replicator;
 
 var INSERT_IMAGE = [

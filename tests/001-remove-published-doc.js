@@ -1,6 +1,8 @@
 (function(root) {
 
-var test = {}
+var assert = root.Substance.assert;
+
+var test = {};
 
 test.seeds = [{
   requires: "boilerplate",
@@ -13,7 +15,7 @@ test.actions = [
   },
 
   "Open Doc for editing", function() {
-    doc = this.session.loadDocument("test-doc-michael-1");
+    this.session.loadDocument("test-doc-michael-1");
   },
 
   // Note: I think there is an inconsistency with keeping publications independent from replication.

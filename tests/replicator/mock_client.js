@@ -2,6 +2,7 @@
 
 var Substance = root.Substance;
 var seeds = root.Substance.seeds;
+var _ = root._;
 
 var MockClient = function(impl) {
   _.extend(this, impl);
@@ -22,7 +23,7 @@ MockClient.__prototype__ = function() {
 
   this.authenticate = function(name, password, cb) {
     cb(null, {token: "abcd"});
-  }
+  };
 
   this.seed = function(seed, cb) {
     var self = this;

@@ -1,5 +1,7 @@
-// for now only these two functions.
-// if necessary we could pull in something more sophisticated such as chai.js
+(function(root) {
+
+var _ = root._;
+
 var assert = {};
 
 assert.AssertionError = function (message) {
@@ -48,8 +50,9 @@ assert.AssertionError.prototype.log = function() {
   console.log(this.message);
   _.each(this.stack, function(frame) {
     console.log(frame.file+":"+frame.line);
-  })
-}
+  });
+};
+
 assert.AssertionError.prototype.toString = function() {
   var errorPos = this.stack[0];
   return this.message + " at " + errorPos.file+":"+errorPos.line;
@@ -61,7 +64,7 @@ var _assert = function(assertion, msg, cb) {
     if (cb) cb(msg);
     throw exc;
   }
-}
+};
 
 assert.fail = function(msg, cb) {
   var exc = new assert.AssertionError(msg);
@@ -138,10 +141,14 @@ assert.isArrayEqual = function(expected, actual) {
   if (expected === actual) return;
 
   // false when only one is null or undefined
-  if ((!expected || !actual)
-    || (expected.length !== actual.length)) assert.fail(msg);
+  if ((!expected || !actual) ||
+    (expected.length !== actual.length)) assert.fail(msg);
 
   for (var idx=0; idx < expected.length; idx++) {
     if (expected[idx] !== actual[idx]) assert.fail(msg);
   }
 };
+
+root.Substance.assert = assert;
+
+})(this);

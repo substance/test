@@ -1,10 +1,12 @@
 (function(root) {
 
+var Substance = root.Substance;
+
 var test = new Substance.test.replicator.ReplicatorTest();
 
 test.seeds = [{
   requires: "boilerplate",
-}]
+}];
 
 test.actions = [
   "Create another doc", function() {

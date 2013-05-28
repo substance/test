@@ -1,5 +1,6 @@
 (function(root) {
 
+var assert = root.Substance.assert;
 var replicator = root.Substance.test.replicator;
 
 var DeleteRemote = function() {
@@ -32,7 +33,7 @@ var DeleteRemote = function() {
       });
     }
   ];
-}
+};
 DeleteRemote.prototype = replicator.ReplicatorTest.prototype;
 
 replicator.DeleteRemote = DeleteRemote;

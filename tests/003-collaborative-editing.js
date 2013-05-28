@@ -1,5 +1,8 @@
 (function(root) {
 
+var assert = root.Substance.assert;
+var Substance = root.Substance;
+
 var test = {};
 
 test.seeds = [{
@@ -78,6 +81,7 @@ test.actions = [
     ];
 
     this.session.authenticate("michael", "abcd", function(err) {
+      if (err) return cb(err);
       self.session.loadDocument("test-doc-michael-1");
       self.session.document.apply(op);
       cb(null);
@@ -91,6 +95,7 @@ test.actions = [
   "Now Oliver performs a sync (conflict situation!)", function(cb) {
     var self = this;
     this.session.authenticate("oliver", "abcd", function(err) {
+      if (err) return cb(err);
       self.session.replicate(function(err) {
         if(err && !(err instanceof Substance.errors.ReplicationError)) return cb(err);
         assert.isTrue(err instanceof Substance.errors.ReplicationError);

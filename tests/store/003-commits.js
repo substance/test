@@ -1,6 +1,11 @@
 (function(root){
 
+var assert = root.Substance.assert;
+var _ = root._;
+
 var ID = "mydoc";
+var BLA = "bla";
+var LAST = "last";
 
 function commit(id, parent) {
   var target = parent || "back";
@@ -47,7 +52,7 @@ function Commits(impl) {
       var self = this;
       this.store.getInfo(ID, function(err, info) {
         if(err) return cb(err);
-        var last = info.refs["bla"]["last"];
+        var last = info.refs[BLA][LAST];
         self.store.commits(ID, {last: last}, function(err, commits) {
           if(err) return cb(err);
           assert.isEqual(3, commits.length);
@@ -57,7 +62,7 @@ function Commits(impl) {
     },
 
   ];
-};
+}
 
 if (!root.Substance.test.store) root.Substance.test.store = {};
 root.Substance.test.store.Commits = Commits;

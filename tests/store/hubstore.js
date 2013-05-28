@@ -1,5 +1,7 @@
 (function(root) {
 
+var _ = root._;
+
 var impl = {
   setup: function(cb) {
     var self = this;
