@@ -3,7 +3,7 @@
 var assert = root.Substance.assert;
 var Chronicle = root.Substance.Chronicle;
 var ChronicleTest = root.Substance.test.ChronicleTest;
-var ROOT = Chronicle.Index.ROOT_ID;
+var ROOT = Chronicle.Index.ROOT.id;
 
 var Diff = function() {
 

@@ -9,7 +9,7 @@ var __OP__ = 1;
 var __VAL__ = 2;
 var __RESULT__ = 3;
 
-var ROOT = Chronicle.Index.ROOT_ID;
+var ROOT = Chronicle.Index.ROOT.id;
 
 // Index structure:
 //

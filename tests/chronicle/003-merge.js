@@ -3,7 +3,7 @@
 var assert = root.Substance.assert;
 var Chronicle = root.Substance.Chronicle;
 var ChronicleTest = root.Substance.test.ChronicleTest;
-var ROOT = Chronicle.Index.ROOT_ID;
+var ROOT = Chronicle.Index.ROOT.id;
 
 // Index structure:
 //
@@ -67,12 +67,10 @@ var Merge = function() {
 
     "Traversal across merge (reverting the merge)", function() {
       this.chronicle.open(this.M1);
-      var path = [this.M1, "08"];
       for (var idx=0; idx < 2; idx++) {
-        path.unshift(this.next_uuid());
         this.op(idx);
       }
-      this.chronicle.step(path);
+      this.chronicle.open("08");
       assert.isEqual("08", this.comp.getState());
       assert.isEqual(this.RESULTS["08"], this.comp.result);
     },
@@ -93,7 +91,7 @@ var Merge = function() {
 
     "Traversal across manual merge", function() {
       this.chronicle.open(this.M3);
-      this.chronicle.step(["06", "05"]);
+      this.chronicle.open("05");
       assert.isEqual("05", this.comp.getState());
       assert.isEqual(this.RESULTS["05"], this.comp.result);
     },
