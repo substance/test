@@ -1,6 +1,7 @@
 (function(root) {
 
 var assert = root.Substance.assert;
+var errors = root.Substance.errors;
 var Chronicle = root.Substance.Chronicle;
 var ChronicleTest = root.Substance.test.ChronicleTest;
 var ROOT = Chronicle.Index.ROOT.id;
@@ -11,13 +12,15 @@ var TEXT2 = "Lorem ipsum amet";
 var TEXT3 = "Lorem ipsum dolor amet";
 var TEXT4 = "Lorem ipsum dolor sit amet";
 var TEXT5 = "Lorem sit amet";
-var TEXT_M1 = "Lorem ipsum sit amet";
+var TEXT_M1 = "Lorem sit ipsum amet";
 
 var OP1 = new TextOperation(['+', 0, "Lorem amet"]);
 var OP2 = new TextOperation(['+', 6, "ipsum "]);
 var OP3 = new TextOperation(['+', 12, "dolor "]);
 var OP4 = new TextOperation(['+', 18, "sit "]);
-var OP5 = new TextOperation(['+', 6, "sit "]);
+
+var OP5_1 = new TextOperation(['+', 6, "sit "]);
+var OP5_2 = new TextOperation(['+', 5, " sit"]);
 
 // Index:
 //
@@ -40,13 +43,18 @@ var TextOperationTest = function() {
       this.chronicle.open(this.ID1);
       assert.isEqual(TEXT1, this.document.getText());
 
-      this.chronicle.open(this.ID5);
+      this.chronicle.open(this.ID5_1);
       assert.isEqual(TEXT5, this.document.getText());
     },
 
     "Merge (simple)", function() {
       this.chronicle.open(this.ID2);
-      this.M1 = this.chronicle.merge(this.ID5, "manual", {sequence: [this.ID2, this.ID5]});
+      // This should fail due to a conflict
+      assert.exception(errors.ChronicleError, function() {
+        this.chronicle.merge(this.ID5_1, "manual", {sequence: [this.ID2, this.ID5_1]});
+      }, this);
+      // This should be ok
+      this.M1 = this.chronicle.merge(this.ID5_2, "manual", {sequence: [this.ID2, this.ID5_2]});
       this.chronicle.open(this.M1);
       assert.isEqual(TEXT_M1, this.document.getText());
     },
@@ -80,7 +88,9 @@ TextOperationTest.__prototype__ = function() {
     this.ID3 = this.document.apply(OP3);
     this.ID4 = this.document.apply(OP4);
     this.chronicle.open(this.ID1);
-    this.ID5 = this.document.apply(OP5);
+    this.ID5_1 = this.document.apply(OP5_1);
+    this.chronicle.open(this.ID1);
+    this.ID5_2 = this.document.apply(OP5_2);
     this.chronicle.open("ROOT");
   };
 
