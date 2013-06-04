@@ -4,7 +4,7 @@ var assert = root.Substance.assert;
 var Chronicle = root.Substance.Chronicle;
 var ChronicleTest = root.Substance.test.ChronicleTest;
 var ROOT = Chronicle.Index.ROOT.id;
-var ot = root.ot;
+var TextOperation = Chronicle.OT.TextOperation;
 
 var TEXT1 = "Lorem amet";
 var TEXT2 = "Lorem ipsum amet";
@@ -13,11 +13,11 @@ var TEXT4 = "Lorem ipsum dolor sit amet";
 var TEXT5 = "Lorem sit amet";
 var TEXT_M1 = "Lorem ipsum sit amet";
 
-var OP1 = new ot.TextOperation().insert("Lorem amet"); // (0, 10)
-var OP2 = new ot.TextOperation().retain(6).insert("ipsum ").retain(4); // (10, 16)
-var OP3 = new ot.TextOperation().retain(12).insert("dolor ").retain(4); // (16, 22)
-var OP4 = new ot.TextOperation().retain(18).insert("sit ").retain(4); // (22, 26)
-var OP5 = new ot.TextOperation().retain(6).insert("sit ").retain(4); // (10, 14)
+var OP1 = new TextOperation(['+', 0, "Lorem amet"]);
+var OP2 = new TextOperation(['+', 6, "ipsum "]);
+var OP3 = new TextOperation(['+', 12, "dolor "]);
+var OP4 = new TextOperation(['+', 18, "sit "]);
+var OP5 = new TextOperation(['+', 6, "sit "]);
 
 // Index:
 //
