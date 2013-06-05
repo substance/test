@@ -12,23 +12,27 @@ var TEXT2 = "Lorem ipsum amet";
 var TEXT3 = "Lorem ipsum dolor amet";
 var TEXT4 = "Lorem ipsum dolor sit amet";
 var TEXT5 = "Lorem sit amet";
-var TEXT_M1 = "Lorem sit ipsum amet";
+var TEXT_M1 = "Lorem ipsum sit amet";
 
 var OP1 = new TextOperation(['+', 0, "Lorem amet"]);
-var OP2 = new TextOperation(['+', 6, "ipsum "]);
+var OP2 = new TextOperation(['+', 5, " ipsum"]);
 var OP3 = new TextOperation(['+', 12, "dolor "]);
 var OP4 = new TextOperation(['+', 18, "sit "]);
 
-var OP5_1 = new TextOperation(['+', 6, "sit "]);
-var OP5_2 = new TextOperation(['+', 5, " sit"]);
+var OP5_1 = new TextOperation(['+', 5, " sit"]);
+var OP5_2 = new TextOperation(['+', 6, "sit "]);
 
 // Index:
 //
-// ROOT - 1 - 2 - 3 - 4
-//        |     \
-//        |       M1
-//          - 5 /
-//
+// ROOT - 1 - 2  - 3 - 4
+//        |    \
+//        |      ---
+//        |          \
+//        |            M1
+//        |          /
+//        |---- 5_2
+//        |
+//         ---- 5_1 (fails when merged with 2)
 
 
 var TestDocument;
@@ -50,9 +54,10 @@ var TextOperationTest = function() {
     "Merge (simple)", function() {
       this.chronicle.open(this.ID2);
       // This should fail due to a conflict
-      assert.exception(errors.ChronicleError, function() {
+      assert.exception(Chronicle.MergeConflict, function() {
         this.chronicle.merge(this.ID5_1, "manual", {sequence: [this.ID2, this.ID5_1]});
       }, this);
+
       // This should be ok
       this.M1 = this.chronicle.merge(this.ID5_2, "manual", {sequence: [this.ID2, this.ID5_2]});
       this.chronicle.open(this.M1);
@@ -72,10 +77,11 @@ TextOperationTest.__prototype__ = function() {
   };
 
   this.setup = function() {
-    this.ID_IDX = 1;
     Chronicle.HYSTERICAL = true;
     this.index = Chronicle.Index.create();
     this.chronicle = Chronicle.create(this.index);
+
+    ID_IDX = 1;
     Chronicle.uuid = this.uuid;
 
     this.document = new TestDocument(this.chronicle);
