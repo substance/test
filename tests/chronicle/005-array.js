@@ -7,18 +7,25 @@ var ArrayOperation = Chronicle.OT.ArrayOperation;
 // Index:
 //
 // ROOT - 1  -  2  -  3  -  4  -  5
+//        |                 \
+//        |                   M1 (1,2,6,4)
+//        |---  6  ---------/
 
 var OP_1 = new ArrayOperation([ArrayOperation.INS, 1, 0]);
 var OP_2 = new ArrayOperation([ArrayOperation.INS, 3, 1]);
 var OP_3 = new ArrayOperation([ArrayOperation.INS, 2, 1]);
 var OP_4 = new ArrayOperation([ArrayOperation.MOV, 0, 3]);
 var OP_5 = new ArrayOperation([ArrayOperation.DEL, 3, 1]);
+var OP_6 = new ArrayOperation([ArrayOperation.INS, 4, 1]);
 
 var ARR_1 = [1];
 var ARR_2 = [1,3];
 var ARR_3 = [1,2,3];
 var ARR_4 = [2,3,1];
 var ARR_5 = [2,1];
+var ARR_6 = [1,4];
+
+var ARR_M1 = [3,4,1];
 
 var ArrayOperationTest = function() {
 
@@ -38,6 +45,15 @@ var ArrayOperationTest = function() {
 
       this.chronicle.open(this.ID2);
       assert.isArrayEqual(ARR_2, this.array);
+    },
+
+    "Brutal merge", function() {
+      this.chronicle.open(this.ID4);
+      this.ID_M1 = this.chronicle.merge(this.ID6, "manual", {sequence: [this.ID2, this.ID6, this.ID4]});
+
+      this.chronicle.open("ROOT");
+      this.chronicle.open(this.ID_M1);
+      assert.isArrayEqual(ARR_M1, this.array);
     },
 
   ];
@@ -77,6 +93,8 @@ ArrayOperationTest.__prototype__ = function() {
     this.ID3 = this.apply(OP_3);
     this.ID4 = this.apply(OP_4);
     this.ID5 = this.apply(OP_5);
+    this.chronicle.reset(this.ID1);
+    this.ID6 = this.apply(OP_6);
     this.chronicle.reset("ROOT");
   };
 
