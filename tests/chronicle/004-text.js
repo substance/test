@@ -1,10 +1,7 @@
 (function(root) {
 
 var assert = root.Substance.assert;
-var errors = root.Substance.errors;
 var Chronicle = root.Substance.Chronicle;
-var ChronicleTest = root.Substance.test.ChronicleTest;
-var ROOT = Chronicle.Index.ROOT.id;
 var TextOperation = Chronicle.OT.TextOperation;
 
 var TEXT1 = "Lorem amet";
@@ -37,6 +34,18 @@ var OP5_2 = new TextOperation(['+', 6, "sit "]);
 
 var TestDocument;
 
+function testTransform(a, b, input, expected) {
+
+  var t = TextOperation.transform(a, b);
+
+  var s = t[1].apply(a.apply(input));
+  assert.isEqual(expected, s);
+
+  s = t[0].apply(b.apply(input));
+  assert.isEqual(expected, s);
+
+}
+
 var TextOperationTest = function() {
 
   this.actions = [
@@ -49,6 +58,93 @@ var TextOperationTest = function() {
 
       this.chronicle.open(this.ID5_1);
       assert.isEqual(TEXT5, this.document.getText());
+
+      this.chronicle.open(this.ID3);
+      assert.isEqual(TEXT3, this.document.getText());
+
+      this.chronicle.open(this.ID2);
+      assert.isEqual(TEXT2, this.document.getText());
+    },
+
+    "Transformation: a=Insert, b=Insert, a before b", function() {
+
+      var input = "Lorem ipsum";
+      var expected = "Lorem bla ipsum blupp";
+      var a = new TextOperation(['+', 6, "bla "]);
+      var b = new TextOperation(['+', 11, " blupp"]);
+
+      // transformation should be symmetric in this case
+      testTransform(a, b, input, expected);
+      testTransform(b, a, input, expected);
+    },
+
+    "Transformation: a=Insert, b=Insert, same position", function() {
+      // a before b
+      var input = "Lorem ipsum";
+      var expected = "Lorem bla blupp ipsum";
+      var expected_2 = "Lorem blupp bla ipsum";
+      var a = new TextOperation(['+', 6, "bla "]);
+      var b = new TextOperation(['+', 6, "blupp "]);
+
+      testTransform(a, b, input, expected);
+      testTransform(b, a, input, expected_2);
+    },
+
+    "Transformation: a=Delete, b=Delete, a before b, no overlap", function() {
+
+      var input = "Lorem ipsum dolor sit amet";
+      var expected = "Lorem dolor amet";
+      var a = new TextOperation(['-', 6, "ipsum "]);
+      var b = new TextOperation(['-', 18, "sit "]);
+
+      testTransform(a, b, input, expected);
+      testTransform(b, a, input, expected);
+    },
+
+    "Transformation: a=Delete, b=Delete, with overlap", function() {
+
+      var input = "Lorem ipsum dolor sit amet";
+      var expected = "Lorem amet";
+      var a = new TextOperation(['-', 6, "ipsum dolor sit "]);
+      var b = new TextOperation(['-', 12, "dolor "]);
+
+      testTransform(a, b, input, expected);
+      testTransform(b, a, input, expected);
+    },
+
+    "Transformation: a=Delete, b=Delete, same position", function() {
+
+      var input = "Lorem ipsum dolor sit amet";
+      var expected = "Lorem amet";
+      var a = new TextOperation(['-', 6, "ipsum dolor "]);
+      var b = new TextOperation(['-', 6, "ipsum dolor sit "]);
+
+      testTransform(a, b, input, expected);
+      testTransform(b, a, input, expected);
+
+    },
+
+    "Transformation: a=Insert, b=Delete, a before b", function() {
+
+      var input = "Lorem dolor sit amet";
+      var expected = "Lorem ipsum dolor amet";
+      var a = new TextOperation(['+', 6, "ipsum "]);
+      var b = new TextOperation(['-', 12, "sit "]);
+
+      testTransform(a, b, input, expected);
+      testTransform(b, a, input, expected);
+
+    },
+
+    "Transformation: a=Insert, b=Delete, overlap", function() {
+
+      var input = "Lorem dolor sit amet";
+      var expected = "Lorem amet";
+      var a = new TextOperation(['+', 12, "ipsum "]);
+      var b = new TextOperation(['-', 6, "dolor sit "]);
+
+      testTransform(a, b, input, expected);
+      testTransform(b, a, input, expected);
     },
 
     "Merge (simple)", function() {
@@ -104,7 +200,7 @@ TextOperationTest.__prototype__ = function() {
 TextOperationTest.prototype = new TextOperationTest.__prototype__();
 
 // ROOT - 1 - 2 - 3 - 4
-var TestDocument = function(chronicle) {
+TestDocument = function(chronicle) {
   this.text = "";
   this.chronicle = chronicle;
   chronicle.manage(new Chronicle.TextOperationAdapter(chronicle, this));
