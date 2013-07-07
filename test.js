@@ -1,19 +1,19 @@
-(function() {
+(function(root) {
 
-var root = this;
+var _,
+    util;
+
 if (typeof exports !== 'undefined') {
-  var _    = require('underscore');
-  var util   = require('./lib/util/util');
-  var seeds   = require('./lib/util/seeds');
+  _    = require('underscore');
+  util   = require('substance-util');
 } else {
-  var _ = root._;
-  var util = root.Substance.util;
-  var seeds   = root.Substance.seeds;
+  _ = root._;
+  util = root.Substance.util;
 }
 
 // Expands the actions into a unified format.
 // For convenienve, tests maybe be declared in a simpler format.
-function compileActions(testSpec) {
+var compileActions = function(testSpec) {
 
   // console.log("expand actions...");
   var actions = [];
@@ -21,8 +21,7 @@ function compileActions(testSpec) {
 
   function action_template() {
     return {
-      'label': [],
-      'type': testSpec.defaultType || "composer",
+      'label': "unknown",
       'func': null
     };
   }
@@ -30,7 +29,7 @@ function compileActions(testSpec) {
   function complete_action() {
      actions.push(action);
      action = action_template();
-  };
+  }
 
   action = action_template();
 
@@ -40,11 +39,7 @@ function compileActions(testSpec) {
     // functions (=actions) separated by strings which are used
     // as labels or to specify the platform
     if(objType === '[object String]') {
-        if (elem === 'composer' || elem === 'hub') {
-          action.type = elem;
-        } else {
-          action.label.push(elem);
-        }
+      action.label = elem;
     }
     // alternatively, only the action body can be given
     else if (objType === '[object Function]') {
@@ -53,15 +48,14 @@ function compileActions(testSpec) {
     }
     // and also a direct version as object
     else {
-      if (elem.func) action.func = action.func;
-      if (elem.label) action.label = action.label;
-      if (elem.type) action.type = action.type;
+      if (elem.func) action.func = elem.func;
+      if (elem.label) action.label = elem.label;
       complete_action();
-    };
+    }
   });
 
   return actions;
-}
+};
 
 // TODO: refactor tests. Defining tests should be simple. OTOH, it should be possible to reuse
 //  tests via sub-classing...
@@ -71,19 +65,13 @@ Test.__prototype__ = function() {
 
   this.run = function(cb) {
     var self = this;
-    var seedData = []
 
     function setup(cb) {
-
-      // To allow to change this in future we provide the session as a member variable.
-      // Make sure to use 'this.session' in tests.
-      self.session = new Substance.Session({env:"test"});
-      Substance.session = self.session;
 
       try {
         console.log("## Setup");
         // asynchronous actions
-        if (self.setup.length == 0) {
+        if (self.setup.length === 0) {
           self.setup();
           cb(null);
         } else {
@@ -96,54 +84,6 @@ Test.__prototype__ = function() {
       }
     }
 
-    // TODO: this can be done statically (without using selector)
-    var loadSeed = util.async.iterator({
-      selector: function() { return self.seeds; },
-      iterator: function(seedSpec, cb) {
-        // console.log("load seed...");
-        var isInlineSpec = !_.isString(seedSpec);
-
-        // The seed can be specified inline or be given as string referencing a seed file.
-        // For the former, the spec has to be pre-processed to initialize optional settings.
-        // For the latter, the referenced seed spec file has to be loaded.
-        function loadSeedSpec(cb) {
-          if(!isInlineSpec) {
-            seeds.loadSeedSpec(seedSpec, function(err, data) {
-              seedSpec = data;
-              cb(err);
-            });
-          } else {
-            seeds.prepareSeedSpec(seedSpec, function(err, data) {
-              seedSpec = data;
-              cb(err);
-            });
-          }
-        }
-
-        function loadSeed(cb) {
-          seeds.loadSeed(seedSpec, function(err, seed) {
-            if (seed) seedData.push(seed);
-            cb(err);
-          });
-        }
-
-        util.async.sequential([loadSeedSpec, loadSeed], cb);
-      }
-    });
-
-    var seedAll = util.async.iterator({
-      selector: function() { return seedData; },
-      iterator: function(seed, cb) {
-        // console.log("Seeding local store...", seedSpec.local);
-        self.session.seed(seed.local);
-        // console.log("Seeding remote store...", seedSpec.remote);
-        self.session.client.seed(seed, function(err) {
-          if(err) return cb(err);
-          cb(null)
-        });
-      }
-    });
-
     function runActions(cb) {
 
       var options = {
@@ -152,7 +92,7 @@ Test.__prototype__ = function() {
           try {
             console.log("## Action:", action.label.join(" "));
             // asynchronous actions
-            if (action.func.length == 0) {
+            if (action.func.length === 0) {
               action.func.call(self);
               self.trigger('action:success', null, action);
               cb(null);
@@ -185,7 +125,7 @@ Test.__prototype__ = function() {
 
     console.log("# Test:", self.category,"/", self.name);
     var options = {
-      functions: [setup, loadSeed, seedAll, runActions, finish],
+      functions: [setup, runActions, finish],
       finally: function(err) {
         self.tearDown();
         cb(err);
@@ -201,11 +141,9 @@ Test.__prototype__ = function() {
 };
 
 Test.prototype = new Test.__prototype__();
-_.extend(Test.prototype, util.Events);
 
 // a place to register tests
-var tests = {}
-var testTree = {};
+var tests = {};
 
 function pathToId(path) {
   var id = path.join("_");
@@ -213,24 +151,13 @@ function pathToId(path) {
   return id;
 }
 
-// a global method to register a test
-var registerTest = function(path, newTest) {
+var prepareTest = function(path, newTest) {
+  // create an id from the path
+  newTest.id = pathToId(path);
 
-  // TODO remove this legacy after refactoring old style tests
-  if(arguments.length == 1) {
-
-    newTest = path;
-    path = newTest.category ? [newTest.category] : [];
-    newTest.path = path;
-
-  } else {
-    // create an id from the path
-    newTest.id = pathToId(path);
-
-    // the last entry of the path is taken as name
-    newTest.name = path.pop();
-    newTest.path = path;
-  }
+  // the last entry of the path is taken as name
+  newTest.name = path.pop();
+  newTest.path = path;
 
   if (!(newTest instanceof Test) ) {
     newTest = _.extend(new Test(), newTest);
@@ -241,15 +168,18 @@ var registerTest = function(path, newTest) {
   // They get expanded to a unified format automatically.
   newTest.actions = compileActions(newTest);
 
-  // HACK: for now only composer side test execution
-  newTest.env = "composer";
-  tests[newTest.id] = newTest;
-}
+  return newTest;
+};
+
+// a global method to register a test
+var registerTest = function(path, newTest) {
+  tests[newTest.id] = prepareTest(path, newTest);
+};
 
 function getTestTree() {
   var tree = {};
 
-  _.each(tests, function(test, key) {
+  _.each(tests, function(test) {
     var obj = tree;
     var subpath = [];
     _.each(test.path, function(key) {
@@ -272,7 +202,7 @@ function getTestTree() {
 // --------
 
 // a module used for exporting
-var _module = {
+var substance_test = {
   Test: Test,
   tests: tests,
   registerTest: registerTest,
@@ -280,9 +210,13 @@ var _module = {
 };
 
 if (typeof exports === 'undefined') {
-  _.extend(root.Substance, _module);
+  _.extend(root.Substance, substance_test);
 } else {
-  module.exports = _module;
+  module.exports = substance_test;
+  var adapter = require('./src/mocha_adapter');
+  module.exports.registerTest = function(path, test) {
+    adapter(prepareTest(path, test));
+  };
 }
 
-}).call(this);
+})(this);

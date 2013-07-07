@@ -1,6 +1,12 @@
 (function(root) {
 
-var _ = root._;
+var _;
+
+if (typeof exports !== 'undefined') {
+  _    = require('underscore');
+} else {
+  _ = root._;
+}
 
 var assert = {};
 
@@ -149,6 +155,10 @@ assert.isArrayEqual = function(expected, actual) {
   }
 };
 
-root.Substance.assert = assert;
+if (typeof exports !== 'undefined') {
+  module.exports = assert;
+} else {
+  root.Substance.assert = assert;
+}
 
 })(this);
