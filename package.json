@@ -14,5 +14,8 @@
   },
   "dependencies": {
     "underscore": "1.5.x"
+  },
+  "devDependencies": {
+    "express": "3.3.3"
   }
 }
