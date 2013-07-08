@@ -2,17 +2,17 @@
   "name": "substance-test",
   "description": "Provides Substance testing utilities.",
   "keywords": ["substance", "test"],
-  "author": "Oliver Buchtala <oliver.buchtala@gmail.com>",
+  "author": "Oliver Buchtala",
+  "contributors": ["Michael Aufreiter"],
   "version": "0.1.0",
   "repository": {
-      "type": "git",
-      "url": "https://github.com/substance/operator.git"
+    "type": "git",
+    "url": "https://github.com/substance/operator.git"
   },
   "engines": {
-      "node": ">=0.6.0"
+      "node": "0.8.x"
   },
   "dependencies": {
-    "underscore": "1.4.x",
-    "vows": "0.7.0"
+    "underscore": "1.5.x"
   }
 }
