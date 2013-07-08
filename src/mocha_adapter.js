@@ -4,8 +4,7 @@
 var registerTest = function(test) {
   describe(test.path.join("/"), function() {
     describe(test.name, function() {
-      test.setup();
-
+      it("Setup", test.setup.bind(test));
       for (var idx = 0; idx < test.actions.length; idx++) {
         var action = test.actions[idx];
         it(action.label, action.func.bind(test));
