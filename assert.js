@@ -155,6 +155,12 @@ assert.isArrayEqual = function(expected, actual) {
   }
 };
 
+assert.isDeepEqual = function(expected, actual) {
+  var msg = "Assertion failed. Expected="+JSON.stringify(expected)+", actual="+JSON.stringify(actual);
+  if (_.isEqual(expected, actual)) return;
+  else assert.fail(msg);
+};
+
 if (typeof exports !== 'undefined') {
   module.exports = assert;
 } else {
