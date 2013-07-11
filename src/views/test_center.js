@@ -19,7 +19,7 @@
     // For outgoing events
     // this.session = options.session;
     // this.$el.delegate("#login_form", "submit", _.bind(this.login, this));
-    this.handle(this.testRunner, 'state-changed:open-report', this.openReport)
+    this.handle(this.testRunner, 'report:ready', this.openReport);
   };
 
   TestCenter.Prototype = function() {
@@ -28,9 +28,9 @@
     // --------
     // 
 
-    this.openReport = function(report) {
-      this.reportView = new TestReport(this.testRunner.report);
-      console.log('opening report...');
+    this.openReport = function(suiteName, report) {
+      if (this.reportView) this.reportView.dispose();
+      this.reportView = new TestReport(report);
       this.$('.test-report').html(this.reportView.render().el);
     };
 
@@ -50,7 +50,6 @@
         test_suites: testSuites
       }));
 
-      this.openReport();
       return this;
     };
 

@@ -8,33 +8,33 @@
   // Substance.TestReport
   // ==========================================================================
 
-  var TEST_REPORT = {
-    "tests": [
-      {
-        "path": ['Publishing', 'Publish a version containing blobs'],
-        "actions": [
-          {
-            "label": ["Open Doc for editing"],
-            "error": {"message": "Some error", "stack_trace": []},
-            "duration": 23124,
-            "sourcecode": "function(foo) {\nconsole.log('meh'); \n}"
-          },
-          {
-            "label": ["Enter some text"],
-            "error": {"message": "Nope", "stack_trace": []},
-            "duration": 23124,
-            "sourcecode": "function(foo) {\nconsole.log('meh'); \n}"
-          }
-        ]
-      }
-    ]
-  };
+  // var TEST_REPORT = {
+  //   "name": "le suitename",
+  //   "tests": [
+  //     {
+  //       "path": ['Publishing', 'Publish a version containing blobs'],
+  //       "actions": [
+  //         {
+  //           "label": ["Open Doc for editing"],
+  //           "error": {"message": "Some error", "stack_trace": []},
+  //           "duration": 23124,
+  //           "sourcecode": "function(foo) {\nconsole.log('meh'); \n}"
+  //         },
+  //         {
+  //           "label": ["Enter some text"],
+  //           "error": {"message": "Nope", "stack_trace": []},
+  //           "duration": 23124,
+  //           "sourcecode": "function(foo) {\nconsole.log('meh'); \n}"
+  //         }
+  //       ]
+  //     }
+  //   ]
+  // };
 
   var TestReport = function(report) {
     Substance.View.call(this);
     
-    // this.report = report;
-    this.report = TEST_REPORT;
+    this.report = report;
 
     // Dom Events
     // this.$el.delegate("#login_form", "submit", _.bind(this.login, this));

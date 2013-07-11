@@ -110,32 +110,9 @@
       }, this);
     };
 
-    // Handy serialization of test tree
+    // Get Test Suites
     // --------
     //
-
-    // this.getTestTree = function() {
-    //   var tree = {};
-
-    //   _.each(this.tests, function(test) {
-    //     var obj = tree;
-    //     var subpath = [];
-    //     _.each(test.path, function(key) {
-    //       subpath.push(key);
-    //       if(!obj[key]) {
-    //         obj[key] = {
-    //           id: test.id,
-    //           name: key
-    //         };
-    //       }
-    //       obj = obj[key];
-    //     });
-    //     obj[test.name] = test;
-    //   });
-    //   return tree;
-    // };
-
-
 
     this.getTestSuites = function() {
       var suites = {};
@@ -163,16 +140,29 @@
       var suites = this.getTestSuites();
       var suite = suites[suiteName];
 
+      var report = {
+        "name": suiteName,
+        "tests": [],
+      };
+
       var funcs = _.map(suite.tests, function(t) {
-        return t.run.bind(t);
+        return function(data, cb) {
+          t.run(function(err, testResult) {
+            report.tests.push({
+              "name": t.name,
+              "actions": testResult
+            });
+            cb(err);
+          });
+        }
       });
 
       util.async.sequential({
         functions: funcs,
-      }, function(err, report) {
-        console.log('REPORT', report);
+        stopOnError: false
+      }, function(err) {
         that.reports[suiteName] = report;
-        that.trigger('report:ready', suiteName);
+        that.trigger('report:ready', suiteName, report);
         cb(err, report);
       });
     };
