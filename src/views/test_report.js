@@ -11,17 +11,17 @@
   var TEST_REPORT = {
     "tests": [
       {
-        "path": ['Publishing', 'Publish a version containing blobs']
+        "path": ['Publishing', 'Publish a version containing blobs'],
         "actions": [
           {
             "label": ["Open Doc for editing"],
-            "error": {"Some error", "stack_trace": []},
+            "error": {"message": "Some error", "stack_trace": []},
             "duration": 23124,
             "sourcecode": "function(foo) {\nconsole.log('meh'); \n}"
           },
           {
             "label": ["Enter some text"],
-            "error": {"Nope", "stack_trace": []},
+            "error": {"message": "Nope", "stack_trace": []},
             "duration": 23124,
             "sourcecode": "function(foo) {\nconsole.log('meh'); \n}"
           }
@@ -30,22 +30,23 @@
     ]
   };
 
-  var TestReport = function(options) {
+  var TestReport = function(report) {
     Substance.View.call(this);
+    
+    // this.report = report;
+    this.report = TEST_REPORT;
 
-    // For outgoing events
-    // this.session = options.session;
+    // Dom Events
     // this.$el.delegate("#login_form", "submit", _.bind(this.login, this));
   };
 
   TestReport.Prototype = function() {
 
-    // this.authenticationError = function(err) {
-    //   alert('Login failed');
-    // };
+    // Render it
+    // --------
 
     this.render = function() {
-      this.$el.html(html.renderTemplate('test_report', {}));
+      this.$el.html(html.renderTemplate('test_report', this.report));
       return this;
     };
 
@@ -55,7 +56,7 @@
   };
 
   TestReport.Prototype.prototype = Substance.View.prototype;
-  TestReport.prototype = new Testreport.Prototype();
+  TestReport.prototype = new TestReport.Prototype();
 
   Substance.TestReport = TestReport;
 

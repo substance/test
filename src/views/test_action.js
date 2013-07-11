@@ -9,7 +9,7 @@
 
   var TEST_REPORT = {
     "label": ["Enter some text"],
-    "error": {"Nope", "stack_trace": []},
+    "error": {"message": "Nope", "stack_trace": []},
     "duration": 23124,
     "sourcecode": "function(foo) {\nconsole.log('meh'); \n}"
   };
@@ -41,7 +41,7 @@
   };
 
   TestAction.Prototype.prototype = Substance.View.prototype;
-  TestAction.prototype = new Testreport.Prototype();
+  TestAction.prototype = new TestAction.Prototype();
 
   Substance.TestAction = TestAction;
 
