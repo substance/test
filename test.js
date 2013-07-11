@@ -90,7 +90,7 @@ Test.__prototype__ = function() {
         items: self.actions,
         iterator: function(action, cb) {
           try {
-            console.log("## Action:", action.label.join(" "));
+            console.log("## Action:", action.label);
             // asynchronous actions
             if (action.func.length === 0) {
               action.func.call(self);
@@ -123,7 +123,7 @@ Test.__prototype__ = function() {
       cb(null);
     }
 
-    console.log("# Test:", self.category,"/", self.name);
+    console.log("# Test:", self.path.join("/"),"/", self.name);
     var options = {
       functions: [setup, runActions, finish],
       finally: function(err) {
@@ -131,6 +131,11 @@ Test.__prototype__ = function() {
         cb(err);
       }
     };
+    if (cb === undefined) {
+      cb = function(err) {
+        if (err) console.log(err);
+      }
+    }
     util.async.sequential(options, cb);
   };
 
@@ -140,7 +145,7 @@ Test.__prototype__ = function() {
   this.tearDown = function() {};
 };
 
-Test.prototype = new Test.__prototype__();
+Test.prototype = _.extend(new Test.__prototype__(), util.Events);
 
 // a place to register tests
 var tests = {};
@@ -173,7 +178,8 @@ var prepareTest = function(path, newTest) {
 
 // a global method to register a test
 var registerTest = function(path, newTest) {
-  tests[newTest.id] = prepareTest(path, newTest);
+  newTest = prepareTest(path, newTest);
+  tests[newTest.id] = newTest;
 };
 
 function getTestTree() {
