@@ -8,7 +8,7 @@
   if (typeof exports !== 'undefined') {
     _ = require('underscore');
     util = require('substance-util');
-    Test = require('../test')
+    Test = require('../test');
   } else {
     _ = root._;
     util = root.Substance.util;
@@ -71,13 +71,14 @@
   var TestRunner = function() {
     this.tests = {};
 
+    // Collects test reports
+    this.reports = {};
 
     // Prepare test based on a test specification
     // --------
     //
 
     var createTest = function(testSpec) {
-
       var test = new Test();
 
       // add everything from the testSpec
@@ -113,35 +114,78 @@
     // --------
     //
 
-    this.getTestTree = function() {
-      var tree = {};
+    // this.getTestTree = function() {
+    //   var tree = {};
+
+    //   _.each(this.tests, function(test) {
+    //     var obj = tree;
+    //     var subpath = [];
+    //     _.each(test.path, function(key) {
+    //       subpath.push(key);
+    //       if(!obj[key]) {
+    //         obj[key] = {
+    //           id: test.id,
+    //           name: key
+    //         };
+    //       }
+    //       obj = obj[key];
+    //     });
+    //     obj[test.name] = test;
+    //   });
+    //   return tree;
+    // };
+
+
+
+    this.getTestSuites = function() {
+      var suites = {};
 
       _.each(this.tests, function(test) {
-        var obj = tree;
-        var subpath = [];
-        _.each(test.path, function(key) {
-          subpath.push(key);
-          if(!obj[key]) {
-            obj[key] = {
-              id: pathToId(subpath),
-              name: key
-            };
-          }
-          obj = obj[key];
-        });
-        obj[test.name] = test;
+        var suiteName = test.path[0];
+
+        suites[suiteName] = suites[suiteName] || {
+          name: suiteName,
+          tests: []
+        };
+        suites[suiteName].tests.push(test);
       });
-      return tree;
+
+      return suites;
     };
 
+    // suiteName is optional
+    // --------
+    //
+    // TODO: currently only supports one suiteName
+
+    this.runSuite = function(suiteName, cb) {
+      var that = this;
+      var suites = this.getTestSuites();
+      var suite = suites[suiteName];
+
+      var funcs = _.map(suite.tests, function(t) {
+        return t.run.bind(t);
+      });
+
+      util.async.sequential({
+        functions: funcs,
+      }, function(err, report) {
+        console.log('REPORT', report);
+        that.reports[suiteName] = report;
+        that.trigger('report:ready', suiteName);
+        cb(err, report);
+      });
+    };
 
     this.loadTests();
   };
 
+  TestRunner.prototype = util.Events;
+
   if (typeof exports !== 'undefined') {
     module.exports = TestRunner;
   } else {
-    Substance.Test.Runner = TestRunner;
+    root.Substance.Test.Runner = TestRunner;
   }
 
 })(this);
