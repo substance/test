@@ -1,4 +1,4 @@
-(function(root) { "use_strict";
+(function(root) { "use strict";
 
   var _ = root._;
   var Substance = root.Substance;
@@ -33,7 +33,7 @@
 
   var TestReport = function(report) {
     Substance.View.call(this);
-    
+
     this.report = report;
 
     // Dom Events

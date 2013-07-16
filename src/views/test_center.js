@@ -1,4 +1,4 @@
-(function(root) { "use_strict";
+(function(root) { "use strict";
 
   var _ = root._;
   var Substance = root.Substance;
@@ -26,7 +26,7 @@
 
     // Open a new test report
     // --------
-    // 
+    //
 
     this.openReport = function(suiteName, report) {
       if (this.reportView) this.reportView.dispose();
@@ -36,7 +36,7 @@
 
     // Render it
     // --------
-    //     
+    //
 
     this.render = function() {
       var testSuites = this.testRunner.getTestSuites();

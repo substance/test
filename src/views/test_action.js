@@ -1,4 +1,4 @@
-(function(root) { "use_strict";
+(function(root) { "use strict";
 
   var _ = root._;
   var Substance = root.Substance;
@@ -31,7 +31,7 @@
     this.render = function() {
       var that = this;
       this.$el.html("HELLO FROM THE TEST CENTRE");
-      
+
       return this;
     };
 
