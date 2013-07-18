@@ -2,6 +2,7 @@
 
   var _ = root._;
   var Substance = root.Substance;
+  var View = Substance.Application.View;
   var util = Substance.util;
 
   // Substance.TestReport
@@ -15,7 +16,7 @@
   };
 
   var TestAction = function(options) {
-    Substance.View.call(this);
+    View.call(this);
 
     // For outgoing events
     // this.session = options.session;
@@ -40,7 +41,7 @@
     };
   };
 
-  TestAction.Prototype.prototype = Substance.View.prototype;
+  TestAction.Prototype.prototype = View.prototype;
   TestAction.prototype = new TestAction.Prototype();
 
   Substance.TestAction = TestAction;

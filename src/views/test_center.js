@@ -2,6 +2,7 @@
 
   var _ = root._;
   var Substance = root.Substance;
+  var View = Substance.Application.View;
   var util = Substance.util;
   var html = Substance.util.html;
   var TestReport = Substance.TestReport;
@@ -10,7 +11,7 @@
   // ==========================================================================
 
   var TestCenter = function(testRunner) {
-    Substance.View.call(this);
+    View.call(this);
 
     this.testRunner = testRunner;
 
@@ -41,10 +42,6 @@
     this.render = function() {
       var testSuites = this.testRunner.getTestSuites();
 
-      // var testSuites = _.map(Object.keys(tree), function(suite) {
-      //   return {"name": suite};
-      // });
-
       // TODO: Use this.testRunner for the view
       this.$el.html(html.renderTemplate('test_center', {
         test_suites: testSuites
@@ -58,7 +55,7 @@
     };
   };
 
-  TestCenter.Prototype.prototype = Substance.View.prototype;
+  TestCenter.Prototype.prototype = View.prototype;
   TestCenter.prototype = new TestCenter.Prototype();
 
   Substance.TestCenter = TestCenter;
