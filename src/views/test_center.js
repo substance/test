@@ -20,7 +20,7 @@
     // For outgoing events
     // this.session = options.session;
     // this.$el.delegate("#login_form", "submit", _.bind(this.login, this));
-    this.handle(this.testRunner, 'report:ready', this.openReport);
+    this.listenTo(this.testRunner, 'report:ready', this.openReport);
   };
 
   TestCenter.Prototype = function() {
@@ -51,7 +51,7 @@
     };
 
     this.dispose = function() {
-      this.disposeHandlers();
+      this.stopListening();
     };
   };
 
