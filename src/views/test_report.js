@@ -1,40 +1,37 @@
-(function(root) { "use strict";
+"use strict";
 
-  var _ = root._;
-  var Substance = root.Substance;
-  var View = Substance.Application.View;
-  var util = Substance.util;
-  var html = Substance.util.html;
+var app = require("substance-application");
+var util = require("substance-util");
+var View = app.View;
+var html = util.html;
 
-  // Substance.TestReport
-  // ==========================================================================
+// Substance.TestReport
+// ==========================================================================
+
+var TestReport = function(report) {
+  View.call(this);
+
+  this.report = report;
+};
 
 
-  var TestReport = function(report) {
-    View.call(this);
+TestReport.Prototype = function() {
 
-    this.report = report;
+  // Render it
+  // --------
 
+  this.render = function() {
+    this.$el.html(html.renderTemplate('test_report', this.report));
+    return this;
   };
 
-  TestReport.Prototype = function() {
-
-    // Render it
-    // --------
-
-    this.render = function() {
-      this.$el.html(html.renderTemplate('test_report', this.report));
-      return this;
-    };
-
-    this.dispose = function() {
-      this.stopListening();
-    };
+  this.dispose = function() {
+    this.stopListening();
   };
 
-  TestReport.Prototype.prototype = View.prototype;
-  TestReport.prototype = new TestReport.Prototype();
+};
 
-  Substance.TestReport = TestReport;
+TestReport.Prototype.prototype = View.prototype;
+TestReport.prototype = new TestReport.Prototype();
 
-})(this);
+module.exports = TestReport;

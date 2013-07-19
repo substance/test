@@ -1,15 +1,7 @@
-(function(root) {
+"use strict";
 
-var _,
-    util;
-
-if (typeof exports !== 'undefined') {
-  _    = require('underscore');
-  util   = require('substance-util');
-} else {
-  _ = root._;
-  util = root.Substance.util;
-}
+var _    = require('underscore');
+var util   = require('substance-util');
 
 var Test = function() {};
 
@@ -37,14 +29,6 @@ Test.__prototype__ = function() {
         cb(err);
       }
     }
-
-    /*
-                "label": ["Open Doc for editing"],
-            "error": {"message": "Some error", "stack_trace": []},
-            "duration": 23124,
-            "sourcecode": "function(foo) {\nconsole.log('meh'); \n}"
-
-    */ 
 
     function runActions(cb) {
       var options = {
@@ -144,11 +128,4 @@ Test.registerTest = function(path, testSpec) {
 };
 
 
-
-if (typeof exports === 'undefined') {
-  root.Substance.Test = Test;
-} else {
-  module.exports = Test;
-}
-
-})(this);
+module.exports = Test;

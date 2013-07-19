@@ -1,12 +1,6 @@
-(function(root) {
+"use strict";
 
-var _;
-
-if (typeof exports !== 'undefined') {
-  _    = require('underscore');
-} else {
-  _ = root._;
-}
+var _  = require('underscore');
 
 var assert = {};
 
@@ -161,10 +155,4 @@ assert.isDeepEqual = function(expected, actual) {
   else assert.fail(msg);
 };
 
-if (typeof exports !== 'undefined') {
-  module.exports = assert;
-} else {
-  root.Substance.assert = assert;
-}
-
-})(this);
+module.exports = assert;

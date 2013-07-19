@@ -1,89 +1,85 @@
-(function(root) { "use strict";
+"use strict";
 
-  var _ = root._;
-  var Substance = root.Substance;
-  var View = Substance.Application.View;
-  var util = Substance.util;
-  var html = Substance.util.html;
-  var TestReport = Substance.TestReport;
+var app = require("substance-application");
+var util = require("substance-util");
+var TestReport = require("./test_report");
+var View = app.View;
+var html = util.html;
 
-  // Substance.TestCenter
-  // ==========================================================================
+// Substance.TestCenter
+// ==========================================================================
 
-  var TestCenter = function(testRunner) {
-    View.call(this);
+var TestCenter = function(testRunner) {
+  View.call(this);
 
-    this.testRunner = testRunner;
+  this.testRunner = testRunner;
+  
+  // Test reports are collected here
+  this.reports = {};
 
-    // Test reports are collected here
-    this.reports = {};
+  this.$el.addClass('test-center');
 
-    this.$el.addClass('test-center');
+  this.currentReport = null;
 
-    this.currentReport = null;
+  // For outgoing events
+  this.listenTo(this.testRunner, 'report:ready', this.onReportReady);
+};
 
-    // For outgoing events
-    this.listenTo(this.testRunner, 'report:ready', this.onReportReady);
+TestCenter.Prototype = function() {
 
-    var showReport = this.showReport;
+  // Show a particular report
+  // --------
+  //
+
+  this.showReport = function(name) {
+    var report = this.reports[name];
+
+    if (report) {
+      this.currentReport = report;
+      if (this.reportView) this.reportView.dispose();
+      this.reportView = new TestReport(report);
+      this.$('.test-report').html(this.reportView.render().el);
+
+      // Set active flag
+      this.$('.test-suite').removeClass('active');
+      this.$('.test-suite.'+name).addClass('active');
+    } else {
+      console.log('report', name, 'not ready');
+    }
   };
 
-  TestCenter.Prototype = function() {
+  // Received report
+  // --------
+  //
 
-    // Show a particular report
-    // --------
-    //
-
-    this.showReport = function(name) {
-      var report = this.reports[name];
-
-      if (report) {
-        this.currentReport = report;
-        if (this.reportView) this.reportView.dispose();
-        this.reportView = new TestReport(report);
-        this.$('.test-report').html(this.reportView.render().el);
-
-        // Set active flag
-        this.$('.test-suite').removeClass('active');
-        this.$('.test-suite.'+name).addClass('active');
-      } else {
-        console.log('report', name, 'not ready');
-      }
-    };
-
-    // Received report
-    // --------
-    //
-
-    this.onReportReady = function(suiteName, report) {
-      this.reports[suiteName] = report;
-      console.log('report ready!');
-      this.showReport(suiteName);
-    };
-
-    // Render it
-    // --------
-    //
-
-    this.render = function() {
-      var testSuites = this.testRunner.getTestSuites();
-
-      // TODO: Use this.testRunner for the view
-      this.$el.html(html.renderTemplate('test_center', {
-        test_suites: testSuites
-      }));
-
-      return this;
-    };
-
-    this.dispose = function() {
-      this.stopListening();
-    };
+  this.onReportReady = function(suiteName, report) {
+    this.reports[suiteName] = report;
+    console.log('report ready!');
+    this.showReport(suiteName);
   };
 
-  TestCenter.Prototype.prototype = View.prototype;
-  TestCenter.prototype = new TestCenter.Prototype();
 
-  Substance.TestCenter = TestCenter;
+  // Render it
+  // --------
+  //
 
-})(this);
+  this.render = function() {
+    var testSuites = this.testRunner.getTestSuites();
+
+    // TODO: Use this.testRunner for the view
+    this.$el.html(html.renderTemplate('test_center', {
+      test_suites: testSuites
+    }));
+
+    return this;
+  };
+
+  this.dispose = function() {
+    this.stopListening();
+  };
+};
+
+TestCenter.Prototype.prototype = View.prototype;
+TestCenter.prototype = new TestCenter.Prototype();
+
+module.exports = TestCenter;
