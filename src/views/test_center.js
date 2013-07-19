@@ -15,24 +15,50 @@
 
     this.testRunner = testRunner;
 
+    // Test reports are collected here
+    this.reports = {};
+
     this.$el.addClass('test-center');
 
+    this.currentReport = null;
+
     // For outgoing events
-    // this.session = options.session;
-    // this.$el.delegate("#login_form", "submit", _.bind(this.login, this));
-    this.listenTo(this.testRunner, 'report:ready', this.openReport);
+    this.listenTo(this.testRunner, 'report:ready', this.onReportReady);
+
+    var showReport = this.showReport;
   };
 
   TestCenter.Prototype = function() {
 
-    // Open a new test report
+    // Show a particular report
     // --------
     //
 
-    this.openReport = function(suiteName, report) {
-      if (this.reportView) this.reportView.dispose();
-      this.reportView = new TestReport(report);
-      this.$('.test-report').html(this.reportView.render().el);
+    this.showReport = function(name) {
+      var report = this.reports[name];
+
+      if (report) {
+        this.currentReport = report;
+        if (this.reportView) this.reportView.dispose();
+        this.reportView = new TestReport(report);
+        this.$('.test-report').html(this.reportView.render().el);
+
+        // Set active flag
+        this.$('.test-suite').removeClass('active');
+        this.$('.test-suite.'+name).addClass('active');
+      } else {
+        console.log('report', name, 'not ready');
+      }
+    };
+
+    // Received report
+    // --------
+    //
+
+    this.onReportReady = function(suiteName, report) {
+      this.reports[suiteName] = report;
+      console.log('report ready!');
+      this.showReport(suiteName);
     };
 
     // Render it

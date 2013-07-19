@@ -15,8 +15,6 @@
 
     this.report = report;
 
-    // Dom Events
-    // this.$el.delegate("#login_form", "submit", _.bind(this.login, this));
   };
 
   TestReport.Prototype = function() {
@@ -30,7 +28,7 @@
     };
 
     this.dispose = function() {
-      this.disposeHandlers();
+      this.stopListening();
     };
   };
 
