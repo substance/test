@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "underscore": "1.5.x",
-    "substance-util": "0.2.0"
+    "substance-util": "0.2.0",
+    "substance-application": "0.1.0"
   },
   "devDependencies": {
     "express": "3.3.3"

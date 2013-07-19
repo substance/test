@@ -1,19 +1,8 @@
-(function(root) {
+"use strict";
 
-var _,
-    util,
-    TestRunner;
-
-if (typeof exports !== 'undefined') {
-  _ = require('underscore');
-  util = require('substance-util');
-  TestRunner = require('./test_runner')
-} else {
-  _ = root._;
-  util = root.Substance.util;
-  Test = root.Substance.Test.MochaTestRunner;
-}
-
+var _ = require('underscore');
+var util = require('substance-util');
+var TestRunner = require('./test_runner')
 
 var MochaTestRunner = function() {
   TestRunner.call(this);
@@ -39,7 +28,4 @@ var MochaTestRunner = function() {
 
 };
 
-
 module.exports = MochaTestRunner;
-
-})(this);

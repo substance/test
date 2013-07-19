@@ -1,4 +1,4 @@
-(function() {
+"use strict";
 
 var _ = require("underscore");
 var fs = require("fs");
@@ -86,5 +86,3 @@ var TestSuite = function(app, scope, folders, globalScripts) {
 };
 
 module.exports = TestSuite;
-
-})(this);
