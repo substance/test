@@ -54,7 +54,6 @@ TestCenter.Prototype = function() {
 
   this.onReportReady = function(suiteName, report) {
     this.reports[suiteName] = report;
-    console.log('report ready!');
     this.showReport(suiteName);
   };
 
@@ -65,8 +64,6 @@ TestCenter.Prototype = function() {
 
   this.render = function() {
     var testSuites = this.testRunner.getTestSuites();
-
-    // TODO: Use this.testRunner for the view
     this.$el.html(html.renderTemplate('test_center', {
       test_suites: testSuites
     }));
