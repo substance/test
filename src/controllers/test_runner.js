@@ -129,6 +129,10 @@ var TestRunner = function() {
     var suites = this.getTestSuites();
     var suite = suites[suiteName];
 
+    if (suite === undefined) {
+      return cb("Unknown testsuite: "+suiteName);
+    }
+
     var report = {
       "name": suiteName,
       "tests": [],
