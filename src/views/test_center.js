@@ -19,7 +19,10 @@ var TestCenter = function(testRunner, options) {
 
   this.$el.addClass('test-center');
 
-  this.currentReport = options.report;
+  this.testSuites = this.testRunner.getTestSuites();
+
+  // Set requested report or use the first one
+  this.currentReport = options.report || _.pluck(this.testSuites, 'name')[0];
 
   // For outgoing events
   this.listenTo(this.testRunner, 'report:ready', this.onReportReady);
@@ -33,7 +36,7 @@ TestCenter.Prototype = function() {
 
   this.showReport = function(name) {
     var report = this.reports[name];
-
+    var that = this;
     if (report) {
       this.currentReport = report;
       if (this.reportView) this.reportView.dispose();
@@ -46,9 +49,9 @@ TestCenter.Prototype = function() {
       
       // Update router
       Substance.router.navigate('tests/'+name);
-
     } else {
-      console.log('report', name, 'not ready');
+      this.currentReport = name;
+      that.testRunner.runSuite(name);  
     }
   };
 
@@ -58,8 +61,8 @@ TestCenter.Prototype = function() {
 
   this.onReportReady = function(suiteName, report) {
     this.reports[suiteName] = report;
-
     this.registerReport(report);
+
     if (this.currentReport === suiteName) {
       this.showReport(suiteName);
     }
@@ -80,7 +83,7 @@ TestCenter.Prototype = function() {
 
   this.render = function() {
     this.$el.html(html.renderTemplate('test_center', {
-      "test_suites": this.testRunner.getTestSuites()
+      "test_suites": this.testSuites
     }));
     return this;
   };

@@ -40,7 +40,7 @@ Test.__prototype__ = function() {
             duration: 0
           };
           try {
-            console.log("## Action:", action.label);
+            // console.log("## Action:", action.label);
             // asynchronous actions
             if (action.func.length === 0) {
               action.func.call(self);
