@@ -18,6 +18,8 @@
     "substance-application": "0.1.0"
   },
   "devDependencies": {
-    "express": "3.3.3"
+    "express": "3.3.3",
+    "substance-util": "git://github.com/substance/util.git#master",
+    "substance-application": "git://github.com/substance/application.git#master"
   }
 }
