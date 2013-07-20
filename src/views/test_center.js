@@ -9,7 +9,7 @@ var html = util.html;
 // Substance.TestCenter
 // ==========================================================================
 
-var TestCenter = function(testRunner) {
+var TestCenter = function(testRunner, options) {
   View.call(this);
 
   this.testRunner = testRunner;
@@ -19,7 +19,7 @@ var TestCenter = function(testRunner) {
 
   this.$el.addClass('test-center');
 
-  this.currentReport = null;
+  this.currentReport = options.report;
 
   // For outgoing events
   this.listenTo(this.testRunner, 'report:ready', this.onReportReady);
@@ -43,6 +43,10 @@ TestCenter.Prototype = function() {
       // Set active flag
       this.$('.test-suite').removeClass('active');
       this.$('.test-suite.'+name).addClass('active');
+      
+      // Update router
+      Substance.router.navigate('tests/'+name);
+
     } else {
       console.log('report', name, 'not ready');
     }
@@ -54,20 +58,30 @@ TestCenter.Prototype = function() {
 
   this.onReportReady = function(suiteName, report) {
     this.reports[suiteName] = report;
-    this.showReport(suiteName);
+
+    this.registerReport(report);
+    if (this.currentReport === suiteName) {
+      this.showReport(suiteName);
+    }
   };
 
+  // Registers a report
+  // --------
+  //
+  // onReportReady
+
+  this.registerReport = function(report) {
+    this.$('.test-suite.'+report.name+' .status').addClass(report.error ? "error" : "success");
+  };
 
   // Render it
   // --------
   //
 
   this.render = function() {
-    var testSuites = this.testRunner.getTestSuites();
     this.$el.html(html.renderTemplate('test_center', {
-      test_suites: testSuites
+      "test_suites": this.testRunner.getTestSuites()
     }));
-
     return this;
   };
 

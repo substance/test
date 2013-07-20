@@ -145,6 +145,9 @@ var TestRunner = function() {
             "name": t.name,
             "actions": testResult
           });
+          if (err) {
+            report.error = err;
+          }
           cb(err);
         });
       }
@@ -154,6 +157,7 @@ var TestRunner = function() {
       functions: funcs,
       stopOnError: false
     }, function(err) {
+      // console.log('ERROR?', err);
       that.reports[suiteName] = report;
       that.trigger('report:ready', suiteName, report);
       cb(err, report);
