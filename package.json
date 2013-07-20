@@ -4,7 +4,7 @@
   "keywords": ["substance", "test"],
   "author": "Oliver Buchtala",
   "contributors": ["Michael Aufreiter"],
-  "version": "0.2.0",
+  "version": "0.2.0-alpha",
   "repository": {
     "type": "git",
     "url": "https://github.com/substance/operator.git"
@@ -14,8 +14,8 @@
   },
   "dependencies": {
     "underscore": "1.5.x",
-    "substance-util": "git://github.com/substance/util.git#master",
-    "substance-application": "git://github.com/substance/application.git#master"
+    "substance-util": "0.2.0-alpha",
+    "substance-application": "0.1.0-alpha"
   },
   "devDependencies": {
     "express": "3.3.3"
