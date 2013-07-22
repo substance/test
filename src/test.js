@@ -65,7 +65,7 @@ Test.__prototype__ = function() {
                 reportItem.duration = Date.now() - start;
                 if (err) {
                   console.error(err.toString());
-                  util.printStackTrace(err, 1);
+                  util.printStackTrace(err);
                   self.trigger('action:error', err, action);
                   reportItem.error = {message: err.message, stack_trace: err.stack };
                 } else {
@@ -83,7 +83,7 @@ Test.__prototype__ = function() {
             }
           } catch(err) {
             console.error(err.name+":", err.message);
-            util.printStackTrace(err, 1);
+            util.printStackTrace(err);
             self.trigger('action:error', err, action);
             reportItem.error = {message: err.message, stack_trace: err.stack };
             report.push(reportItem);
