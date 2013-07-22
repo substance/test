@@ -51,7 +51,9 @@ TestCenter.Prototype = function() {
       // window.Substance.router.navigate('tests/'+name);
     } else {
       this.currentReport = name;
-      that.testRunner.runSuite(name);
+      that.testRunner.runSuite(name, function(err, report) {
+        if (err) console.log(err.stack);
+      });
     }
   };
 
