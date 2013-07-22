@@ -43,12 +43,16 @@ Test.__prototype__ = function() {
             // console.log("## Action:", action.label);
             // asynchronous actions
             if (action.func.length === 0) {
+              var start = Date.now();
               action.func.call(self);
+              reportItem.duration = Date.now() - start;
               self.trigger('action:success', null, action);
               report.push(reportItem);
               cb(null);
             } else {
+              var start = Date.now();
               action.func.call(self, function(err, data) {
+                reportItem.duration = Date.now() - start;
                 if (err) {
                   console.error(err.toString());
                   util.printStackTrace(err, 1);
