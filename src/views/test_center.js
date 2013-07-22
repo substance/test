@@ -9,10 +9,12 @@ var html = util.html;
 // Substance.TestCenter
 // ==========================================================================
 
-var TestCenter = function(testRunner, options) {
+// TODO: rethink router dep...
+var TestCenter = function(testRunner, router, options) {
   View.call(this);
 
   this.testRunner = testRunner;
+  this.router = router;
 
   // Test reports are collected here
   this.reports = {};
@@ -47,8 +49,8 @@ TestCenter.Prototype = function() {
       this.$('.test-suite').removeClass('active');
       this.$('.test-suite.'+name).addClass('active');
 
-      // FIXME:
-      // window.Substance.router.navigate('tests/'+name);
+      // TODO: should we really trigger a navigate?
+      this.router.navigate('tests/'+name);
     } else {
       this.currentReport = name;
       that.testRunner.runSuite(name, function(err, report) {
