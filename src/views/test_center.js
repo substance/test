@@ -48,7 +48,7 @@ TestCenter.Prototype = function() {
       this.$('.test-suite.'+name).addClass('active');
 
       // FIXME:
-      window.Substance.router.navigate('tests/'+name);
+      // window.Substance.router.navigate('tests/'+name);
     } else {
       this.currentReport = name;
       that.testRunner.runSuite(name);
