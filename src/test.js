@@ -12,6 +12,10 @@ Test.__prototype__ = function() {
 
     var report = [];
 
+    this.setDelay = function(millis) {
+      this.delay = millis;
+    };
+
     function setup(cb) {
 
       try {
@@ -48,7 +52,11 @@ Test.__prototype__ = function() {
               reportItem.duration = Date.now() - start;
               self.trigger('action:success', null, action);
               report.push(reportItem);
-              cb(null);
+
+              if (self.delay !== undefined) {
+                _.delay(cb, self.delay, null);
+              }
+
             } else {
               var start = Date.now();
               action.func.call(self, function(err, data) {
@@ -58,9 +66,15 @@ Test.__prototype__ = function() {
                   util.printStackTrace(err, 1);
                   self.trigger('action:error', err, action);
                   reportItem.error = {message: err.message, stack_trace: err.stack };
-                } else self.trigger('action:success', null, action);
+                } else {
+                  self.trigger('action:success', null, action);
+                }
                 report.push(reportItem);
-                cb(err, data);
+
+                if (self.delay) {
+                  _.delay(cb, self.delay, err, data);
+                }
+
               });
             }
           } catch(err) {
