@@ -13,7 +13,7 @@ var TestCenter = function(testRunner, options) {
   View.call(this);
 
   this.testRunner = testRunner;
-  
+
   // Test reports are collected here
   this.reports = {};
 
@@ -46,12 +46,12 @@ TestCenter.Prototype = function() {
       // Set active flag
       this.$('.test-suite').removeClass('active');
       this.$('.test-suite.'+name).addClass('active');
-      
-      // Update router
-      Substance.router.navigate('tests/'+name);
+
+      // FIXME:
+      window.Substance.router.navigate('tests/'+name);
     } else {
       this.currentReport = name;
-      that.testRunner.runSuite(name);  
+      that.testRunner.runSuite(name);
     }
   };
 
