@@ -55,6 +55,8 @@ Test.__prototype__ = function() {
 
               if (self.delay !== undefined) {
                 _.delay(cb, self.delay, null);
+              } else {
+                cb(null);
               }
 
             } else {
@@ -73,6 +75,8 @@ Test.__prototype__ = function() {
 
                 if (self.delay) {
                   _.delay(cb, self.delay, err, data);
+                } else {
+                  cb(err, data);
                 }
 
               });
