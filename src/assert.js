@@ -1,62 +1,11 @@
 "use strict";
 
-var _  = require('underscore');
+var _ = require('underscore');
+var errors = require('substance-util').errors;
 
 var assert = {};
 
-assert.AssertionError = function (message) {
-  var SAFARI_STACK_ELEM = /([^@]*)@(.*):(\d+)/;
-  var CHROME_STACK_ELEM = /\s*at ([^(]*)[(](.*):(\d+):(\d+)[)]/;
-
-  this.message = message;
-  try { throw new Error(); } catch (trace) {
-    var idx;
-    var stackTrace = trace.stack.split('\n');
-    // parse the stack trace: each line is a tuple (function, file, lineNumber)
-    // Note: unfortunately this is interpreter specific
-    // safari: "<function>@<file>:<lineNumber>"
-    // chrome: "at <function>(<file>:<line>:<col>"
-
-    var stack = [];
-    for (idx = 0; idx < stackTrace.length; idx++) {
-      var match = SAFARI_STACK_ELEM.exec(stackTrace[idx]);
-      if (!match) match = CHROME_STACK_ELEM.exec(stackTrace[idx]);
-      if (match) {
-        var entry = {
-          func: match[1],
-          file: match[2],
-          line: match[3],
-          col: match[4] || 0
-        };
-        if (entry.func === "") entry.func = "<anonymous>";
-        stack.push(entry);
-      }
-    }
-
-    // leave out the first entries that are from this file
-    var thisFile = stack[0].file;
-    for (idx = 1; idx < stack.length; idx++) {
-      if (stack[idx].file !== thisFile) break;
-    }
-    this.stack = stack.slice(idx);
-  }
-};
-
-assert.AssertionError.prototype = new Error();
-assert.AssertionError.prototype.constructor = assert.AssertionError;
-assert.AssertionError.prototype.name = 'AssertionError';
-
-assert.AssertionError.prototype.log = function() {
-  console.log(this.message);
-  _.each(this.stack, function(frame) {
-    console.log(frame.file+":"+frame.line);
-  });
-};
-
-assert.AssertionError.prototype.toString = function() {
-  var errorPos = this.stack[0];
-  return this.message + " at " + errorPos.file+":"+errorPos.line;
-};
+assert.AssertionError = errors.define("AssertionError", -1);
 
 var _assert = function(assertion, msg, cb) {
   if (!assertion) {

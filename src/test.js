@@ -67,7 +67,7 @@ Test.__prototype__ = function() {
                   console.error(err.toString());
                   util.printStackTrace(err);
                   self.trigger('action:error', err, action);
-                  reportItem.error = {message: err.message, stack_trace: err.stack };
+                  reportItem.error = err;
                 } else {
                   self.trigger('action:success', null, action);
                 }
@@ -85,7 +85,7 @@ Test.__prototype__ = function() {
             console.error(err.name+":", err.message);
             util.printStackTrace(err);
             self.trigger('action:error', err, action);
-            reportItem.error = {message: err.message, stack_trace: err.stack };
+            reportItem.error = err;
             report.push(reportItem);
             cb(err);
           }
