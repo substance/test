@@ -7,15 +7,15 @@
   "version": "0.2.0-alpha",
   "repository": {
     "type": "git",
-    "url": "https://github.com/substance/operator.git"
+    "url": "https://github.com/substance/test.git"
   },
   "engines": {
     "node": ">=0.8.x"
   },
   "dependencies": {
     "underscore": "1.5.x",
-    "substance-util": "0.2.0-alpha",
-    "substance-application": "0.1.0-alpha"
+    "substance-util": "git+https://github.com/substance/util.git#master",
+    "substance-application": "git+https://github.com/substance/application.git#master"
   },
   "devDependencies": {
     "express": "3.3.3"
