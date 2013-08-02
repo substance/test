@@ -1,0 +1,17 @@
+{
+  "name": "substance-test",
+  "description": "Provides Substance testing utilities.",
+  "keywords": ["substance", "test"],
+  "author": "Oliver Buchtala",
+  "contributors": ["Michael Aufreiter"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/substance/test.git"
+  },
+  "dependencies": {
+    "underscore": "",
+    "substance-util": "",
+    "substance-application": ""
+  },
+  "version": "0.2.0"
+}
