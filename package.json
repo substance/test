@@ -1,23 +1,26 @@
 {
   "name": "substance-test",
   "description": "Provides Substance testing utilities.",
-  "keywords": ["substance", "test"],
+  "keywords": [
+    "substance",
+    "test"
+  ],
   "author": "Oliver Buchtala",
-  "contributors": ["Michael Aufreiter"],
-  "version": "0.2.0-alpha",
+  "contributors": [
+    "Michael Aufreiter"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/substance/test.git"
   },
-  "engines": {
-    "node": ">=0.8.x"
-  },
   "dependencies": {
     "underscore": "1.5.x",
-    "substance-util": "git+https://github.com/substance/util.git#master",
-    "substance-application": "git+https://github.com/substance/application.git#master"
+    "substance-util": "git+https://github.com/substance/util.git#0.2.1",
+    "substance-application": "git+https://github.com/substance/application.git#0.1.1"
   },
-  "devDependencies": {
-    "express": "3.3.3"
+  "version": "0.2.1",
+  "engines": {
+    "node": ">=0.8.x",
+    "npm": ">=1.1.x"
   }
 }
