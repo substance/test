@@ -104,4 +104,6 @@ assert.isDeepEqual = function(expected, actual) {
   else assert.fail(msg);
 };
 
+assert.isObjectEqual = assert.isDeepEqual;
+
 module.exports = assert;
