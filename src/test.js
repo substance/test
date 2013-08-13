@@ -37,6 +37,7 @@ Test.__prototype__ = function() {
     function runActions(cb) {
       var options = {
         items: self.actions,
+        stopOnError: false,
         iterator: function(action, cb) {
           var reportItem = {
             label: action.label,
