@@ -14,21 +14,19 @@ var TestReport = function(report) {
   this.report = report;
 };
 
-
 TestReport.Prototype = function() {
 
   // Render it
   // --------
 
   this.render = function() {
-    this.$el.html(html.renderTemplate('test_report', this.report));
+    this.$el.html(html.tpl('test_report', this.report));
     return this;
   };
 
   this.dispose = function() {
     this.stopListening();
   };
-
 };
 
 TestReport.Prototype.prototype = View.prototype;
