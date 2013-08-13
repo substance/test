@@ -99,7 +99,7 @@ assert.isArrayEqual = function(expected, actual) {
 };
 
 assert.isDeepEqual = function(expected, actual) {
-  var msg = "Assertion failed. Expected="+JSON.stringify(expected)+", actual="+JSON.stringify(actual);
+  var msg = "Assertion failed. Expected="+JSON.stringify(expected, null, 2)+"\n, actual="+JSON.stringify(actual, null, 2);
   if (_.isEqual(expected, actual)) return;
   else assert.fail(msg);
 };
