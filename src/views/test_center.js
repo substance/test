@@ -1,10 +1,42 @@
 "use strict";
 
-var app = require("substance-application");
+var Application = require("substance-application");
 var util = require("substance-util");
 var TestReport = require("./test_report");
-var View = app.View;
+var View = Application.View;
 var html = util.html;
+
+// DOM Constructor
+
+var $$ = Application.$$;
+
+
+
+// Takes a data piece and renders the DOM necessary for the TestCenter
+// ==========================================================================
+
+
+var Renderer = function(data) {
+  var fragment = document.createDocumentFragment();
+
+  var testSuites = $$('.test-suites', {
+    children: _.map(data.test_suites, function(ts) {
+      return $$('a.test-suite.'+ts.name, {
+        "sbs-click": "showReport("+ts.name+")",
+        "href": "#tests/"+ts.name,
+        "text": ts.name,
+        "children": [ $$('.status') ]
+      })
+    })
+  });
+
+  fragment.appendChild(testSuites);
+  fragment.appendChild($$('.test-report'));
+  fragment.appendChild($$('.test-output'));
+  return fragment;
+};
+
+
 
 // Substance.TestCenter
 // ==========================================================================
@@ -82,10 +114,7 @@ TestCenter.Prototype = function() {
   //
 
   this.render = function() {
-    this.$el.html(html.tpl('test_center', {
-      "test_suites": this.testSuites
-    }));
-
+    this.el.appendChild(new Renderer({"test_suites": this.testSuites}));
     return this;
   };
 
