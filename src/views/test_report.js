@@ -39,7 +39,7 @@ var Renderer = function(data) {
     children: _.map(data.tests, function(test) {
       return $$('.test', {
         children: [
-          $$('.div.name', { text: data.name }),
+          $$('.div.name', { text: test.name }),
           $$('.actions', {
             children: actions(test.actions)
           })
