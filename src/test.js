@@ -5,7 +5,7 @@ var util   = require('substance-util');
 
 var Test = function() {};
 
-Test.__prototype__ = function() {
+Test.Prototype = function() {
 
   this.run = function(cb) {
     var self = this;
@@ -123,7 +123,7 @@ Test.__prototype__ = function() {
   this.tearDown = function() {};
 };
 
-Test.prototype = _.extend(new Test.__prototype__(), util.Events);
+Test.prototype = _.extend(new Test.Prototype(), util.Events);
 
 
 // Global Test Registry
