@@ -109,7 +109,7 @@ var TestRunner = function() {
     _.each(this.tests, function(test) {
       var suiteName = test.path[0];
 
-      suites[suiteName] = suites[suiteName] || {
+      suites[suiteName] = suites[suiteName] || {
         name: suiteName,
         tests: []
       };
