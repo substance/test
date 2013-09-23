@@ -5,6 +5,7 @@ var util = require("substance-util");
 var TestReport = require("./test_report");
 var View = Application.View;
 var html = util.html;
+var _ = require("underscore");
 
 // DOM Constructor
 

@@ -5,6 +5,7 @@ var util = require("substance-util");
 var View = app.View;
 var Application = require("substance-application");
 var html = util.html;
+var _ = require("underscore");
 
 var $$ = Application.$$;
 
