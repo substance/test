@@ -15,5 +15,9 @@
   },
   "dependencies": {
     "lodash-es": "^4.15.0"
-  }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ]
 }
