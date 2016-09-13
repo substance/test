@@ -1,0 +1,19 @@
+{
+  "name": "substance-test",
+  "version": "0.1.0",
+  "description": "Substance test-suite.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Oliver Buchtala",
+  "license": "MIT",
+  "devDependencies": {
+    "lodash": "^4.15.0",
+    "tape": "4.5.1",
+    "substance": "substance/substance#9868a0a915514ae9369303024eb90f595a23d468"
+  },
+  "dependencies": {
+    "lodash-es": "^4.15.0"
+  }
+}
