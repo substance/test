@@ -1,4 +1,6 @@
-import { clone, extend, forEach, isNil } from 'lodash'
+import clone from 'lodash/clone'
+import forEach from 'lodash/forEach'
+import isNil from 'lodash/isNil'
 import { inBrowser, platform, substanceGlobals, DefaultDOMElement } from 'substance'
 import { tape, Test } from './vendor'
 
@@ -167,7 +169,7 @@ function _addExtensions(extensions, tapeish, addModule) {
   tapeish.withOptions = function(opts) {
     return _addExtensions(extensions, function() {
       var args = getTestArgs.apply(null, arguments)
-      var _opts = extend({}, opts, args.opts)
+      var _opts = Object.assign({}, opts, args.opts)
       return tapeish(args.name, _opts, args.cb)
     })
   }

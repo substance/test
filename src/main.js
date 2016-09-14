@@ -1,5 +1,8 @@
-export { default as ResultItem } from './ResultItem'
-export { default as spy } from './spy'
-export { default as test } from './test'
-export { default as TestItem } from './TestItem'
-export { default as TestSuite } from './TestSuite'
+import ResultItem from './ResultItem'
+import spy from './spy'
+import test from './test'
+import TestItem from './TestItem'
+import TestSuite from './TestSuite'
+const module = test.module
+
+export { test, module, spy, ResultItem, TestItem, TestSuite }

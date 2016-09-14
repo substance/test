@@ -1,4 +1,4 @@
-import { isFunction } from 'lodash'
+import isFunction from 'lodash/isFunction'
 
 export default function spy(self, name) {
   var f

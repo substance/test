@@ -2,11 +2,7 @@
 // to build the bundler
 var b = require('substance-bundler')
 var bundleVendor = require('substance-bundler/util/bundleVendor')
-var path = require('path')
-
-var argv = b.yargs
-  .boolean('d').alias('d', 'debug').default('d', false)
-  .argv
+// var path = require('path')
 
 b.task('substance', function() {
   b.make('substance')
@@ -26,31 +22,27 @@ b.task('vendor', function() {
         // ... and these are used for doing the work
         src: './.make/vendor.js',
         dest: './dist/vendor.js',
-        external: ['fsevents'],
-        debug: argv.debug
+        debug: true
       })
     }
   })
 })
 
-b.task('bundle', function() {
+b.task('test', function() {
   b.js('src/main.js', {
-    resolve: {
-      alias: { 'lodash': 'lodash-es' },
-      jsnext: ['substance']
+    resolve: { jsnext: ['substance'] },
+    commonjs: {
+      include: [ require.resolve('./dist/vendor'), 'node_modules/lodash/**' ],
+      namedExports: { './dist/vendor.js': ['tape', 'Test' ] },
     },
     // need buble if we want to minify later
     buble: { include: [ 'src/**' ] },
-    // built-ins: i.e. these files will not be processed
-    // leaving the corresponding require statements untouched
-    external: [
-      'assert', 'buffer', 'child_process', 'constants', 'events',
-      'fs', 'os', 'path', 'stream', 'tty', 'url', 'util',
-      path.join(__dirname, 'dist', 'vendor.js')
-    ],
     sourceMap: true,
     targets: [{
-      dest: './dist/test.js',
+      dest: './dist/test.es.js',
+      format: 'es', moduleName: 'test'
+    },{
+      dest: './dist/test.cjs.js',
       format: 'cjs', moduleName: 'test'
     }]
   })
