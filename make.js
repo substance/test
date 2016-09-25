@@ -46,6 +46,8 @@ b.task('cjs', function() {
 })
 
 b.task('suite', function() {
+  b.copy('src/index.html', 'dist/')
+  b.copy('src/test.css', 'dist/')
   b.js('src/suite.js', {
     commonjs: {
       include: [ path.join(__dirname, 'tmp/vendor.js'), '/**/lodash/**', '/**/substance-cheerio/**' ],
