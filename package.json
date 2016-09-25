@@ -1,6 +1,6 @@
 {
   "name": "substance-test",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Substance test-suite.",
   "main": "dist/test.cjs.js",
   "jsnext:main": "dist/test.es.js",
