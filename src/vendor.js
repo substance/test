@@ -1,1 +1,1 @@
-export * from '../dist/vendor'
+export * from '../tmp/vendor'

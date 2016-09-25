@@ -1,7 +1,10 @@
 import clone from 'lodash/clone'
 import forEach from 'lodash/forEach'
 import isNil from 'lodash/isNil'
-import { inBrowser, platform, substanceGlobals, DefaultDOMElement } from 'substance'
+import inBrowser from 'substance/util/inBrowser'
+import platform from 'substance/util/platform'
+import substanceGlobals from 'substance/util/substanceGlobals'
+import DefaultDOMElement from 'substance/ui/DefaultDOMElement'
 import { tape, Test } from './vendor'
 
 var harness = tape
