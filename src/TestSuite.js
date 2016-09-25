@@ -1,6 +1,7 @@
 import startsWith from 'lodash/startsWith'
 import clone from 'lodash/clone'
-import { Component, Router } from 'substance'
+import Component from 'substance/ui/Component'
+import Router from 'substance/ui/Router'
 import TestItem from './TestItem'
 
 class TestSuite extends Component {

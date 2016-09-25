@@ -1,4 +1,4 @@
-import { substanceGlobals } from 'substance'
+import substanceGlobals from 'substance/util/substanceGlobals'
 import harness from './test'
 import TestSuite from './TestSuite'
 

@@ -1,4 +1,4 @@
-import { Component } from 'substance'
+import Component from 'substance/ui/Component'
 
 class ResultItem extends Component {
 

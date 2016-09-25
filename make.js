@@ -45,4 +45,20 @@ b.task('cjs', function() {
   })
 })
 
-b.task('default', ['clean', 'vendor', 'cjs'])
+b.task('suite', function() {
+  b.js('src/suite.js', {
+    commonjs: {
+      include: [ path.join(__dirname, 'tmp/vendor.js'), '/**/lodash/**', '/**/substance-cheerio/**' ],
+      namedExports: { './tmp/vendor.js': ['tape', 'Test' ] },
+    },
+    // need buble if we want to minify later
+    buble: { include: [ 'src/**' ] },
+    sourceMap: true,
+    targets: [{
+      dest: './dist/testsuite.js',
+      format: 'umd', moduleName: 'testSuite'
+    }]
+  })
+})
+
+b.task('default', ['clean', 'vendor', 'cjs', 'suite'])

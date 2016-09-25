@@ -1,4 +1,5 @@
-import { Component, RenderingEngine } from 'substance'
+import Component from 'substance/ui/Component'
+import RenderingEngine from 'substance/ui/RenderingEngine'
 import ResultItem from './ResultItem'
 
 class TestItem extends Component {
