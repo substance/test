@@ -5,7 +5,8 @@ import inBrowser from 'substance/util/inBrowser'
 import platform from 'substance/util/platform'
 import substanceGlobals from 'substance/util/substanceGlobals'
 import DefaultDOMElement from 'substance/ui/DefaultDOMElement'
-import { tape, Test } from './vendor'
+import tape from 'tape'
+const Test = tape.Test
 
 var harness = tape
 
@@ -31,8 +32,7 @@ Test.prototype.isNotNil = function (value, msg, extra) {
   })
 }
 
-if (inBrowser && substanceGlobals.TEST_UI) {
-
+tape.setupTestSuite = function(tape) {
   // add a tape.Test.reset() that allows to re-run a test
   Test.prototype.reset = function() {
     this.readable = true
@@ -73,11 +73,11 @@ if (inBrowser && substanceGlobals.TEST_UI) {
   // Using a timeout feels better, as the UI gets updated while
   // it is running.
   // var nextTick = process.nextTick
+  tape = tape.createHarness()
   var nextTick = function(f) { window.setTimeout(f, 0) }
-  harness = tape.createHarness()
-  var results = harness._results
+  var results = tape._results
 
-  harness.runTests = function(tests) {
+  tape.runTests = function(tests) {
     tests = tests.slice()
     function next() {
       if (tests.length > 0) {
@@ -91,9 +91,13 @@ if (inBrowser && substanceGlobals.TEST_UI) {
     nextTick(next)
   }
 
-  harness.getTests = function() {
+  tape.getTests = function() {
     return results.tests || []
   }
+
+  tape = _addExtensions(defaultExtensions, tape, true)
+
+  return tape
 }
 
 /*

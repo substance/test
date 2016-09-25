@@ -10,10 +10,12 @@
   "author": "Oliver Buchtala",
   "license": "MIT",
   "devDependencies": {
+    "babel-preset-es2015": "^6.14.0",
+    "babelify": "^7.3.0",
     "lodash": "^4.15.0",
-    "tape": "4.5.1",
     "substance": "substance/substance#93a32c8bb4d1c87b6f26fb0c6df3c6e7c105c680",
-    "substance-bundler": "^0.4.17"
+    "substance-bundler": "^0.4.17",
+    "tape": "4.5.1"
   },
   "dependencies": {},
   "files": [

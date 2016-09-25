@@ -1,9 +1,11 @@
-import substanceGlobals from 'substance/util/substanceGlobals'
-import harness from './test'
+import test from './test'
 import TestSuite from './TestSuite'
+import spy from './spy'
 
-substanceGlobals.TEST_UI = true
+var testAPI = test.setupTestSuite(test)
+testAPI.spy = spy
+window.substanceTest = testAPI
 
 window.onload = function() {
-  TestSuite.mount({ harness: harness }, 'body')
+  TestSuite.mount({ harness: testAPI }, 'body')
 }
