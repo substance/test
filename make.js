@@ -19,7 +19,7 @@ b.task('tape', function() {
     src: './.make/tape.js',
     dest: './tmp/tape.js',
     execute: function() {
-      return _bundleBrowser({
+      return bundleBrowser({
         src: './.make/tape.js',
         dest: './tmp/tape.browser.js'
       })
@@ -59,25 +59,6 @@ b.task('suite', function() {
     }
   })
 
-
-  // b.js('src/suite.js', {
-  //   ignore: [ 'substance-cheerio' ],
-  //   resolve: {
-  //     alias: {
-  //       tape: path.join(__dirname, 'tmp/tape.browser.js')
-  //     }
-  //   },
-  //   commonjs: {
-  //     include: [ path.join(__dirname, 'tmp/tape.browser.js'), '/**/lodash/**', '/**/substance-cheerio/**' ],
-  //   },
-  //   // need buble if we want to minify later
-  //   buble: { include: [ 'src/**' ] },
-  //   sourceMap: true,
-  //   targets: [{
-  //     dest: './dist/testsuite.js',
-  //     format: 'umd', moduleName: 'testSuite'
-  //   }]
-  // })
 })
 
-b.task('default', ['clean', 'vendor', 'cjs', 'suite'])
+b.task('default', ['clean', 'tape', 'cjs', 'suite'])
