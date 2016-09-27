@@ -10,8 +10,9 @@ module.exports = function bundleBrowser(opts) {
   var dest = opts.dest;
   var external = opts.external || []
   var ignore = opts.ignore || []
+  var bopts = opts.browserify || {}
   return new Promise(function(resolve, reject) {
-    var b = browserify(src)
+    var b = browserify(src, bopts)
     external.forEach(function(m) {
       b.external(m)
     })
