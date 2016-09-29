@@ -27,6 +27,7 @@ b.task('api:node', function() {
       format: 'cjs', moduleName: 'substanceTest'
     }]
   })
+  b.copy('src/run-tests.js', 'dist/')
 })
 
 // Bundling the test API for use in the browser (e.g. in karma)

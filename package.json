@@ -18,9 +18,12 @@
     "substance-bundler": "^0.4.17",
     "tape": "4.5.1"
   },
-  "dependencies": {},
+  "dependencies": {
+    "source-map-support": "^0.4.3"
+  },
   "files": [
     "dist",
+    "util",
     "README.md"
   ]
 }
