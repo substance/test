@@ -16,11 +16,8 @@ b.task('clean', function() {
 // Bundling the test API for use in nodejs
 b.task('api:node', function() {
   b.js('src/api.js', {
-    commonjs: {
-      include: [ '/**/tape/**', '/**/lodash/**', '/**/substance-cheerio/**' ],
-    },
-    // need buble if we want to minify later
-    buble: { include: [ 'src/**' ] },
+    commonjs: { jsnext: true, include: [ 'node_modules/**' ] },
+    buble: true,
     sourceMap: true,
     targets: [{
       dest: './dist/test.cjs.js',
@@ -72,4 +69,4 @@ b.task('suite', function() {
   })
 })
 
-b.task('default', ['clean', 'api', 'suite'])
+b.task('default', ['substance', 'clean', 'api', 'suite'])

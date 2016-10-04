@@ -5,7 +5,7 @@
   "main": "dist/test.cjs.js",
   "jsnext:main": "dist/test.es.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pre-publish": "node make"
   },
   "author": "Oliver Buchtala",
   "license": "MIT",
@@ -14,8 +14,8 @@
     "babelify": "^7.3.0",
     "browserify": "^13.1.0",
     "lodash": "^4.15.0",
-    "substance": "substance/substance#93a32c8bb4d1c87b6f26fb0c6df3c6e7c105c680",
-    "substance-bundler": "^0.4.17",
+    "substance": "substance/substance#57fd9ed5aa8cc5376c69b528d8968ed57b733dbd",
+    "substance-bundler": "^0.4.24",
     "tape": "4.5.1"
   },
   "dependencies": {
