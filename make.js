@@ -16,6 +16,7 @@ b.task('clean', function() {
 // Bundling the test API for use in nodejs
 b.task('api:node', function() {
   b.js('src/api.js', {
+    external: ['util', 'fs', 'path', 'stream'],
     commonjs: { jsnext: true, include: [ 'node_modules/**' ] },
     buble: true,
     sourceMap: true,
