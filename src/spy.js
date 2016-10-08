@@ -14,9 +14,11 @@ export default function spy(self, name) {
   function spyFunction() {
     var res = f.apply(self, arguments)
     spyFunction.callCount++
+    spyFunction.args = arguments
     return res
   }
   spyFunction.callCount = 0
+  spyFunction.args = null
   spyFunction.restore = function() {
     if (self) {
       self[name] = f
@@ -24,6 +26,7 @@ export default function spy(self, name) {
   }
   spyFunction.reset = function() {
     spyFunction.callCount = 0
+    spyFunction.args = null
   }
   if (self) {
     self[name] = spyFunction
