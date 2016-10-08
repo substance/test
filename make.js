@@ -70,4 +70,4 @@ b.task('suite', function() {
   })
 })
 
-b.task('default', ['substance', 'clean', 'api', 'suite'])
+b.task('default', ['clean', 'api', 'suite'])
