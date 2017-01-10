@@ -54,10 +54,14 @@ class TestSuite extends Component {
     })
     moduleSelect.on('change', this.onModuleSelect)
     toolbar.append(moduleSelect)
+
+    let hideSuccessfulCheckbox = $$('input').ref('hideCheckbox')
+      .attr('type', 'checkbox')
+      .htmlProp('checked', state.hideSuccessful)
+      .on('change', this.onToggleHideSuccessful)
     toolbar.append(
       $$('div').append(
-        $$('input').attr({ type: 'checkbox' })
-          .on('change', this.onToggleHideSuccessful).ref('hideCheckbox'),
+        hideSuccessfulCheckbox,
         $$('label').append('Only show failed tests only')
       )
     )
