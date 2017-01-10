@@ -141,8 +141,15 @@ class TestSuite extends Component {
   }
 }
 
+let TILDE = '~'.charCodeAt(0)
+
 function _filter(name, f) {
-  return startsWith(name, f)
+  if (!f) return true
+  if (f.charCodeAt(0) === TILDE) {
+    return startsWith(name, f)
+  } else {
+    return name === f
+  }
 }
 
 export default TestSuite
