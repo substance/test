@@ -15,6 +15,8 @@ class TestSuite extends Component {
       }
     })
     this.moduleNames = Object.keys(moduleNames)
+
+    this.handleAction('focusTest', this.handleFocusTest)
   }
 
   didMount() {
@@ -73,7 +75,7 @@ class TestSuite extends Component {
     let tests = $$('div').addClass('se-tests').ref('tests')
     this.props.harness.getTests().forEach(function(test) {
       let testItem = $$(TestItem, { test: test })
-      if (!_filter(test.moduleName, filter)) {
+      if (!_filter(test, filter)) {
         testItem.addClass('sm-hidden')
       }
       tests.append(testItem)
@@ -100,7 +102,7 @@ class TestSuite extends Component {
     let filter = this.state.filter || ''
     testItems.forEach(function(testItem) {
       let t = testItem.props.test
-      if(_filter(t.moduleName, filter)) {
+      if(_filter(t, filter)) {
         testItem.removeClass('sm-hidden')
         tests.push(t)
       } else {
@@ -114,6 +116,13 @@ class TestSuite extends Component {
     let filter = this.refs.moduleNames.htmlProp('value')
     this.extendState({
       filter: filter
+    })
+    this.updateRoute()
+  }
+
+  handleFocusTest(test) {
+    this.extendState({
+      filter: '@' + test.name
     })
     this.updateRoute()
   }
@@ -142,13 +151,18 @@ class TestSuite extends Component {
 }
 
 let TILDE = '~'.charCodeAt(0)
+let AT = '@'.charCodeAt(0)
 
-function _filter(name, f) {
-  if (!f) return true
-  if (f.charCodeAt(0) === TILDE) {
-    return startsWith(name, f)
+function _filter(test, pattern) {
+  if (!pattern) return true
+  let moduleName = test.moduleName
+  let title = test.name
+  if (pattern.charCodeAt(0) === AT) {
+    return startsWith(title, pattern.slice(1))
+  } else if (pattern.charCodeAt(0) === TILDE) {
+    return startsWith(moduleName, pattern.slice(1))
   } else {
-    return name === f
+    return moduleName === pattern
   }
 }
 

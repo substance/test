@@ -32,8 +32,11 @@ class TestItem extends Component {
     el.append(header)
 
     let controls = $$('span').addClass('se-controls').append(
+      $$('button').addClass('se-focus')
+        .append('\uD83D\uDCCC')
+        .on('click', this.onClickFocus),
       $$('button').addClass('se-run')
-        .append('Run')
+        .append('\u25B6')
         .on('click', this.onClickRun)
     )
     el.append(controls)
@@ -75,6 +78,12 @@ class TestItem extends Component {
     } else {
       this.el.addClass('sm-not-ok')
     }
+  }
+
+  onClickFocus(e) {
+    e.preventDefault()
+    e.stopPropagation()
+    this.send('focusTest', this.props.test)
   }
 
   onClickRun(e) {

@@ -49,6 +49,12 @@ body {
   right: 10px;
   top: 5px;
 }
+.sc-test > .se-controls > button {
+  height: 28px;
+  width: 28px;
+  cursor: pointer;
+}
+
 .sc-test > .se-header {
   padding: 10px 10px;
 }
