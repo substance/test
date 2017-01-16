@@ -1,5 +1,4 @@
-import startsWith from 'lodash/startsWith'
-import clone from 'lodash/clone'
+import clone from 'substance/util/clone'
 import { Component, Router } from 'substance'
 import TestItem from './TestItem'
 

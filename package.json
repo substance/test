@@ -1,6 +1,6 @@
 {
   "name": "substance-test",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "description": "A test-suite for Substance based on tape.",
   "main": "dist/test.cjs.js",
   "jsnext:main": "dist/test.es.js",
@@ -11,12 +11,10 @@
   "author": "Oliver Buchtala",
   "license": "MIT",
   "devDependencies": {
-    "babel-preset-es2015": "^6.14.0",
-    "babelify": "^7.3.0",
     "browserify": "^13.1.0",
     "lodash": "^4.15.0",
-    "substance": "1.0.0-beta.5.8",
-    "substance-bundler": "^0.5.1",
+    "substance": "https://github.com/substance/substance.git#a5d278607d2388763280edf19fd85b01d071c64e",
+    "substance-bundler": "^0.6.8",
     "tape": "4.5.1"
   },
   "dependencies": {
