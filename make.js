@@ -18,7 +18,7 @@ const TAPE_NODE = path.join(__dirname, 'tmp/tape.cjs.js')
 b.task('tape:browser', function() {
   b.browserify('./.make/tape.js', {
     dest: TAPE_BROWSER,
-    module: true
+    exports: ['default']
   })
 })
 
@@ -26,7 +26,7 @@ b.task('tape:node', function() {
   b.browserify('./.make/tape.js', {
     dest: TAPE_NODE,
     server: true,
-    module: true
+    exports: ['default']
   })
 })
 
@@ -38,10 +38,8 @@ b.task('api:node', ['tape:node'], function() {
       dest: './dist/test.cjs.js',
       format: 'cjs'
     },
-    resolve: {
-      alias: {
-        'tape': TAPE_NODE
-      }
+    alias: {
+      'tape': TAPE_NODE
     },
     commonjs: true,
     buble: true
@@ -51,22 +49,15 @@ b.task('api:node', ['tape:node'], function() {
 
 // Bundling the test API for use in the browser (e.g. in karma)
 b.task('api:browser', ['tape:browser'], function() {
-  let namedExports = {}
-  namedExports[TAPE_BROWSER] = ['tape']
   b.js('./src/api.js', {
     target: {
       dest: './dist/test.browser.js',
       format: 'umd', moduleName: 'substanceTest'
     },
-    resolve: {
-      alias: {
-        'tape': TAPE_BROWSER
-      }
+    alias: {
+      'tape': TAPE_BROWSER
     },
-    commonjs: {
-      include: [TAPE_BROWSER],
-      namedExports: namedExports
-    },
+    commonjs: true,
     buble: true
   })
 })
@@ -74,22 +65,15 @@ b.task('api:browser', ['tape:browser'], function() {
 b.task('suite', ['tape:browser'], function() {
   b.copy('src/index.html', 'dist/')
   b.copy('src/test.css', 'dist/')
-  let namedExports = {}
-  namedExports[TAPE_BROWSER] = ['tape']
   b.js('./src/suite.js', {
     target: {
       dest: './dist/testsuite.js',
       format: 'umd', moduleName: 'testsuite'
     },
-    resolve: {
-      alias: {
-        'tape': TAPE_BROWSER
-      }
+    alias: {
+      'tape': TAPE_BROWSER
     },
-    commonjs: {
-      include: [TAPE_BROWSER],
-      namedExports: namedExports
-    },
+    commonjs: true,
     buble: true,
   })
 })

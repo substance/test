@@ -14,7 +14,7 @@
     "browserify": "^13.1.0",
     "lodash": "^4.15.0",
     "substance": "https://github.com/substance/substance.git#a5d278607d2388763280edf19fd85b01d071c64e",
-    "substance-bundler": "^0.6.8",
+    "substance-bundler": "^0.6.9",
     "tape": "4.5.1"
   },
   "dependencies": {
