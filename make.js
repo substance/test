@@ -40,13 +40,9 @@ b.task('api:node', ['tape:node'], function() {
     },
     resolve: {
       alias: {
-        // provides util.inherits
-        // 'inherits': require.resolve('./.make/inherits.node.js'),
-        'tape': './tape.cjs.js'
+        'tape': TAPE_NODE
       }
     },
-    // external: ['util', 'fs', 'path', 'stream', ],
-    // external: [TAPE_NODE]
     commonjs: true,
     buble: true
   })
