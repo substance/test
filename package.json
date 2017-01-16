@@ -1,6 +1,6 @@
 {
   "name": "substance-test",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "A test-suite for Substance based on tape.",
   "main": "dist/test.cjs.js",
   "jsnext:main": "dist/test.es.js",
