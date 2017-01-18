@@ -1,5 +1,3 @@
-// we are using an older version of bundler
-// to build the bundler
 let b = require('substance-bundler')
 let path = require('path')
 
