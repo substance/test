@@ -2,6 +2,10 @@
   "name": "substance-test",
   "version": "0.4.4",
   "description": "A test-suite for Substance based on tape.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/substance/test.git"
+  },
   "main": "dist/test.cjs.js",
   "jsnext:main": "dist/test.es.js",
   "scripts": {
