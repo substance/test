@@ -1,6 +1,6 @@
 {
   "name": "substance-test",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "A test-suite for Substance based on tape.",
   "main": "dist/test.cjs.js",
   "jsnext:main": "dist/test.es.js",
@@ -13,7 +13,7 @@
   "devDependencies": {
     "browserify": "13.3.0",
     "lodash": "4.17.4",
-    "substance": "https://github.com/substance/substance.git#a5d278607d2388763280edf19fd85b01d071c64e",
+    "substance": "https://github.com/substance/substance.git#b2f26b5365e5d0f8dd55b8b8cad88a89b58f7d63",
     "substance-bundler": "0.6.9",
     "tape": "4.6.3"
   },
