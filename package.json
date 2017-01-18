@@ -16,9 +16,10 @@
   "license": "MIT",
   "devDependencies": {
     "browserify": "13.3.0",
+    "eslint": "3.13.1",
     "lodash": "4.17.4",
-    "substance": "https://github.com/substance/substance.git#b2f26b5365e5d0f8dd55b8b8cad88a89b58f7d63",
-    "substance-bundler": "0.6.9",
+    "substance": "https://github.com/substance/substance.git#c99635a70913622e64c6810395acb7339fb86fd1",
+    "substance-bundler": "0.6.11",
     "tape": "4.6.3"
   },
   "dependencies": {
