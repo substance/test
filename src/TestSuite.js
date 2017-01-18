@@ -1,6 +1,11 @@
+import startsWith from 'substance/util/startsWith'
 import clone from 'substance/util/clone'
-import { Component, Router } from 'substance'
+import Component from 'substance/ui/Component'
+import Router from 'substance/ui/Router'
 import TestItem from './TestItem'
+
+const TILDE = '~'.charCodeAt(0)
+const AT = '@'.charCodeAt(0)
 
 class TestSuite extends Component {
 
@@ -148,9 +153,6 @@ class TestSuite extends Component {
     this.updateRoute()
   }
 }
-
-let TILDE = '~'.charCodeAt(0)
-let AT = '@'.charCodeAt(0)
 
 function _filter(test, pattern) {
   if (!pattern) return true

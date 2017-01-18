@@ -1,12 +1,34 @@
 import clone from 'substance/util/clone'
 import forEach from 'substance/util/forEach'
 import isNil from 'substance/util/isNil'
-import { inBrowser, platform, substanceGlobals, DefaultDOMElement } from 'substance'
+import inBrowser from 'substance/util/inBrowser'
+import platform from 'substance/util/platform'
+import substanceGlobals from 'substance/util/substanceGlobals'
+import DefaultDOMElement from 'substance/dom/DefaultDOMElement'
 import tape from 'tape'
 
 const Test = tape.Test
 
-var harness = tape
+const defaultExtensions = {
+  UI: function() {
+    var args = this.getTestArgs(arguments)
+    if (!inBrowser) args.opts.skip = true
+    if(inBrowser && !substanceGlobals.TEST_UI) args.opts.setupUI = true
+    return _withBeforeAndAfter(this, args)
+  },
+  FF: function() {
+    var args = this.getTestArgs(arguments)
+    if (!inBrowser || !platform.isFF) args.opts.skip = true
+    return this.UI(args.name, args.opts, args.cb)
+  },
+  WK: function() {
+    var args = this.getTestArgs(arguments)
+    if (!inBrowser || !platform.isWebKit) args.opts.skip = true
+    return this.UI(args.name, args.opts, args.cb)
+  },
+}
+
+let harness = tape
 
 Test.prototype.nil =
 Test.prototype.isNil = function (value, msg, extra) {
@@ -134,25 +156,6 @@ function _withBeforeAndAfter(tapeish, args) {
     if(_setupUI) _teardownSandbox(t)
     if(_after) _after(t)
   })
-}
-
-var defaultExtensions = {
-  UI: function() {
-    var args = this.getTestArgs(arguments)
-    if (!inBrowser) args.opts.skip = true
-    if(inBrowser && !substanceGlobals.TEST_UI) args.opts.setupUI = true
-    return _withBeforeAndAfter(this, args)
-  },
-  FF: function() {
-    var args = this.getTestArgs(arguments)
-    if (!inBrowser || !platform.isFF) args.opts.skip = true
-    return this.UI(args.name, args.opts, args.cb)
-  },
-  WK: function() {
-    var args = this.getTestArgs(arguments)
-    if (!inBrowser || !platform.isWebKit) args.opts.skip = true
-    return this.UI(args.name, args.opts, args.cb)
-  },
 }
 
 harness = _addExtensions(defaultExtensions, harness, true)
