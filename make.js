@@ -3,17 +3,13 @@
 let b = require('substance-bundler')
 let path = require('path')
 
-b.task('substance', function() {
-  b.make('substance')
-})
+const TAPE_BROWSER = path.join(__dirname, 'tmp/tape.browser.js')
+const TAPE_NODE = path.join(__dirname, 'tmp/tape.cjs.js')
 
 b.task('clean', function() {
   b.rm('./dist')
   b.rm('./tmp')
 })
-
-const TAPE_BROWSER = path.join(__dirname, 'tmp/tape.browser.js')
-const TAPE_NODE = path.join(__dirname, 'tmp/tape.cjs.js')
 
 b.task('tape:browser', function() {
   b.browserify('./.make/tape.js', {
@@ -42,7 +38,9 @@ b.task('api:node', ['tape:node'], function() {
       'tape': TAPE_NODE
     },
     commonjs: true,
-    buble: true
+    buble: true,
+    eslint: { exclude: [ TAPE_NODE ] },
+    cleanup: true
   })
   b.copy('src/run-tests.js', 'dist/')
 })
@@ -58,7 +56,9 @@ b.task('api:browser', ['tape:browser'], function() {
       'tape': TAPE_BROWSER
     },
     commonjs: true,
-    buble: true
+    buble: true,
+    eslint: { exclude: [ TAPE_BROWSER ] },
+    cleanup: true
   })
 })
 
@@ -75,6 +75,8 @@ b.task('suite', ['tape:browser'], function() {
     },
     commonjs: true,
     buble: true,
+    eslint: { exclude: [ TAPE_BROWSER ] },
+    cleanup: true
   })
 })
 
@@ -84,7 +86,8 @@ b.task('example', function() {
       dest: './tmp/tests.js',
       format: 'umd', moduleName: 'tests'
     },
-    external: { 'substance-test': 'substanceTest' }
+    external: { 'substance-test': 'substanceTest' },
+    eslint: true
   })
 })
 
