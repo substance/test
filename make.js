@@ -91,4 +91,4 @@ b.task('example', function() {
 
 b.task('api', ['api:node', 'api:browser'])
 
-b.task('default', ['clean', 'substance', 'api', 'suite'])
+b.task('default', ['clean', 'api', 'suite'])
