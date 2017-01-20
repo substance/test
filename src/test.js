@@ -177,8 +177,8 @@ function _addExtensions(extensions, tapeish, addModule) {
   tapeish.withOptions = function(opts) {
     return _addExtensions(extensions, function() {
       var args = getTestArgs.apply(null, arguments)
-      var _opts = Object.assign({}, opts, args.opts)
-      return tapeish(args.name, _opts, args.cb)
+      args.opts = Object.assign({}, opts, args.opts)
+      return _withBeforeAndAfter(tapeish, args)
     })
   }
 
