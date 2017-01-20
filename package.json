@@ -18,7 +18,7 @@
     "browserify": "13.3.0",
     "eslint": "3.13.1",
     "lodash": "4.17.4",
-    "substance": "https://github.com/substance/substance.git#c99635a70913622e64c6810395acb7339fb86fd1",
+    "substance": "https://github.com/substance/substance.git#767a842ff01dc7eb53b54f266803876d003c7358",
     "substance-bundler": "0.6.11",
     "tape": "4.6.3"
   },
