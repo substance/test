@@ -76,6 +76,17 @@ body {
   display: block;
 }
 
+.sc-test > .se-body > .se-sandbox:before {
+  content: 'Sandbox: ';
+  color: #999;
+  font-style: italic;
+}
+
+.sc-test > .se-body > .se-sandbox {
+  padding-top: 10px;
+  border-top: 1px solid #ccc;
+}
+
 .sc-test-result {
   padding: 5px;
 }
