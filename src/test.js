@@ -205,24 +205,28 @@ function _addExtensions(extensions, tapeish, addModule) {
 }
 
 function _setupSandbox(t) {
-  var fixtureElement = window.document.querySelector('#qunit-fixture')
-  if (!fixtureElement) {
-    fixtureElement = window.document.createElement('div')
-    fixtureElement.id = "qunit-fixture"
-    window.document.querySelector('body').appendChild(fixtureElement)
+  // TestSuite may have injected an element already
+  if (t.sandbox) {
+    t.sandbox.empty()
+  } else {
+    var fixtureElement = window.document.querySelector('#qunit-fixture')
+    if (!fixtureElement) {
+      fixtureElement = window.document.createElement('div')
+      fixtureElement.id = "qunit-fixture"
+      window.document.querySelector('body').appendChild(fixtureElement)
+    }
+    var sandboxEl = window.document.createElement('div')
+    fixtureElement.appendChild(sandboxEl)
+    t.sandbox = DefaultDOMElement.wrapNativeElement(sandboxEl)
+    t.sandbox._shouldBeRemoved = true
   }
-  var sandboxEl = window.document.createElement('div')
-  sandboxEl.id = 'sandbox-'+t.test.id
-  fixtureElement.appendChild(sandboxEl)
-  t.sandbox = DefaultDOMElement.wrapNativeElement(sandboxEl)
 }
 
 function _teardownSandbox(t) {
   var sandbox = t.sandbox
-  if (sandbox) {
+  if (sandbox && sandbox._shouldBeRemoved) {
     sandbox.remove()
   }
 }
 
 export default harness
-
