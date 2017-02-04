@@ -98,4 +98,4 @@ b.task('example', function() {
 
 b.task('api', ['api:node', 'api:browser'])
 
-b.task('default', ['clean', 'api', 'suite'])
+b.task('default', ['clean', 'tap:spec', 'api', 'suite'])
