@@ -3,6 +3,7 @@ let path = require('path')
 
 const TAPE_BROWSER = path.join(__dirname, 'tmp/tape.browser.js')
 const TAPE_NODE = path.join(__dirname, 'tmp/tape.cjs.js')
+const TAPE_SPEC = path.join(__dirname, 'dist/tap-spec.js')
 
 b.task('clean', function() {
   b.rm('./dist')
@@ -24,6 +25,12 @@ b.task('tape:node', function() {
   })
 })
 
+b.task('tap:spec', function() {
+  b.browserify('./node_modules/tap-spec/bin/cmd.js', {
+    dest: TAPE_SPEC,
+    server: true
+  })
+})
 
 // Bundling the test API for use in nodejs
 b.task('api:node', ['tape:node'], function() {

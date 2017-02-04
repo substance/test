@@ -1,15 +1,19 @@
-import test from './test'
+import createTestSuiteHarness from './createTestSuiteHarness'
+import createModuleFunction from './createModuleFunction'
+import addTestAPI from './addTestAPI'
 import TestSuite from './TestSuite'
 import spy from './spy'
 
-let _test = test.setupTestSuite(test)
+// add some extensions
+addTestAPI()
 
-window.substanceTest = {
-  test: _test,
-  module: _test.module,
-  spy: spy
-}
+const harness = createTestSuiteHarness()
+const module = createModuleFunction(harness)
+// default test module
+const test = module()
+
+window.substanceTest = { test, module, spy }
 
 window.onload = function() {
-  TestSuite.mount({ harness: _test }, 'body')
+  TestSuite.mount({ harness }, 'body')
 }
