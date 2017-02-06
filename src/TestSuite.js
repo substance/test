@@ -89,8 +89,10 @@ class TestSuite extends Component {
     return el
   }
 
-  didUpdate() {
-    this.runTests()
+  didUpdate(oldProps, oldState) {
+    if (this.state.filter !== oldState.filter) {
+      this.runTests()
+    }
   }
 
   runTests() {
