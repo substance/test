@@ -6,27 +6,20 @@ export default function createTestSuiteHarness() {
   // monkey patch tape.Test
   makeTestRestartable()
 
-  // Then create a new harness for the TestSuite
-  // Using a timeout feels better, as the UI gets updated while
-  // it is running.
-  // var nextTick = process.nextTick
   let harness = tape.createHarness()
-  function nextTick(f) { window.setTimeout(f, 0) }
+
   harness.getResults = function() {
     return this._results
   }
   harness.runTests = function(tests) {
-    tests = tests.slice()
-    function next() {
-      if (tests.length > 0) {
-        var t = tests.shift()
-        t.once('end', function(){
-          nextTick(next)
-        })
-        t.run()
-      }
+    if (this.job) {
+      this.job.cancel()
     }
-    nextTick(next)
+    this.job = new RunJob(tests)
+    this.job.run()
+  }
+  harness.cancel = function() {
+    if (this.job) this.job.cancel()
   }
   harness.getTests = function() {
     return this.getResults().tests || []
@@ -47,4 +40,35 @@ export default function createTestSuiteHarness() {
   }
 
   return harness
+}
+
+function nextTick(f) {
+  window.setTimeout(f, 0)
+}
+
+class RunJob {
+  constructor(tests) {
+    this.tests = tests
+    this._cancelled = false
+  }
+
+  run() {
+    const self = this
+    const tests = this.tests
+    let idx = 0
+    function next() {
+      if (idx < tests.length && !self._cancelled) {
+        let t = tests[idx++]
+        t.once('end', function() {
+          nextTick(next)
+        })
+        t.run()
+      }
+    }
+    nextTick(next)
+  }
+
+  cancel() {
+    this._cancelled = true
+  }
 }

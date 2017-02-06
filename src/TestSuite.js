@@ -109,7 +109,8 @@ class TestSuite extends Component {
         testItem.addClass('sm-hidden')
       }
     })
-    this.props.harness.runTests(tests)
+    const harness = this.props.harness
+    harness.runTests(tests)
   }
 
   onModuleSelect() {
