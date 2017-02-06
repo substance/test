@@ -12,13 +12,7 @@ class TestSuite extends Component {
   constructor(...args) {
     super(...args)
 
-    let moduleNames = {}
-    this.props.harness.getTests().forEach(function(t) {
-      if (t.moduleName) {
-        moduleNames[t.moduleName] = true
-      }
-    })
-    this.moduleNames = Object.keys(moduleNames)
+    this.moduleNames = this.props.harness.getModuleNames()
 
     this.handleAction('focusTest', this.handleFocusTest)
   }

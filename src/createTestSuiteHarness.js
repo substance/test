@@ -31,6 +31,20 @@ export default function createTestSuiteHarness() {
   harness.getTests = function() {
     return this.getResults().tests || []
   }
+  harness.getModuleNames = function() {
+    // NOTE: tape does not have modules
+    // Instead we put the module name into each test
+    // Now we compute the set of all unique module names
+    let moduleNames = {}
+    harness.getTests().forEach((t) => {
+      if (t.moduleName) {
+        moduleNames[t.moduleName] = true
+      }
+    })
+    moduleNames = Object.keys(moduleNames)
+    moduleNames.sort()
+    return moduleNames
+  }
 
   return harness
 }
