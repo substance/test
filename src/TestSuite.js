@@ -72,7 +72,7 @@ class TestSuite extends Component {
 
     let tests = $$('div').addClass('se-tests').ref('tests')
     this.props.harness.getTests().forEach(function(test) {
-      let testItem = $$(TestItem, { test: test })
+      let testItem = $$(TestItem, { test: test }).ref(test.name)
       if (!_filter(test, filter)) {
         testItem.addClass('sm-hidden')
       }

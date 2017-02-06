@@ -54,6 +54,12 @@ class TestItem extends Component {
     return el
   }
 
+  // The content of results and sandbox are produced by the test
+  // Thus this does not need to be rerendered
+  shouldRerender() {
+    return false
+  }
+
   onStart() {
     let test = this.props.test
     this.el.removeClass('sm-skip')
