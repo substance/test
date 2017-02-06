@@ -13,15 +13,17 @@ class TestItem extends Component {
   }
 
   didMount() {
-    this.props.test.on('prerun', this.onStart)
-    this.props.test.on('result', this.onResult)
-    this.props.test.on('end', this.onEnd)
+    let test = this.props.test
+    test.on('prerun', this.onStart)
+    test.on('result', this.onResult)
+    test.on('end', this.onEnd)
   }
 
   dispose() {
-    this.props.test.removeListener('prerun', this.onStart)
-    this.props.test.removeListener('result', this.onResult)
-    this.props.test.removeListener('end', this.onEnd)
+    let test = this.props.test
+    test.removeListener('prerun', this.onStart)
+    test.removeListener('result', this.onResult)
+    test.removeListener('end', this.onEnd)
   }
 
   render($$) {
@@ -102,7 +104,6 @@ class TestItem extends Component {
     if (expanded) this.el.removeClass('sm-expanded')
     else this.el.addClass('sm-expanded')
   }
-
 }
 
 export default TestItem

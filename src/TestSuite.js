@@ -82,7 +82,6 @@ class TestSuite extends Component {
     body.append(tests)
     el.append(body)
 
-
     if (this.state.hideSuccessful) {
       el.addClass('sm-hide-successful')
     }
@@ -95,6 +94,7 @@ class TestSuite extends Component {
   }
 
   runTests() {
+    // console.log('Running tests...')
     let testItems = this.refs.tests.getChildren()
     let tests = []
     let filter = this.state.filter || ''
