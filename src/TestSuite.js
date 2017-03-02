@@ -39,8 +39,9 @@ class TestSuite extends Component {
     let filter = this.state.filter || ''
 
     let header = $$('div').addClass('se-header')
+    let title = this.props.title || window.document.title || 'TestSuite'
     header.append(
-      $$('div').addClass('se-logo').append('Substance TestSuite')
+      $$('div').addClass('se-logo').append(title)
     )
     el.append(header)
 
