@@ -5,7 +5,7 @@ import Router from 'substance/ui/Router'
 import TestItem from './TestItem'
 
 const TILDE = '~'.charCodeAt(0)
-const AT = '@'.charCodeAt(0)
+const CARET = '^'.charCodeAt(0)
 
 class TestSuite extends Component {
 
@@ -45,15 +45,17 @@ class TestSuite extends Component {
     el.append(header)
 
     let toolbar = $$('div').addClass('se-toolbar')
-    let moduleSelect = $$('select').ref('moduleNames')
-    moduleSelect.append($$('option').attr('value', '').append('---   All   --'))
-    this.moduleNames.forEach(function(moduleName) {
-      let option = $$('option').attr('value', moduleName).append(moduleName)
-      if (moduleName === state.filter) option.attr('selected', true)
-      moduleSelect.append(option)
-    })
-    moduleSelect.on('change', this.onModuleSelect)
-    toolbar.append(moduleSelect)
+    if (this.moduleNames && this.moduleNames.length > 0) {
+      let moduleSelect = $$('select').ref('moduleNames')
+      moduleSelect.append($$('option').attr('value', '').append('---   All   --'))
+      this.moduleNames.forEach(function(moduleName) {
+        let option = $$('option').attr('value', moduleName).append(moduleName)
+        if (moduleName === state.filter) option.attr('selected', true)
+        moduleSelect.append(option)
+      })
+      moduleSelect.on('change', this.onModuleSelect)
+      toolbar.append(moduleSelect)
+    }
 
     let hideSuccessfulCheckbox = $$('input').ref('hideCheckbox')
       .attr('type', 'checkbox')
@@ -65,6 +67,15 @@ class TestSuite extends Component {
         $$('label').append('Only show failed tests only')
       )
     )
+    if (filter) {
+      toolbar.append(
+        $$('div').addClass('se-clear-filter').append(
+          $$('button').addClass('se-clear')
+            .append('Clear Filter \u232B')
+            .on('click', this.onClearFilter)
+        )
+      )
+    }
 
     el.append(toolbar)
 
@@ -114,7 +125,7 @@ class TestSuite extends Component {
   }
 
   onModuleSelect() {
-    let filter = this.refs.moduleNames.htmlProp('value')
+    let filter = '^'+this.refs.moduleNames.htmlProp('value')
     this.extendState({
       filter: filter
     })
@@ -123,7 +134,7 @@ class TestSuite extends Component {
 
   handleFocusTest(test) {
     this.extendState({
-      filter: '@' + test.name
+      filter: test.name
     })
     this.updateRoute()
   }
@@ -149,18 +160,25 @@ class TestSuite extends Component {
     }
     this.updateRoute()
   }
+
+  onClearFilter() {
+    let newState = clone(this.state)
+    delete newState.filter
+    this.setState(newState)
+    this.updateRoute()
+  }
 }
 
 function _filter(test, pattern) {
   if (!pattern) return true
   let moduleName = test.moduleName
   let title = test.name
-  if (pattern.charCodeAt(0) === AT) {
+  if (pattern.charCodeAt(0) === CARET) {
     return startsWith(title, pattern.slice(1))
   } else if (pattern.charCodeAt(0) === TILDE) {
     return startsWith(moduleName, pattern.slice(1))
   } else {
-    return moduleName === pattern
+    return title === pattern
   }
 }
 
