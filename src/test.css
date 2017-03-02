@@ -76,6 +76,10 @@ body {
   display: block;
 }
 
+.sc-test > .se-body > .se-sandbox:empty {
+  display:none;
+}
+
 .sc-test > .se-body > .se-sandbox:before {
   content: 'Sandbox: ';
   color: #999;
