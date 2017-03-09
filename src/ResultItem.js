@@ -1,4 +1,6 @@
 import Component from 'substance/ui/Component'
+import isArray from 'substance/util/isArray'
+import isPlainObject from 'substance/util/isPlainObject'
 
 class ResultItem extends Component {
 
@@ -22,21 +24,28 @@ class ResultItem extends Component {
     header.append($$('span').addClass('se-description').append(String(result.name)))
     el.append(header)
 
-    if (!test._skip && !result.ok && result.operator === "equal") {
-      var diff = $$('div').addClass('se-diff')
-      var expected = $$('div').addClass('se-expected')
+    if (!test._skip && !result.ok && (result.expected || result.actual) ) {
+      let diffEl = $$('div').addClass('se-diff')
+      let expectedEl = $$('div').addClass('se-expected')
         .append('Expected:')
-        .append($$('pre').append(String(result.expected)))
-      var actual = $$('div').addClass('se-actual')
+        .append($$('pre').append(_toString(result.expected)))
+      let actualEl = $$('div').addClass('se-actual')
         .append('Actual:')
-        .append($$('pre').append(String(result.actual)))
-      diff.append(expected, actual)
-      el.append(diff)
+        .append($$('pre').append(_toString(result.actual)))
+      diffEl.append(expectedEl, actualEl)
+      el.append(diffEl)
     }
 
     return el
   }
+}
 
+function _toString(obj) {
+  if (isArray(obj) || isPlainObject(obj)) {
+    return JSON.stringify(obj)
+  } else {
+    String(obj)
+  }
 }
 
 export default ResultItem
