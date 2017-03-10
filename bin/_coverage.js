@@ -12,5 +12,5 @@ tape.onFinish(() => {
   reporter.write(collector, true, () => {})
 })
 
-let testFile = path.join(process.cwd(), process.argv[2])
+let testFile = process.argv[2]
 require(testFile)
