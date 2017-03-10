@@ -44,7 +44,7 @@ function _toString(obj) {
   if (isArray(obj) || isPlainObject(obj)) {
     return JSON.stringify(obj)
   } else {
-    String(obj)
+    return String(obj)
   }
 }
 
