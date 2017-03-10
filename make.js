@@ -47,7 +47,6 @@ b.task('api:node', ['tape:node'], function() {
     eslint: { exclude: [ TAPE_NODE ] },
     cleanup: true
   })
-  b.copy('src/run-tests.js', 'dist/')
 })
 
 // Bundling the test API for use in the browser (e.g. in karma)

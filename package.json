@@ -28,7 +28,7 @@
   },
   "files": [
     "dist",
-    "util",
+    "bin",
     "README.md"
   ]
 }
