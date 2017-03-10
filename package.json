@@ -1,6 +1,6 @@
 {
   "name": "substance-test",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "description": "A test-suite for Substance based on tape.",
   "repository": {
     "type": "git",
@@ -18,8 +18,8 @@
     "browserify": "13.3.0",
     "eslint": "3.13.1",
     "lodash": "4.17.4",
-    "substance": "https://github.com/substance/substance.git#c7bc70f92820660aff2015a8eea96c7dbcfb3488",
-    "substance-bundler": "0.7.2",
+    "substance": "1.0.0-beta.6.5",
+    "substance-bundler": "^0.12.0",
     "tap-spec": "^4.1.1",
     "tape": "4.6.3"
   },
