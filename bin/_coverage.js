@@ -1,5 +1,5 @@
 require('source-map-support').install()
-
+const isAbsolute = require('./_isAbsolute')
 const istanbul = require('istanbul')
 const path = require('path')
 const {tape} = require('substance-test')
