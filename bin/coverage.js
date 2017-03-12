@@ -9,8 +9,8 @@ let tapSpecFile = require.resolve('../dist/tap-spec.js')
 let testRunner = cp.fork(_coverage, [testFile], {
   stdio: ['ignore', 'pipe', 2, 'ipc']
 })
-let tapeSepc = cp.fork(tapSpecFile, {
+let tapSpec = cp.fork(tapSpecFile, {
   stdio: ['pipe', 1, 2, 'ipc']
 })
 
-testRunner.stdout.pipe(tapeSepc.stdin)
+testRunner.stdout.pipe(tapSpec.stdin)
