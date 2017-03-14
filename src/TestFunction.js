@@ -71,6 +71,12 @@ class TestFunction extends Function {
     return getTestArgs(args)
   }
 
+  skip(...args) {
+    let { name, opts, cb } = this.getTestArgs(args)
+    opts.skip = true
+    return this.test(name, opts, cb)
+  }
+
 }
 
 function getTestName(moduleName, name) {
