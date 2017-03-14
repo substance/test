@@ -1,4 +1,3 @@
-import startsWith from 'substance/util/startsWith'
 import clone from 'substance/util/clone'
 import Component from 'substance/ui/Component'
 import Router from 'substance/ui/Router'
@@ -6,6 +5,7 @@ import TestItem from './TestItem'
 
 const TILDE = '~'.charCodeAt(0)
 const CARET = '^'.charCodeAt(0)
+const SLASH = '/'.charCodeAt(0)
 
 class TestSuite extends Component {
 
@@ -76,16 +76,26 @@ class TestSuite extends Component {
             .on('click', this.onClearFilter)
         )
       )
+    } else {
+      let filterInput = $$('input').addClass('se-filter-input')
+        .ref('filterInput')
+        .attr('type', 'text')
+        .on('change', this.onChangeFilter)
+      toolbar.append($$('div').append(
+        $$('span').text('Filter: '),
+        filterInput
+      ))
     }
 
     el.append(toolbar)
 
     let body = $$('div').addClass('se-body')
 
+    let _filter = this._getFilter()
     let tests = $$('div').addClass('se-tests').ref('tests')
     this.props.harness.getTests().forEach(function(test) {
       let testItem = $$(TestItem, { test: test }).ref(test.name)
-      if (!_filter(test, filter)) {
+      if (!_filter(test)) {
         testItem.addClass('sm-hidden')
       }
       tests.append(testItem)
@@ -111,10 +121,10 @@ class TestSuite extends Component {
     // console.log('Running tests...')
     let testItems = this.refs.tests.getChildren()
     let tests = []
-    let filter = this.state.filter || ''
+    let _filter = this._getFilter()
     testItems.forEach(function(testItem) {
       let t = testItem.props.test
-      if(_filter(t, filter)) {
+      if(_filter(t)) {
         testItem.removeClass('sm-hidden')
         tests.push(t)
       } else {
@@ -125,8 +135,39 @@ class TestSuite extends Component {
     harness.runTests(tests)
   }
 
+  _getFilter() {
+    // no pattern means we select all
+    if (!this.state.filter) return () => { return true }
+
+    const pattern = window.decodeURI(this.state.filter)
+
+    if (pattern.charCodeAt(0) === SLASH && pattern.charCodeAt(pattern.length-1)) {
+      let re = new RegExp(pattern.slice(1,-1))
+      return (t) => {
+        return re.exec(t.name)
+      }
+    }
+
+    // legacy
+    if (pattern.charCodeAt(0) === CARET) {
+      let re = new RegExp(pattern)
+      return (t) => {
+        return re.exec(t.name)
+      }
+    }
+
+    if (pattern.charCodeAt(0) === TILDE) {
+      let moduleName = pattern.slice(1)
+      return (t) => {
+        return t.moduleName === moduleName
+      }
+    }
+
+    return t => (t.name === pattern)
+  }
+
   onModuleSelect() {
-    let filter = '^'+this.refs.moduleNames.htmlProp('value')
+    let filter = window.encodeURI('~'+this.refs.moduleNames.htmlProp('value'))
     this.extendState({
       filter: filter
     })
@@ -134,9 +175,8 @@ class TestSuite extends Component {
   }
 
   handleFocusTest(test) {
-    this.extendState({
-      filter: test.name
-    })
+    const filter = window.encodeURI(test.name)
+    this.extendState({ filter })
     this.updateRoute()
   }
 
@@ -168,18 +208,13 @@ class TestSuite extends Component {
     this.setState(newState)
     this.updateRoute()
   }
-}
 
-function _filter(test, pattern) {
-  if (!pattern) return true
-  let moduleName = test.moduleName
-  let title = test.name
-  if (pattern.charCodeAt(0) === CARET) {
-    return startsWith(title, pattern.slice(1))
-  } else if (pattern.charCodeAt(0) === TILDE) {
-    return startsWith(moduleName, pattern.slice(1))
-  } else {
-    return title === pattern
+  onChangeFilter() {
+    const filter = '/' + window.encodeURI(this.refs.filterInput.el.getValue()) + '/'
+    this.extendState({
+      filter
+    })
+    this.updateRoute()
   }
 }
 
