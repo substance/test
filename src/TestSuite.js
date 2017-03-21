@@ -65,7 +65,7 @@ class TestSuite extends Component {
     toolbar.append(
       $$('div').append(
         hideSuccessfulCheckbox,
-        $$('label').append('Only show failed tests only')
+        $$('label').append('Only show failed tests')
       )
     )
     if (filter) {
