@@ -7,7 +7,7 @@ const path = require('path')
 
 let tapes = []
 try {
-  let { tape } = require('substanceTape')
+  let { tape } = require('substance-test')
   if (tape) tapes.push(tape)
 } catch(err) {}
 try {
@@ -18,10 +18,15 @@ try {
 tapes.forEach((tape) => {
   tape.onFinish(() => {
     let reporter = new istanbul.Reporter()
-    let collector = new istanbul.Collector()
-    collector.add(global.__coverage__)
-    reporter.add('lcov')
-    reporter.write(collector, true, () => {})
+    if (global.__coverage__) {
+      console.info('Writing istanbul report...')
+      let collector = new istanbul.Collector()
+      collector.add(global.__coverage__)
+      reporter.add('lcov')
+      reporter.write(collector, true, () => {console.info('Done.')})
+    } else {
+      console.error('Could not find istanbul coverage report.')
+    }
   })
 })
 
