@@ -139,7 +139,7 @@ class TestSuite extends Component {
     // no pattern means we select all
     if (!this.state.filter) return () => { return true }
 
-    const pattern = window.decodeURI(this.state.filter)
+    const pattern = window.decodeURIComponent(this.state.filter)
 
     if (pattern.charCodeAt(0) === SLASH && pattern.charCodeAt(pattern.length-1)) {
       let re = new RegExp(pattern.slice(1,-1))
@@ -167,7 +167,7 @@ class TestSuite extends Component {
   }
 
   onModuleSelect() {
-    let filter = window.encodeURI('~'+this.refs.moduleNames.htmlProp('value'))
+    let filter = window.encodeURIComponent('~'+this.refs.moduleNames.htmlProp('value'))
     this.extendState({
       filter: filter
     })
@@ -175,7 +175,7 @@ class TestSuite extends Component {
   }
 
   handleFocusTest(test) {
-    const filter = window.encodeURI(test.name)
+    const filter = window.encodeURIComponent(test.name)
     this.extendState({ filter })
     this.updateRoute()
   }
@@ -210,7 +210,7 @@ class TestSuite extends Component {
   }
 
   onChangeFilter() {
-    const filter = '/' + window.encodeURI(this.refs.filterInput.el.getValue()) + '/'
+    const filter = '/' + window.encodeURIComponent(this.refs.filterInput.el.getValue()) + '/'
     this.extendState({
       filter
     })
