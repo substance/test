@@ -16,4 +16,13 @@ let tapeSepc = cp.fork(tapSpecFile, {
   stdio: ['pipe', 1, 2, 'ipc']
 })
 
+testRunner.on('error', function(error) {
+  console.error(error)
+  process.exit(1)
+})
+
+testRunner.on('close', function(exitCode) {
+  process.exit(exitCode)
+})
+
 testRunner.stdout.pipe(tapeSepc.stdin)
