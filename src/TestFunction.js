@@ -1,5 +1,4 @@
 import tape from 'tape'
-import inBrowser from 'substance/util/inBrowser'
 import platform from 'substance/util/platform'
 import getTestArgs from './getTestArgs'
 import DefaultDOMElement from 'substance/dom/DefaultDOMElement'
@@ -14,7 +13,7 @@ import DefaultDOMElement from 'substance/dom/DefaultDOMElement'
 
   TestFunction.prototype.FF = function(...args) {
     let { name, opts, cb } = getTestArgs(args)
-    if (!inBrowser || !platform.isFF) opts.skip = true
+    if (!platform.inBrowser || !platform.isFF) opts.skip = true
     return this._runTape(name, opts, cb)
   }
 */
@@ -51,19 +50,19 @@ class TestFunction extends Function {
 
   UI(...args) {
     let { name, opts, cb } = this.getTestArgs(args)
-    if (!inBrowser) opts.skip = true
+    if (!platform.inBrowser) opts.skip = true
     return this.test(name, opts, cb)
   }
 
   FF(...args) {
     let { name, opts, cb } = this.getTestArgs(args)
-    if (!inBrowser || !platform.isFF) opts.skip = true
+    if (!platform.inBrowser || !platform.isFF) opts.skip = true
     return this.test(name, opts, cb)
   }
 
   WK(...args) {
     let { name, opts, cb } = this.getTestArgs(args)
-    if (!inBrowser || !platform.isWebKit) opts.skip = true
+    if (!platform.inBrowser || !platform.isWebKit) opts.skip = true
     return this.test(name, opts, cb)
   }
 
@@ -89,7 +88,7 @@ function _setupSandbox(t) {
     t.sandbox.empty()
   } else {
     // HACK: this is karma/qunit specific
-    if (inBrowser) {
+    if (platform.inBrowser) {
       let fixtureElement = window.document.querySelector('#qunit-fixture')
       if (!fixtureElement) {
         fixtureElement = window.document.createElement('div')
