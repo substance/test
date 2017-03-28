@@ -29,9 +29,12 @@ class TestFunction extends Function {
       let t = harness(getTestName(moduleName, name), Object.assign({}, _opts, opts), (t) => {
         _setupSandbox(t)
         if (before) before(t)
-        cb(t)
-        if (after) after(t)
-        _teardownSandbox(t)
+        try {
+          cb(t)
+        } finally {
+          if (after) after(t)
+          _teardownSandbox(t)
+        }
       })
       t.moduleName = moduleName
       return t
