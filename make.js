@@ -44,7 +44,6 @@ b.task('api:node', ['tape:node'], function() {
     },
     commonjs: true,
     buble: true,
-    eslint: { exclude: [ TAPE_NODE ] },
     cleanup: true
   })
 })
@@ -61,7 +60,6 @@ b.task('api:browser', ['tape:browser'], function() {
     },
     commonjs: true,
     buble: true,
-    eslint: { exclude: [ TAPE_BROWSER ] },
     cleanup: true
   })
 })
@@ -79,7 +77,6 @@ b.task('suite', ['tape:browser'], function() {
     },
     commonjs: true,
     buble: true,
-    eslint: { exclude: [ TAPE_BROWSER ] },
     cleanup: true
   })
 })
@@ -90,8 +87,7 @@ b.task('example', function() {
       dest: './tmp/tests.js',
       format: 'umd', moduleName: 'tests'
     },
-    external: { 'substance-test': 'substanceTest' },
-    eslint: true
+    external: { 'substance-test': 'substanceTest' }
   })
 })
 
