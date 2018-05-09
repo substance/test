@@ -1,8 +1,15 @@
-import Component from 'substance/ui/Component'
-import isArray from 'substance/util/isArray'
-import isPlainObject from 'substance/util/isPlainObject'
+import { substanceGlobals, Component, isArray, isPlainObject } from 'substance'
+import DMP from '../vendor/google-diff-match-patch/dmp'
+
+substanceGlobals.DEBUG_RENDERING = false
 
 class ResultItem extends Component {
+
+  constructor(...args) {
+    super(...args)
+
+    this.dmp = new DMP()
+  }
 
   shouldRerender() {
     return false
@@ -25,18 +32,37 @@ class ResultItem extends Component {
     el.append(header)
 
     if (!test._skip && !result.ok && (result.expected || result.actual) ) {
+      let expStr = _toString(result.expected)
+      let actStr = _toString(result.actual)
+      if (expStr !== actStr) {
+        el.append(this._renderPatch($$, expStr, actStr))
+      }
       let diffEl = $$('div').addClass('se-diff')
-      let expectedEl = $$('div').addClass('se-expected')
+      diffEl.append(
+        $$('div').addClass('se-expected')
         .append('Expected:')
-        .append($$('pre').append(_toString(result.expected)))
-      let actualEl = $$('div').addClass('se-actual')
+        .append(
+          $$('pre').append(_toString(result.expected))
+        )
+      )
+      diffEl.append(
+        $$('div').addClass('se-actual')
         .append('Actual:')
-        .append($$('pre').append(_toString(result.actual)))
-      diffEl.append(expectedEl, actualEl)
+        .append(
+          $$('pre').append(_toString(result.actual))
+        )
+      )
       el.append(diffEl)
     }
 
     return el
+  }
+
+  _renderPatch($$, act, exp) {
+    const dmp = this.dmp
+    let d = dmp.diff_main(act, exp);
+    let html = dmp.diff_prettyHtml(d);
+    return $$('div').addClass('se-patch').html(html)
   }
 }
 
