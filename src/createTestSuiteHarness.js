@@ -1,35 +1,49 @@
 import tape from 'tape'
 import makeTestRestartable from './makeTestRestartable'
 
-export default function createTestSuiteHarness() {
-
+export default function createTestSuiteHarness () {
   // monkey patch tape.Test
   makeTestRestartable()
 
-  let harness = tape.createHarness()
+  let harness = Object.assign(tape.createHarness(), HarnessExtension)
+  return harness
+}
 
-  harness.getResults = function() {
+function nextTick (f) {
+  window.setTimeout(f, 0)
+}
+
+const HarnessExtension = {
+  getResults () {
     return this._results
-  }
-  harness.runTests = function(tests) {
+  },
+  runTests (tests, opts) {
     if (this.job) {
       this.job.cancel()
     }
-    this.job = new RunJob(tests)
-    this.job.run()
-  }
-  harness.cancel = function() {
-    if (this.job) this.job.cancel()
-  }
-  harness.getTests = function() {
+    this.job = new RunJob(tests, opts)
+    this.job.run().then(() => {
+      this.job = null
+    })
+  },
+  isRunning () {
+    return Boolean(this.job)
+  },
+  cancel () {
+    if (this.job) {
+      this.job.cancel()
+      this.job = null
+    }
+  },
+  getTests () {
     return this.getResults().tests || []
-  }
-  harness.getModuleNames = function() {
+  },
+  getModuleNames () {
     // NOTE: tape does not have modules
     // Instead we put the module name into each test
     // Now we compute the set of all unique module names
     let moduleNames = {}
-    harness.getTests().forEach((t) => {
+    this.getTests().forEach((t) => {
       if (t.moduleName) {
         moduleNames[t.moduleName] = true
       }
@@ -38,37 +52,38 @@ export default function createTestSuiteHarness() {
     moduleNames.sort()
     return moduleNames
   }
-
-  return harness
-}
-
-function nextTick(f) {
-  window.setTimeout(f, 0)
 }
 
 class RunJob {
-  constructor(tests) {
+  constructor (tests, opts) {
     this.tests = tests
     this._cancelled = false
+    this._opts = opts || {}
   }
 
-  run() {
+  run () {
     const self = this
     const tests = this.tests
+    const opts = this._opts
     let idx = 0
-    function next() {
-      if (idx < tests.length && !self._cancelled) {
-        let t = tests[idx++]
-        t.once('end', function() {
-          nextTick(next)
-        })
-        t.run()
+    return new Promise((resolve, reject) => {
+      function next () {
+        if (idx < tests.length && !self._cancelled) {
+          let t = tests[idx++]
+          t.once('end', () => {
+            if (!t._ok && opts.stopOnError) return
+            nextTick(next)
+          })
+          t.run()
+        } else {
+          resolve()
+        }
       }
-    }
-    nextTick(next)
+      nextTick(next)
+    })
   }
 
-  cancel() {
+  cancel () {
     this._cancelled = true
   }
 }

@@ -1,7 +1,6 @@
 import tape from 'tape'
-import platform from 'substance/util/platform'
+import { platform, DefaultDOMElement } from 'substance'
 import getTestArgs from './getTestArgs'
-import DefaultDOMElement from 'substance/dom/DefaultDOMElement'
 
 /*
   This TestFunction makes tape a bit better extensible.

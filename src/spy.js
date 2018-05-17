@@ -1,4 +1,4 @@
-import isFunction from 'substance/util/isFunction'
+import { isFunction } from 'substance'
 
 export default function spy(self, name) {
   var f

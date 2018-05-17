@@ -26,6 +26,13 @@ body {
 .sc-test-suite > .se-toolbar > * + * {
   margin-left: 10px;
 }
+.sc-test-suite > .se-toolbar .se-toggle-run-button.sm-running::before {
+  content: "Stop";
+}
+.sc-test-suite > .se-toolbar .se-toggle-run-button.sm-stopped::before {
+  content: "Restart";
+}
+
 .sc-test-suite > .se-body {
   padding: 10px 0px;
 }

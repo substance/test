@@ -1,18 +1,16 @@
-import clone from 'substance/util/clone'
-import Component from 'substance/ui/Component'
-import Router from 'substance/ui/Router'
+import { clone, Component, Router } from 'substance'
 import TestItem from './TestItem'
 
 const TILDE = '~'.charCodeAt(0)
 const CARET = '^'.charCodeAt(0)
 const SLASH = '/'.charCodeAt(0)
 
-class TestSuite extends Component {
+export default class TestSuite extends Component {
 
   constructor(...args) {
     super(...args)
 
-    this.moduleNames = this.props.harness.getModuleNames()
+    this.moduleNames = this._getHarness().getModuleNames()
 
     this.handleAction('focusTest', this.handleFocusTest)
   }
@@ -35,8 +33,9 @@ class TestSuite extends Component {
   render($$) {
     let el = $$('div').addClass('sc-test-suite')
 
-    let state = this.state
-    let filter = this.state.filter || ''
+    const harness = this._getHarness()
+    const state = this.state
+    const filter = this.state.filter || ''
 
     let header = $$('div').addClass('se-header')
     let title = this.props.title || window.document.title || 'TestSuite'
@@ -58,16 +57,6 @@ class TestSuite extends Component {
       toolbar.append(moduleSelect)
     }
 
-    let hideSuccessfulCheckbox = $$('input').ref('hideCheckbox')
-      .attr('type', 'checkbox')
-      .htmlProp('checked', state.hideSuccessful)
-      .on('change', this.onToggleHideSuccessful)
-    toolbar.append(
-      $$('div').append(
-        hideSuccessfulCheckbox,
-        $$('label').append('Only show failed tests')
-      )
-    )
     if (filter) {
       toolbar.append(
         $$('div').addClass('se-clear-filter').append(
@@ -87,13 +76,41 @@ class TestSuite extends Component {
       ))
     }
 
+    let hideSuccessfulCheckbox = $$('input').ref('hideCheckbox')
+      .attr('type', 'checkbox')
+      .htmlProp('checked', state.hideSuccessful)
+      .on('change', this.onToggleHideSuccessful)
+    let stopOnErrorCheckbox = $$('input').ref('stopOnErrorCheckbox')
+      .attr('type', 'checkbox')
+      .htmlProp('checked', state.stopOnError)
+      .on('change', this.onToggleStopOnError)
+    toolbar.append(
+      $$('div').append(
+        hideSuccessfulCheckbox,
+        $$('label').append('Only show failed tests')
+      ).append(
+        stopOnErrorCheckbox,
+        $$('label').append('Stop on first error')
+      )
+    )
+
+    toolbar.append(
+      $$('div').append(
+        $$('button').addClass('se-toggle-run-button').ref('toggleRunButton')
+          .on('click', this.onToggleRun)
+          .addClass(harness.isRunning() ? 'sm-running' : 'sm-stopped')
+      )
+    )
+
+    // run
+
     el.append(toolbar)
 
     let body = $$('div').addClass('se-body')
 
     let _filter = this._getFilter()
     let tests = $$('div').addClass('se-tests').ref('tests')
-    this.props.harness.getTests().forEach(function(test) {
+    harness.getTests().forEach((test) => {
       let testItem = $$(TestItem, { test: test }).ref(test.name)
       if (!_filter(test)) {
         testItem.addClass('sm-hidden')
@@ -117,22 +134,34 @@ class TestSuite extends Component {
     }
   }
 
-  runTests() {
+  restart () {
+    const harness = this._getHarness()
+    const _filter = this._getFilter()
+    harness.getTests().forEach((test) => {
+      if (_filter(test)) {
+        this.refs[test.name].clearResult()
+      }
+    })
+    this.runTests()
+  }
+
+  runTests () {
     // console.log('Running tests...')
     let testItems = this.refs.tests.getChildren()
     let tests = []
     let _filter = this._getFilter()
-    testItems.forEach(function(testItem) {
+    testItems.forEach((testItem) => {
       let t = testItem.props.test
-      if(_filter(t)) {
+      if (_filter(t)) {
         testItem.removeClass('sm-hidden')
         tests.push(t)
       } else {
         testItem.addClass('sm-hidden')
       }
     })
-    const harness = this.props.harness
-    harness.runTests(tests)
+    const harness = this._getHarness()
+    harness.runTests(tests, { stopOnError: this.state.stopOnError })
+    this.refs.toggleRunButton.addClass('sm-running').removeClass('sm-stopped')
   }
 
   _getFilter() {
@@ -164,6 +193,10 @@ class TestSuite extends Component {
     }
 
     return t => (t.name === pattern)
+  }
+
+  _getHarness () {
+    return this.props.harness
   }
 
   onModuleSelect() {
@@ -202,6 +235,35 @@ class TestSuite extends Component {
     this.updateRoute()
   }
 
+  onToggleStopOnError() {
+    let checked = this.refs.stopOnErrorCheckbox.htmlProp('checked')
+    if (checked) {
+      this.extendState({
+        stopOnError: checked
+      })
+    } else {
+      let newState = clone(this.state)
+      delete newState.stopOnError
+      this.setState(newState)
+    }
+    this.updateRoute()
+  }
+
+  onToggleRun () {
+    const harness = this._getHarness()
+    if (harness.isRunning()) {
+      harness.cancel()
+      this.refs.toggleRunButton
+        .removeClass('sm-running')
+        .addClass('sm-stopped')
+    } else {
+      this.restart()
+      this.refs.toggleRunButton
+        .removeClass('sm-stopped')
+        .addClass('sm-running')
+    }
+  }
+
   onClearFilter() {
     let newState = clone(this.state)
     delete newState.filter
@@ -217,5 +279,3 @@ class TestSuite extends Component {
     this.updateRoute()
   }
 }
-
-export default TestSuite

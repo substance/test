@@ -1,5 +1,5 @@
+import { isNil } from 'substance'
 import tape from 'tape'
-import isNil from 'substance/util/isNil'
 
 const Test = tape.Test
 

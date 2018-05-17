@@ -1,5 +1,4 @@
-import Component from 'substance/ui/Component'
-import RenderingEngine from 'substance/ui/RenderingEngine'
+import { Component, RenderingEngine } from 'substance'
 import ResultItem from './ResultItem'
 
 class TestItem extends Component {
@@ -60,12 +59,17 @@ class TestItem extends Component {
     return false
   }
 
+  clearResult() {
+    this.el.removeClass('sm-ok').removeClass('sm-not-ok')
+    this.refs.results.empty()
+    this.refs.sandbox.empty()
+  }
+
   onStart() {
     let test = this.props.test
     this.el.removeClass('sm-skip')
     if (test._skip) this.el.addClass('sm-skip')
-    this.refs.results.empty()
-    this.refs.sandbox.empty()
+    this.clearResult()
     this.props.test.sandbox = this.refs.sandbox.el
   }
 
