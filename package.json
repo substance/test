@@ -19,8 +19,8 @@
     "browserify": "13.3.0",
     "lodash": "4.17.4",
     "standard": "^11.0.1",
-    "substance": "^1.0.0-preview.58",
-    "substance-bundler": "^0.24.1",
+    "substance": "1.0.0-preview.65",
+    "substance-bundler": "0.25.1",
     "tap-spec": "^4.1.1",
     "tape": "4.6.3"
   },
@@ -28,7 +28,7 @@
     "source-map-support": "0.4.3"
   },
   "peerDependencies": {
-    "substance": "next"
+    "substance": ">1.0.0-preview.65"
   },
   "files": [
     "dist",
