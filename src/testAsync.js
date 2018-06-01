@@ -1,4 +1,4 @@
-import test from 'tape'
+import test from './test'
 
 export default function testAsync (name, func) {
   test(name, async assert => {

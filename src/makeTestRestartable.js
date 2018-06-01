@@ -1,7 +1,5 @@
-import tape from 'tape'
-
 // monkey path tape so that we can restart the tests in the TestSuite
-export default function makeTestRestartable () {
+export default function makeTestRestartable (tape) {
   const Test = tape.Test
 
   Test.prototype.reset = function () {

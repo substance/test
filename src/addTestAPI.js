@@ -1,9 +1,8 @@
 import { isNil } from 'substance'
-import tape from 'tape'
 
-const Test = tape.Test
+export default function addTestAPI (tape) {
+  const Test = tape.Test
 
-export default function addTestAPI () {
   Test.prototype.nil =
   Test.prototype.isNil = function (value, msg, extra) {
     this._assert(isNil(value), {

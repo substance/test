@@ -1,9 +1,8 @@
-import tape from 'tape'
 import makeTestRestartable from './makeTestRestartable'
 
-export default function createTestSuiteHarness () {
+export default function createTestSuiteHarness (tape) {
   // monkey patch tape.Test
-  makeTestRestartable()
+  makeTestRestartable(tape)
 
   let harness = Object.assign(tape.createHarness(), HarnessExtension)
   return harness
