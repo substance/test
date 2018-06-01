@@ -1,9 +1,10 @@
-import tape from 'tape'
-import spy from './spy'
-import createModuleFunction from './createModuleFunction'
+import test from 'tape'
 import addTestAPI from './addTestAPI'
-
 // add some extensions
 addTestAPI()
 
-export { tape, test, module, spy }
+export { test }
+export { default as getMountPoint } from './getMountPoint'
+export { default as spy } from './spy'
+export { default as testAsync } from './testAsync'
+export { default as wait } from './wait'

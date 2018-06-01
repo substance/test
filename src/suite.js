@@ -1,16 +1,11 @@
+import * as substanceTest from './api'
 import createTestSuiteHarness from './createTestSuiteHarness'
-import createModuleFunction from './createModuleFunction'
-import addTestAPI from './addTestAPI'
 import TestSuite from './TestSuite'
-import spy from './spy'
-
-// add some extensions
-addTestAPI()
 
 const harness = createTestSuiteHarness()
 
-window.substanceTest = { test, module, spy }
+window.substanceTest = substanceTest
 
-window.onload = function() {
+window.onload = () => {
   TestSuite.mount({ harness }, 'body')
 }
