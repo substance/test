@@ -10,15 +10,15 @@
   "jsnext:main": "dist/test.es.js",
   "scripts": {
     "prepublish": "node make",
-    "lint": "eslint -c .eslintrc.js src",
+    "lint": "standard src/*.js",
     "build": "node make"
   },
   "author": "Oliver Buchtala",
   "license": "MIT",
   "devDependencies": {
     "browserify": "13.3.0",
-    "eslint": "^4.19.1",
     "lodash": "4.17.4",
+    "standard": "^11.0.1",
     "substance": "^1.0.0-preview.58",
     "substance-bundler": "^0.24.1",
     "tap-spec": "^4.1.1",
