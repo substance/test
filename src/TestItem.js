@@ -2,8 +2,7 @@ import { Component, RenderingEngine } from 'substance'
 import ResultItem from './ResultItem'
 
 class TestItem extends Component {
-
-  constructor(...args) {
+  constructor (...args) {
     super(...args)
 
     this.onStart = this.onStart.bind(this)
@@ -11,21 +10,21 @@ class TestItem extends Component {
     this.onEnd = this.onEnd.bind(this)
   }
 
-  didMount() {
+  didMount () {
     let test = this.props.test
     test.on('prerun', this.onStart)
     test.on('result', this.onResult)
     test.on('end', this.onEnd)
   }
 
-  dispose() {
+  dispose () {
     let test = this.props.test
     test.removeListener('prerun', this.onStart)
     test.removeListener('result', this.onResult)
     test.removeListener('end', this.onEnd)
   }
 
-  render($$) {
+  render ($$) {
     let test = this.props.test
     let el = $$('div').addClass('sc-test')
 
@@ -55,17 +54,17 @@ class TestItem extends Component {
 
   // The content of results and sandbox are produced by the test
   // Thus this does not need to be rerendered
-  shouldRerender() {
+  shouldRerender () {
     return false
   }
 
-  clearResult() {
+  clearResult () {
     this.el.removeClass('sm-ok').removeClass('sm-not-ok')
     this.refs.results.empty()
     this.refs.sandbox.empty()
   }
 
-  onStart() {
+  onStart () {
     let test = this.props.test
     this.el.removeClass('sm-skip')
     if (test._skip) this.el.addClass('sm-skip')
@@ -73,7 +72,7 @@ class TestItem extends Component {
     this.props.test.sandbox = this.refs.sandbox.el
   }
 
-  onResult(result) {
+  onResult (result) {
     let renderContext = RenderingEngine.createContext(this)
     let $$ = renderContext.$$
     this.refs.results.append($$(ResultItem, {
@@ -82,7 +81,7 @@ class TestItem extends Component {
     }))
   }
 
-  onEnd() {
+  onEnd () {
     let test = this.props.test
     if (test._skip) {
       this.el.addClass('sm-skip')
@@ -93,13 +92,13 @@ class TestItem extends Component {
     }
   }
 
-  onClickFocus(e) {
+  onClickFocus (e) {
     e.preventDefault()
     e.stopPropagation()
     this.send('focusTest', this.props.test)
   }
 
-  onClickRun(e) {
+  onClickRun (e) {
     e.preventDefault()
     e.stopPropagation()
     let test = this.props.test
@@ -107,7 +106,7 @@ class TestItem extends Component {
     test.run()
   }
 
-  toggleExpand(e) {
+  toggleExpand (e) {
     e.preventDefault()
     e.stopPropagation()
     let expanded = this.el.hasClass('sm-expanded')

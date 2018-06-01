@@ -1,11 +1,10 @@
 import tape from 'tape'
 
 // monkey path tape so that we can restart the tests in the TestSuite
-export default function makeTestRestartable() {
-
+export default function makeTestRestartable () {
   const Test = tape.Test
 
-  Test.prototype.reset = function() {
+  Test.prototype.reset = function () {
     this.readable = true
     this.assertCount = 0
     this.pendingCount = 0
@@ -20,7 +19,7 @@ export default function makeTestRestartable() {
 
   const _run = Test.prototype.run
 
-  Test.prototype.run = function() {
+  Test.prototype.run = function () {
     let _ok = false
     try {
       this.reset()
@@ -30,16 +29,15 @@ export default function makeTestRestartable() {
       })
       _run.apply(this, arguments)
       _ok = true
-    }
+
     // Using *finally* without *catch* enables us to use browser's
     // 'Stop on uncaught exceptions', but still making sure
     // that 'end' is emitted
-    finally {
+    } finally {
       if (!_ok) {
         this._ok = false
         this.emit('end')
       }
     }
   }
-
 }

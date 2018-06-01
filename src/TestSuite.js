@@ -1,34 +1,31 @@
 import { clone, Component, Router } from 'substance'
 import TestItem from './TestItem'
 
-const TILDE = '~'.charCodeAt(0)
-const CARET = '^'.charCodeAt(0)
 const SLASH = '/'.charCodeAt(0)
 
 export default class TestSuite extends Component {
-
-  constructor(...args) {
+  constructor (...args) {
     super(...args)
 
     this.handleAction('focusTest', this.handleFocusTest)
   }
 
-  didMount() {
+  didMount () {
     this.router.on('route:changed', this.onRouteChange, this)
     this.router.start()
     this.runTests()
   }
 
-  dispose() {
+  dispose () {
     this.router.off(this)
   }
 
-  getInitialState() {
+  getInitialState () {
     this.router = new Router()
     return this.router.readRoute()
   }
 
-  render($$) {
+  render ($$) {
     let el = $$('div').addClass('sc-test-suite')
 
     const harness = this._getHarness()
@@ -114,7 +111,7 @@ export default class TestSuite extends Component {
     return el
   }
 
-  didUpdate(oldProps, oldState) {
+  didUpdate (oldProps, oldState) {
     if (this.state.filter !== oldState.filter) {
       this.runTests()
     }
@@ -150,14 +147,14 @@ export default class TestSuite extends Component {
     this.refs.toggleRunButton.addClass('sm-running').removeClass('sm-stopped')
   }
 
-  _getFilter() {
+  _getFilter () {
     // no pattern means we select all
     if (!this.state.filter) return () => { return true }
 
     const pattern = window.decodeURIComponent(this.state.filter)
 
-    if (pattern.charCodeAt(0) === SLASH && pattern.charCodeAt(pattern.length-1)) {
-      let re = new RegExp(pattern.slice(1,-1))
+    if (pattern.charCodeAt(0) === SLASH && pattern.charCodeAt(pattern.length - 1)) {
+      let re = new RegExp(pattern.slice(1, -1))
       return (t) => {
         return re.exec(t.name)
       }
@@ -170,21 +167,21 @@ export default class TestSuite extends Component {
     return this.props.harness
   }
 
-  handleFocusTest(test) {
+  handleFocusTest (test) {
     const filter = window.encodeURIComponent(test.name)
     this.extendState({ filter })
     this.updateRoute()
   }
 
-  updateRoute() {
+  updateRoute () {
     this.router.writeRoute(this.state)
   }
 
-  onRouteChange(newState) {
+  onRouteChange (newState) {
     this.setState(newState)
   }
 
-  onToggleHideSuccessful() {
+  onToggleHideSuccessful () {
     let checked = this.refs.hideCheckbox.htmlProp('checked')
     if (checked) {
       this.extendState({
@@ -198,7 +195,7 @@ export default class TestSuite extends Component {
     this.updateRoute()
   }
 
-  onToggleStopOnError() {
+  onToggleStopOnError () {
     let checked = this.refs.stopOnErrorCheckbox.htmlProp('checked')
     if (checked) {
       this.extendState({
@@ -227,14 +224,14 @@ export default class TestSuite extends Component {
     }
   }
 
-  onClearFilter() {
+  onClearFilter () {
     let newState = clone(this.state)
     delete newState.filter
     this.setState(newState)
     this.updateRoute()
   }
 
-  onChangeFilter() {
+  onChangeFilter () {
     const filter = '/' + window.encodeURIComponent(this.refs.filterInput.el.getValue()) + '/'
     this.extendState({
       filter
