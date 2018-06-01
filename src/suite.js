@@ -8,9 +8,6 @@ import spy from './spy'
 addTestAPI()
 
 const harness = createTestSuiteHarness()
-const module = createModuleFunction(harness)
-// default test module
-const test = module()
 
 window.substanceTest = { test, module, spy }
 

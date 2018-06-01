@@ -10,8 +10,6 @@ export default class TestSuite extends Component {
   constructor(...args) {
     super(...args)
 
-    this.moduleNames = this._getHarness().getModuleNames()
-
     this.handleAction('focusTest', this.handleFocusTest)
   }
 
@@ -45,18 +43,6 @@ export default class TestSuite extends Component {
     el.append(header)
 
     let toolbar = $$('div').addClass('se-toolbar')
-    if (this.moduleNames && this.moduleNames.length > 0) {
-      let moduleSelect = $$('select').ref('moduleNames')
-      moduleSelect.append($$('option').attr('value', '').append('---   All   --'))
-      this.moduleNames.forEach(function(moduleName) {
-        let option = $$('option').attr('value', moduleName).append(moduleName)
-        if (moduleName === state.filter) option.attr('selected', true)
-        moduleSelect.append(option)
-      })
-      moduleSelect.on('change', this.onModuleSelect)
-      toolbar.append(moduleSelect)
-    }
-
     if (filter) {
       toolbar.append(
         $$('div').addClass('se-clear-filter').append(
@@ -177,34 +163,11 @@ export default class TestSuite extends Component {
       }
     }
 
-    // legacy
-    if (pattern.charCodeAt(0) === CARET) {
-      let re = new RegExp(pattern)
-      return (t) => {
-        return re.exec(t.name)
-      }
-    }
-
-    if (pattern.charCodeAt(0) === TILDE) {
-      let moduleName = pattern.slice(1)
-      return (t) => {
-        return t.moduleName === moduleName
-      }
-    }
-
     return t => (t.name === pattern)
   }
 
   _getHarness () {
     return this.props.harness
-  }
-
-  onModuleSelect() {
-    let filter = window.encodeURIComponent('~'+this.refs.moduleNames.htmlProp('value'))
-    this.extendState({
-      filter: filter
-    })
-    this.updateRoute()
   }
 
   handleFocusTest(test) {

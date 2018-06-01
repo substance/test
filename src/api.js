@@ -6,8 +6,4 @@ import addTestAPI from './addTestAPI'
 // add some extensions
 addTestAPI()
 
-const module = createModuleFunction()
-// default module
-const test = module()
-
 export { tape, test, module, spy }

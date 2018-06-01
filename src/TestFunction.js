@@ -16,16 +16,15 @@ import getTestArgs from './getTestArgs'
     return this._runTape(name, opts, cb)
   }
 */
-class TestFunction extends Function {
-
-  constructor(moduleName = '', _opts = {}, harness = tape) {
+export default class TestFunction extends Function {
+  constructor (_opts = {}, harness = tape) {
     super()
 
     const before = _opts.before
     const after = _opts.after
 
-    function registerTest(name, opts, cb) {
-      let t = harness(getTestName(moduleName, name), Object.assign({}, _opts, opts), (t) => {
+    function registerTest (name, opts, cb) {
+      let t = harness(name, Object.assign({}, _opts, opts), (t) => {
         _setupSandbox(t)
         if (before) before(t)
         try {
@@ -35,11 +34,10 @@ class TestFunction extends Function {
           _teardownSandbox(t)
         }
       })
-      t.moduleName = moduleName
       return t
     }
 
-    function testFunction(...args) {
+    function testFunction (...args) {
       let { name, opts, cb } = getTestArgs(args)
       return registerTest(name, opts, cb)
     }
@@ -50,51 +48,46 @@ class TestFunction extends Function {
     return testFunction
   }
 
-  UI(...args) {
+  UI (...args) {
     let { name, opts, cb } = this.getTestArgs(args)
     if (!platform.inBrowser) opts.skip = true
     return this.test(name, opts, cb)
   }
 
-  FF(...args) {
+  FF (...args) {
     let { name, opts, cb } = this.getTestArgs(args)
     if (!platform.inBrowser || !platform.isFF) opts.skip = true
     return this.test(name, opts, cb)
   }
 
-  WK(...args) {
+  WK (...args) {
     let { name, opts, cb } = this.getTestArgs(args)
     if (!platform.inBrowser || !platform.isWebKit) opts.skip = true
     return this.test(name, opts, cb)
   }
 
-  getTestArgs(args) {
+  getTestArgs (args) {
     return getTestArgs(args)
   }
 
-  skip(...args) {
+  skip (...args) {
     let { name, opts, cb } = this.getTestArgs(args)
     opts.skip = true
     return this.test(name, opts, cb)
   }
-
 }
 
-function getTestName(moduleName, name) {
-  if (moduleName) return moduleName + ': ' + name
-  else return name
-}
-
-function _setupSandbox(t) {
+function _setupSandbox (t) {
   if (t.sandbox) {
     t.sandbox.empty()
   } else {
     // HACK: this is karma/qunit specific
+    // TODO: try to remove this, because we are not using qunit anymore
     if (platform.inBrowser) {
       let fixtureElement = window.document.querySelector('#qunit-fixture')
       if (!fixtureElement) {
         fixtureElement = window.document.createElement('div')
-        fixtureElement.id = "qunit-fixture"
+        fixtureElement.id = 'qunit-fixture'
         window.document.querySelector('body').appendChild(fixtureElement)
       }
       let sandboxEl = window.document.createElement('div')
@@ -110,12 +103,10 @@ function _setupSandbox(t) {
   }
 }
 
-function _teardownSandbox(t) {
+function _teardownSandbox (t) {
   const sandbox = t.sandbox
   // TODO: why is this so important?
   if (sandbox && sandbox._shouldBeRemoved) {
     sandbox.remove()
   }
 }
-
-export default TestFunction
