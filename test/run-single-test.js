@@ -1,4 +1,4 @@
-let { test } = require('../dist/test.cjs.js')
+let { test, getMountPoint } = require('../dist/test.cjs.js')
 
 test('Foo', (t) => {
   t.ok(true, 'All good.')
@@ -6,6 +6,6 @@ test('Foo', (t) => {
 })
 
 test('Bar', (t) => {
-  t.sandbox.append('Bar')
+  getMountPoint(t).append('Bar')
   t.end()
 })
