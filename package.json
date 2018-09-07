@@ -1,6 +1,6 @@
 {
   "name": "substance-test",
-  "version": "0.12.2",
+  "version": "0.12.3",
   "description": "A test-suite for Substance based on tape.",
   "repository": {
     "type": "git",
