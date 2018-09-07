@@ -3,7 +3,7 @@ import DMP from '../vendor/google-diff-match-patch/dmp'
 
 substanceGlobals.DEBUG_RENDERING = false
 
-class ResultItem extends Component {
+export default class ResultItem extends Component {
   constructor (...args) {
     super(...args)
 
@@ -60,7 +60,9 @@ class ResultItem extends Component {
   _renderPatch ($$, act, exp) {
     const dmp = this.dmp
     let d = dmp.diff_main(act, exp)
+    d = _shortenDiff(d)
     let html = dmp.diff_prettyHtml(d)
+    html = html.replace(/\.\.\.&para;/g, '...')
     return $$('div').addClass('se-patch').html(html)
   }
 }
@@ -73,4 +75,15 @@ function _toString (obj) {
   }
 }
 
-export default ResultItem
+function _shortenDiff (diffs) {
+  return diffs.map(d => {
+    if (d[0] === 0) {
+      let lines = d[1].split(/\r?\n/)
+      let L = lines.length
+      if (L > 10) {
+        d[1] = [lines[0], '...', lines[L - 1]].join('\n')
+      }
+    }
+    return d
+  })
+}
