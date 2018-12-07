@@ -9,10 +9,10 @@ export default function spy (self, name) {
   } else {
     f = self[name]
   }
-  function spyFunction () {
-    var res = f.apply(self, arguments)
+  function spyFunction (...args) {
+    var res = f.call(self, ...args)
     spyFunction.callCount++
-    spyFunction.args = arguments
+    spyFunction.args = args
     return res
   }
   spyFunction.callCount = 0
