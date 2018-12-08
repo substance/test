@@ -50,12 +50,13 @@ b.task('api:node', ['tape:node'], () => {
 
 // Bundling the test API for use in the browser (e.g. in karma)
 b.task('api:browser', ['tape:browser'], () => {
-  b.js('./src/api.js', {
+  b.js('./src/tape-api.js', {
     output: [{
       file: './dist/test.browser.js',
       format: 'umd',
       name: 'substanceTest',
-      globals: { substance: 'window.substance' }
+      globals: { substance: 'window.substance' },
+      sourcemap: false
     }],
     alias: {
       'tape': TAPE_BROWSER
