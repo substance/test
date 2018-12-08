@@ -1,10 +1,18 @@
-import { DefaultDOMElement } from 'substance'
+import { DefaultDOMElement, platform } from 'substance'
 
 export default function getMountPoint (t) {
   // when running with substance-test we get
   // a sandbox for each test
   if (t.sandbox) return t.sandbox
-  // otherwise we create our own DOM
-  let htmlDoc = DefaultDOMElement.parseHTML('<html><body></body></html>')
-  return htmlDoc.find('body')
+  // if we are in the browser we append an element to the body
+  if (platform.inBrowser) {
+    let body = DefaultDOMElement.wrap(window.document.body)
+    let sandboxEl = body.createElement('div')
+    body.append(sandboxEl)
+    return sandboxEl
+  } else {
+    // otherwise we create a detached DOM
+    let htmlDoc = DefaultDOMElement.parseHTML('<html><body></body></html>')
+    return htmlDoc.find('body')
+  }
 }
