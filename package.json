@@ -19,7 +19,7 @@
     "browserify": "13.3.0",
     "lodash": "4.17.4",
     "standard": "^11.0.1",
-    "substance": "1.0.0-preview.65",
+    "substance": "1.0.0-preview.113",
     "substance-bundler": "^0.25.2",
     "tap-spec": "^4.1.1",
     "tape": "4.6.3"
