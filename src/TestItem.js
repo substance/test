@@ -1,13 +1,17 @@
 import { Component, RenderingEngine } from 'substance'
 import ResultItem from './ResultItem'
 
-class TestItem extends Component {
+export default class TestItem extends Component {
   constructor (...args) {
     super(...args)
 
     this.onStart = this.onStart.bind(this)
     this.onResult = this.onResult.bind(this)
     this.onEnd = this.onEnd.bind(this)
+  }
+
+  getInitialState () {
+    return { showBody: false }
   }
 
   didMount () {
@@ -33,6 +37,9 @@ class TestItem extends Component {
     el.append(header)
 
     let controls = $$('span').addClass('se-controls').append(
+      $$('button').addClass('se-details')
+        .append('\uD83D\uDC41')
+        .on('click', this.onToggleVisible),
       $$('button').addClass('se-focus')
         .append('\uD83D\uDCCC')
         .on('click', this.onClickFocus),
@@ -42,12 +49,10 @@ class TestItem extends Component {
     )
     el.append(controls)
 
-    let body = $$('div').addClass('se-body')
+    let body = $$('div').addClass('se-body').ref('body')
     body.append($$('div').addClass('se-results').ref('results'))
     body.append($$('div').addClass('se-sandbox').ref('sandbox'))
     el.append(body)
-
-    el.on('click', this.toggleExpand)
 
     return el
   }
@@ -90,6 +95,10 @@ class TestItem extends Component {
     } else {
       this.el.addClass('sm-not-ok')
     }
+    // hiding a test after it has finished
+    if (!this.props.hasFilter) {
+      this.refs.body.addClass('sm-hidden')
+    }
   }
 
   onClickFocus (e) {
@@ -106,13 +115,13 @@ class TestItem extends Component {
     test.run()
   }
 
-  toggleExpand (e) {
+  onToggleVisible (e) {
     e.preventDefault()
     e.stopPropagation()
-    let expanded = this.el.hasClass('sm-expanded')
-    if (expanded) this.el.removeClass('sm-expanded')
-    else this.el.addClass('sm-expanded')
+    if (this.refs.body.hasClass('sm-hidden')) {
+      this.refs.body.removeClass('sm-hidden')
+    } else {
+      this.refs.body.addClass('sm-hidden')
+    }
   }
 }
-
-export default TestItem

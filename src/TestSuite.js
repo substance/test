@@ -94,7 +94,7 @@ export default class TestSuite extends Component {
     let _filter = this._getFilter()
     let tests = $$('div').addClass('se-tests').ref('tests')
     harness.getTests().forEach((test) => {
-      let testItem = $$(TestItem, { test: test }).ref(test.name)
+      let testItem = $$(TestItem, { test: test, hasFilter: Boolean(this.state.filter) }).ref(test.name)
       if (!_filter(test)) {
         testItem.addClass('sm-hidden')
       }

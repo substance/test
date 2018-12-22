@@ -68,6 +68,9 @@ body {
 .sc-test > .se-body {
   padding: 10px 20px;
 }
+.sc-test > .se-body.sm-hidden {
+  display: none;
+}
 .sc-test.sm-ok > .se-header {
   background: rgba(0, 128, 0, 0.4);
 }
