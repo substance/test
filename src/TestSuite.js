@@ -89,7 +89,7 @@ export default class TestSuite extends Component {
 
     el.append(toolbar)
 
-    let body = $$('div').addClass('se-body')
+    let bodyEl = $$('div').addClass('se-body')
 
     let _filter = this._getFilter()
     let tests = $$('div').addClass('se-tests').ref('tests')
@@ -101,8 +101,8 @@ export default class TestSuite extends Component {
       tests.append(testItem)
     })
 
-    body.append(tests)
-    el.append(body)
+    bodyEl.append(tests)
+    el.append(bodyEl)
 
     if (this.state.hideSuccessful) {
       el.addClass('sm-hide-successful')

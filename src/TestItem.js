@@ -49,10 +49,10 @@ export default class TestItem extends Component {
     )
     el.append(controls)
 
-    let body = $$('div').addClass('se-body').ref('body')
-    body.append($$('div').addClass('se-results').ref('results'))
-    body.append($$('div').addClass('se-sandbox').ref('sandbox'))
-    el.append(body)
+    let bodyEl = $$('div').addClass('se-body').ref('body')
+    bodyEl.append($$('div').addClass('se-results').ref('results'))
+    bodyEl.append($$('div').addClass('se-sandbox').ref('sandbox'))
+    el.append(bodyEl)
 
     return el
   }

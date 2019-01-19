@@ -6,9 +6,9 @@ export default function getMountPoint (t) {
   if (t.sandbox) return t.sandbox
   // if we are in the browser we append an element to the body
   if (platform.inBrowser) {
-    let body = DefaultDOMElement.wrap(window.document.body)
-    let sandboxEl = body.createElement('div')
-    body.append(sandboxEl)
+    let bodyEl = DefaultDOMElement.wrap(window.document.body)
+    let sandboxEl = bodyEl.createElement('div')
+    bodyEl.append(sandboxEl)
     return sandboxEl
   } else {
     // otherwise we create a detached DOM
