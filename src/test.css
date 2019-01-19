@@ -104,6 +104,10 @@ body {
 .sc-test-result {
   padding: 5px;
 }
+.sc-test-result.sm-comment {
+  color: gray;
+  font-style: italic;
+}
 .sc-test-result > * + * {
   margin-top: 10px;
 }
