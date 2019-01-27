@@ -1,7 +1,19 @@
-import { isNil } from 'substance'
+import { isNil, platform } from 'substance'
 
 export default function addTestAPI (tape) {
   const Test = tape.Test
+
+  if (platform.inNodeJS) {
+    const _run = Test.prototype.run
+    Test.prototype.run = function () {
+      try {
+        _run.apply(this, arguments)
+      } catch (err) {
+        this.fail('Uncaught error: ' + String(err))
+        this.end()
+      }
+    }
+  }
 
   Test.prototype.nil =
   Test.prototype.isNil = function (value, msg, extra) {
