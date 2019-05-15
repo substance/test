@@ -13,7 +13,8 @@ b.task('clean', () => {
 b.task('tape:browser', () => {
   b.browserify('./.make/tape.js', {
     dest: TAPE_BROWSER,
-    exports: ['default']
+    exports: ['default'],
+    debug: true
   })
 })
 
@@ -34,9 +35,9 @@ b.task('tap:spec', () => {
 
 // Bundling the test API for use in nodejs
 b.task('api:node', ['tape:node'], () => {
-  b.js('src/api.js', {
+  b.js('src/api.cjs.js', {
     output: [{
-      file: './dist/test.cjs.js',
+      file: './dist/substance-test.cjs.js',
       format: 'cjs'
     }],
     alias: {
@@ -50,9 +51,9 @@ b.task('api:node', ['tape:node'], () => {
 
 // Bundling the test API for use in the browser (e.g. in karma)
 b.task('api:browser', ['tape:browser'], () => {
-  b.js('./src/tape-api.js', {
+  b.js('./src/api.browser.js', {
     output: [{
-      file: './dist/test.browser.js',
+      file: './dist/substance-test.browser.js',
       format: 'umd',
       name: 'substanceTest',
       globals: { substance: 'window.substance' },
@@ -72,9 +73,9 @@ b.task('suite', ['tape:browser'], () => {
   b.copy('src/test.css', 'dist/')
   b.js('./src/suite.js', {
     output: [{
-      file: './dist/testsuite.js',
+      file: './dist/substance-test.js',
       format: 'umd',
-      name: 'testsuite',
+      name: 'substanceTest',
       globals: { substance: 'window.substance' }
     }],
     alias: {

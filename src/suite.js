@@ -1,8 +1,8 @@
-import * as substanceTest from './api'
+import * as substanceTest from './api.browser'
 import TestSuite from './TestSuite'
 
-window.substanceTest = substanceTest
-
 window.onload = () => {
-  TestSuite.mount({ harness: substanceTest.test }, 'body')
+  TestSuite.mount({ harness: substanceTest.harness }, 'body')
 }
+
+export default substanceTest

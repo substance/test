@@ -1,6 +1,12 @@
-let tape = require('tape')
-let Test = require('tape/lib/test')
+const tape = require('tape')
+const Test = require('tape/lib/test')
+const Results = require('tape/lib/results')
+const through = require('through')
+const resumer = require('resumer')
 tape.Test = Test
+tape.Results = Results
+tape.through = through
+tape.resumer = resumer
 
 function _isNil (obj) {
   return o === null || o === undefined

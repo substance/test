@@ -1,8 +1,6 @@
 import { isNil, platform } from 'substance'
 
-export default function addTestAPI (tape) {
-  const Test = tape.Test
-
+export default function addTestAPI (Test) {
   if (platform.inNodeJS) {
     const _run = Test.prototype.run
     Test.prototype.run = function () {

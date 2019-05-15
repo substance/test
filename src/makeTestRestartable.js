@@ -1,7 +1,5 @@
 // monkey path tape so that we can restart the tests in the TestSuite
-export default function makeTestRestartable (tape) {
-  const Test = tape.Test
-
+export default function makeTestRestartable (Test) {
   Test.prototype.reset = function () {
     this.readable = true
     this.assertCount = 0
