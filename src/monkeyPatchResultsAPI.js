@@ -3,7 +3,7 @@ import { platform } from 'substance'
 import tape from 'tape'
 
 // monkey-patch tape/lib/Results so that
-// 1. Results.createStream() does not start execution
+// Results.createStream() does not start execution
 
 const Results = tape.Results
 

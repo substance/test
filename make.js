@@ -1,9 +1,12 @@
 let b = require('substance-bundler')
+let rollup = require('substance-bundler/extensions/rollup')
+let nodeResolve = require('rollup-plugin-node-resolve')
+let commonjs = require('rollup-plugin-commonjs')
+let nodeBuiltins = require('rollup-plugin-node-builtins')
+let nodeGlobals = require('rollup-plugin-node-globals')
 let path = require('path')
 
-const TAPE_BROWSER = path.join(__dirname, 'tmp/tape.browser.js')
-const TAPE_NODE = path.join(__dirname, 'tmp/tape.cjs.js')
-const TAPE_SPEC = path.join(__dirname, 'dist/tap-spec.js')
+const TMP = path.join(__dirname, 'tmp')
 
 b.task('clean', () => {
   b.rm('./dist')
@@ -11,94 +14,119 @@ b.task('clean', () => {
 })
 
 b.task('tape:browser', () => {
-  b.browserify('./.make/tape.js', {
-    dest: TAPE_BROWSER,
-    exports: ['default'],
-    debug: true
+  rollup(b, {
+    input: './.make/tape.js',
+    output: {
+      file: path.join(TMP, 'tape.browser.js'),
+      format: 'umd',
+      name: 'tape'
+    },
+    plugins: [
+      nodeResolve({
+        preferBuiltins: true
+      }),
+      commonjs(),
+      nodeBuiltins()
+    ]
   })
 })
 
 b.task('tape:node', () => {
-  b.browserify('./.make/tape.js', {
-    dest: TAPE_NODE,
-    server: true,
-    exports: ['default']
-  })
-})
-
-b.task('tap:spec', () => {
-  b.browserify('./node_modules/tap-spec/bin/cmd.js', {
-    dest: TAPE_SPEC,
-    server: true
+  rollup(b, {
+    input: '.make/tape.js',
+    output: {
+      file: path.join(TMP, 'tape.cjs.js'),
+      format: 'commonjs'
+    },
+    plugins: [
+      nodeResolve({
+        preferBuiltins: true
+      }),
+      commonjs(),
+      nodeBuiltins()
+    ]
   })
 })
 
 // Bundling the test API for use in nodejs
 b.task('api:node', ['tape:node'], () => {
-  b.js('src/api.cjs.js', {
+  rollup(b, {
+    input: 'src/api.cjs.js',
     output: [{
-      file: './dist/substance-test.cjs.js',
+      file: './dist/test.cjs.js',
       format: 'cjs'
     }],
-    alias: {
-      'tape': TAPE_NODE
-    },
-    external: [ 'substance' ],
-    commonjs: true,
-    cleanup: true
+    plugins: [
+      _resolveTape({
+        tape: path.join(TMP, 'tape.cjs.js')
+      }),
+      nodeResolve(),
+      commonjs()
+    ],
+    external: ['events', 'fs', 'path', 'stream', 'util']
   })
 })
 
 // Bundling the test API for use in the browser (e.g. in karma)
 b.task('api:browser', ['tape:browser'], () => {
-  b.js('./src/api.browser.js', {
+  rollup(b, {
+    input: './src/api.browser.js',
     output: [{
-      file: './dist/substance-test.browser.js',
+      file: './dist/test.browser.js',
       format: 'umd',
-      name: 'substanceTest',
-      globals: { substance: 'window.substance' },
-      sourcemap: false
+      name: 'substanceTest'
     }],
-    alias: {
-      'tape': TAPE_BROWSER
-    },
-    external: [ 'substance' ],
-    commonjs: true,
-    cleanup: true
+    plugins: [
+      _resolveTape({
+        tape: path.join(TMP, 'tape.browser.js')
+      }),
+      nodeResolve({
+        preferBuiltins: true
+      }),
+      commonjs(),
+      nodeBuiltins(),
+      nodeGlobals()
+    ]
   })
 })
 
 b.task('suite', ['tape:browser'], () => {
   b.copy('src/index.html', 'dist/')
   b.copy('src/test.css', 'dist/')
-  b.js('./src/suite.js', {
-    output: [{
-      file: './dist/substance-test.js',
+  rollup(b, {
+    input: './src/suite.js',
+    output: {
+      file: './dist/testsuite.js',
       format: 'umd',
-      name: 'substanceTest',
-      globals: { substance: 'window.substance' }
-    }],
-    alias: {
-      'tape': TAPE_BROWSER
+      // Note: important registering this at the same global name as the API
+      name: 'substanceTest'
     },
-    external: [ 'substance' ],
-    commonjs: true,
-    cleanup: true
-  })
-})
-
-b.task('example', () => {
-  b.js('./test/index.js', {
-    output: [{
-      file: './tmp/tests.js',
-      format: 'umd',
-      name: 'tests',
-      globals: { 'substance-test': 'substanceTest' }
-    }],
-    external: [ 'substance-test' ]
+    plugins: [
+      _resolveTape({
+        tape: path.join(TMP, 'tape.browser.js')
+      }),
+      nodeResolve({
+        preferBuiltins: true
+      }),
+      commonjs(),
+      nodeBuiltins(),
+      nodeGlobals()
+    ]
   })
 })
 
 b.task('api', ['api:node', 'api:browser'])
 
-b.task('default', ['clean', 'tap:spec', 'api', 'suite'])
+b.task('default', ['clean', 'api', 'suite'])
+
+function _resolveTape (options = {}) {
+  return {
+    name: '_resolve-tape',
+    resolveId (source) {
+      if (source === 'tape') {
+        return options.tape
+      }
+      return null
+    }
+  }
+}

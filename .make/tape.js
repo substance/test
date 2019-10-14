@@ -1,8 +1,9 @@
-const tape = require('tape')
-const Test = require('tape/lib/test')
-const Results = require('tape/lib/results')
-const through = require('through')
-const resumer = require('resumer')
+import { default as tape } from 'tape'
+import { default as Test } from 'tape/lib/test'
+import { default as Results } from 'tape/lib/results'
+import through from 'through'
+import resumer from 'resumer'
+
 tape.Test = Test
 tape.Results = Results
 tape.through = through
@@ -34,4 +35,4 @@ Test.prototype.isNotNil = function (value, msg, extra) {
   })
 }
 
-module.exports = tape
+export default tape

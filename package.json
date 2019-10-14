@@ -6,29 +6,28 @@
     "type": "git",
     "url": "https://github.com/substance/test.git"
   },
-  "main": "dist/substance-test.cjs.js",
+  "main": "dist/test.cjs.js",
   "scripts": {
-    "prepublish": "node make",
-    "lint": "standard src/*.js",
-    "build": "node make"
+    "prepack": "npm install && node make",
+    "lint": "standard src/*.js"
   },
   "author": "Oliver Buchtala",
   "license": "MIT",
   "devDependencies": {
-    "browserify": "13.3.0",
-    "lodash": "4.17.4",
     "resumer": "0.0.0",
-    "standard": "11.0.1",
-    "substance": "0.145.0",
-    "substance-bundler": "0.25.2",
-    "tap-spec": "5.0.0",
-    "tape": "4.10.1"
+    "rollup": "^1.23.1",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-builtins": "^2.1.2",
+    "rollup-plugin-node-globals": "^1.4.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "standard": "^14.3.1",
+    "substance": "1.0.x",
+    "substance-bundler": "^0.27.1",
+    "tape": "4.10.1",
+    "webpack": "^4.41.1"
   },
   "dependencies": {
     "source-map-support": "0.4.3"
-  },
-  "peerDependencies": {
-    "substance": ">0.145.0"
   },
   "files": [
     "dist",
